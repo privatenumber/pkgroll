@@ -209,9 +209,15 @@ pkgroll --watch
 
 - **Dependency bundling** yields smaller and faster installation.
 
-	Tree-shaking only pulls in used code from dependencies, preventing unused code and unnecessary files (eg. `README.md`) from getting downloaded.
+	Tree-shaking only pulls in used code from dependencies, preventing unused code and unnecessary files (eg. `README.md`, `package.json`, etc.) from getting downloaded.
 
 	Removing dependencies also eliminates dependency tree traversal, which is [one of the biggest bottlenecks](https://dev.to/atian25/in-depth-of-tnpm-rapid-mode-how-could-we-fast-10s-than-pnpm-3bpp#:~:text=The%20first%20optimization%20comes%20from%20%27dependencies%20graph%27%3A).
+
+- **Inadvertent breaking changes**
+
+	Dependencies can introduce breaking changes due to a discrepancy in environment support criteria, by accident, or in rare circumstances, [maliciously](https://snyk.io/blog/peacenotwar-malicious-npm-node-ipc-package-vulnerability/).
+
+	Compiling dependencies will make sure new syntax & features are downgraded to support the same environments. And also prevent any unexpected changes from sneaking in during installation.
 
 - **Type dependencies** must be declared in the `dependencies` hash in  `package.json` for it to be resolved by the consumer.
 

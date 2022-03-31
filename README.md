@@ -1,6 +1,6 @@
 # pkgroll
 
-Write your code in ESM/TypeScript and get bundled ESM, CJS, and DTS outputs with a single command!
+Write your code in ESM/TypeScript and bundle it to get ESM, CommonJS, and type declaration outputs with a single command!
 
 ### Features
 - **Zero config** Configuration automatically inferred from `package.json`

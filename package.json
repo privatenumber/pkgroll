@@ -25,7 +25,8 @@
 	],
 	"bin": "dist/cli.js",
 	"scripts": {
-		"build": "esno src/cli.ts --minify --target node12.19",
+		"Target is 12.20 for import(), node: prefix is not used":"",
+		"build": "esno src/cli.ts --minify --target node12.20",
 		"pretest": "npm run build",
 		"test": "esno tests/index.ts",
 		"lint": "eslint --cache ."

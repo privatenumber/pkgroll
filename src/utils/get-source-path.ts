@@ -1,4 +1,3 @@
-import path from 'path';
 import type { ExportEntry } from '../types';
 import { fsExists } from './fs-exists';
 
@@ -32,7 +31,7 @@ export async function getSourcePath(
 		throw new Error(`Export path ${stringify(exportEntry.outputPath)} from ${stringify(`package.json#${exportEntry.from}`)} is not in directory ${dist}`);
 	}
 
-	const sourcePath = path.join(source, exportEntry.outputPath.slice(dist.length));
+	const sourcePath = source + exportEntry.outputPath.slice(dist.length);
 
 	for (const extension of (Object.keys(sourceExtensions) as (keyof typeof sourceExtensions)[])) {
 		if (exportEntry.outputPath.endsWith(extension)) {

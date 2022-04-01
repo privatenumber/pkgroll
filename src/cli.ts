@@ -50,9 +50,15 @@ const argv = cli({
 	},
 });
 
-const sourcePath = `${fs.realpathSync(argv.flags.src)}/`;
-const distPath = normalizePath(argv.flags.dist);
 const cwd = process.cwd();
+
+/**
+ * The sourcepath may be a symlink.
+ * In the tests, the temp directory is a symlink:
+ * /var/folders/hl/ -> /private/var/folders/hl/
+ */
+const sourcePath = normalizePath(argv.flags.src, true);
+const distPath = normalizePath(argv.flags.dist, true);
 
 const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
 if (tsconfigTarget) {
@@ -81,7 +87,13 @@ if (tsconfigTarget) {
 	]);
 
 	const rollupConfigs = await getRollupConfigs(
-		sourcePath,
+		/**
+		 * Resolve symlink in source path.
+		 *
+		 * Tests since symlinks because tmpdir is a symlink:
+		 * /var/ -> /private/var/
+		 */
+		normalizePath(fs.realpathSync(sourcePath), true),
 		distPath,
 		sourcePaths,
 		argv.flags,

@@ -17,7 +17,7 @@ specifiers:
   esno: ^0.14.1
   execa: ^6.1.0
   get-node: ^12.1.0
-  get-tsconfig: ^3.0.0
+  get-tsconfig: ^3.0.1
   husky: ^4.3.8
   kolorist: ^1.5.1
   lint-staged: ^12.3.7
@@ -26,7 +26,7 @@ specifiers:
   rimraf: ^3.0.2
   rollup: ^2.70.1
   rollup-plugin-dts: ^4.2.0
-  type-fest: ^2.12.1
+  type-fest: ^2.12.2
   typescript: ^4.6.3
 
 dependencies:
@@ -50,14 +50,14 @@ devDependencies:
   esno: 0.14.1
   execa: 6.1.0
   get-node: 12.1.0
-  get-tsconfig: 3.0.0
+  get-tsconfig: 3.0.1
   husky: 4.3.8
   kolorist: 1.5.1
   lint-staged: 12.3.7
   manten: 0.0.3
   rimraf: 3.0.2
   rollup-plugin-dts: 4.2.0_rollup@2.70.1+typescript@4.6.3
-  type-fest: 2.12.1
+  type-fest: 2.12.2
   typescript: 4.6.3
 
 packages:
@@ -1902,8 +1902,8 @@ packages:
       get-intrinsic: 1.1.1
     dev: true
 
-  /get-tsconfig/3.0.0:
-    resolution: {integrity: sha512-6M+rJ2v+VULEBkV6g59960wtjdoevNgWWhx+UMi8u2xDiIHg8CtVmB0bpUyAY0znHCT00BvOPr4JoH6FGDx+zQ==}
+  /get-tsconfig/3.0.1:
+    resolution: {integrity: sha512-+m30eQjbcf3xMNdnacXH5IDAKUMbI7Mhbf3e1BHif1FzBlUhBzBlmOVc7kL4+kB035l8OCyBdI3dNXZ3of9HqA==}
     dev: true
 
   /glob-parent/5.1.2:
@@ -3649,8 +3649,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /type-fest/2.12.1:
-    resolution: {integrity: sha512-AiknQSEqKVGDDjtZqeKrUoTlcj7FKhupmnVUgz6KoOKtvMwRGE6hUNJ/nVear+h7fnUPO1q/htSkYKb1pyntkQ==}
+  /type-fest/2.12.2:
+    resolution: {integrity: sha512-qt6ylCGpLjZ7AaODxbpyBZSs9fCI9SkL3Z9q2oxMBQhs/uyY+VD8jHA8ULCGmWQJlBgqvO3EJeAngOHD8zQCrQ==}
     engines: {node: '>=12.20'}
     dev: true
 

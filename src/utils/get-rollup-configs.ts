@@ -115,14 +115,14 @@ export async function getRollupConfigs(
 				dir: distributionDirectoryPath,
 				/**
 				 * Preserve source path in dist path
-				 * 
+				 *
 				 * In contrast with the app config, the dts
 				 * config doesn't seem to resolve symlink paths.
-				 * 
+				 *
 				 * This is particularly problematic with tests since
 				 * the tmpdir is a symlink: /var/ -> /private/var/
 				*/
-				entryFileNames: (chunk) => fs.realpathSync(chunk.facadeModuleId!)
+				entryFileNames: chunk => fs.realpathSync(chunk.facadeModuleId!)
 					.slice(sourceDirectoryPath.length)
 					.replace(/\.\w+$/, extension),
 

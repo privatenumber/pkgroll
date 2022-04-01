@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import type { OutputOptions } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
@@ -112,8 +113,16 @@ export async function getRollupConfigs(
 
 			config.output = [{
 				dir: distributionDirectoryPath,
-				// Preserve source path
-				entryFileNames: chunk => chunk.facadeModuleId!
+				/**
+				 * Preserve source path in dist path
+				 *
+				 * In contrast with the app config, the dts
+				 * config doesn't seem to resolve symlink paths.
+				 *
+				 * This is particularly problematic with tests since
+				 * the tmpdir is a symlink: /var/ -> /private/var/
+				*/
+				entryFileNames: chunk => fs.realpathSync(chunk.facadeModuleId!)
 					.slice(sourceDirectoryPath.length)
 					.replace(/\.\w+$/, extension),
 
@@ -130,7 +139,9 @@ export async function getRollupConfigs(
 			configs.app = config;
 		}
 
-		config.input.push(input);
+		if (!config.input.includes(input)) {
+			config.input.push(input);
+		}
 
 		const outputs = config.output;
 		const extension = path.extname(exportEntry.outputPath);

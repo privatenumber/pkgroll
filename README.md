@@ -1,4 +1,4 @@
-# pkgroll
+# 📦 🍣 pkgroll
 
 Write your code in ESM & TypeScript and bundle it to get ESM, CommonJS, and type declaration outputs with a single command!
 

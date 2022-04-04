@@ -18,7 +18,9 @@ npm install --save-dev pkgroll
 ## Quick setup
 1. Setup your project with source files in `src` and output in `dist` (configurable).
 
-2. Specify output files in `package.json`:
+2. Specify entry files in `package.json`.
+
+    These configurations are read by Node.js to determine how to import the package. Pkgroll leverages the same configuration to determine how to build the package.
 
 	```json5
 	{

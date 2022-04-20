@@ -53,7 +53,7 @@ const argv = cli({
 // Needs to be resolved because a symlink can be passed in as a cwd (eg. execa)
 const cwd = fs.realpathSync(process.cwd());
 
-console.log('cwd', cwd);
+console.log('cwd', process.cwd(), cwd);
 
 /**
  * The sourcepath may be a symlink.
@@ -80,6 +80,8 @@ if (tsconfigTarget) {
 		input: await getSourcePath(exportEntry, sourcePath, distPath),
 		exportEntry,
 	})));
+
+	console.log('sourcePaths', JSON.stringify(sourcePaths, null, 2));
 
 	const aliases = getAliases(packageJson, cwd);
 	const externalDependencies = getExternalDependencies(packageJson).filter(

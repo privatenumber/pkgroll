@@ -54,6 +54,7 @@ const argv = cli({
 console.log({
 	cwd: process.cwd(),
 	realpath: fs.realpathSync(process.cwd()),
+	cwdSlash: slash(process.cwd()),
 	realpathSlash: fs.realpathSync(slash(process.cwd())),
 });
 

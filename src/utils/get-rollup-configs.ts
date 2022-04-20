@@ -122,7 +122,7 @@ export async function getRollupConfigs(
 				 * This is particularly problematic with tests since
 				 * the tmpdir is a symlink: /var/ -> /private/var/
 				*/
-				entryFileNames: chunk => fs.realpathSync(chunk.facadeModuleId!)
+				entryFileNames: chunk => fs.realpathSync.native(chunk.facadeModuleId!)
 					.slice(sourceDirectoryPath.length)
 					.replace(/\.\w+$/, extension),
 

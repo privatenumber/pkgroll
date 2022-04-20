@@ -8,8 +8,8 @@ const nodeVersions = [
 	...(
 		process.env.CI
 			? [
-				'14.18.3',
-				'16.13.2',
+				// '14.18.3',
+				// '16.13.2',
 			]
 			: []
 	),
@@ -19,7 +19,7 @@ const nodeVersions = [
 	for (const nodeVersion of nodeVersions) {
 		const node = await getNode(nodeVersion);
 		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
-			runTestSuite(specErrorCases, node.path);
+			// runTestSuite(specErrorCases, node.path);
 			runTestSuite(specBuilds, node.path);
 		});
 	}

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import slash from 'slash';
 import { cli } from 'cleye';
@@ -59,6 +60,18 @@ console.log({
 	realpathSlash: fs.realpathSync(slash(process.cwd()) + '/'),
 });
 
+console.log({
+	tmpdir: os.tmpdir(),
+	realpathSync: fs.realpathSync(os.tmpdir()),
+});
+(async () => {
+	console.log({
+		tmpdir: os.tmpdir(),
+		realpathSync: fs.realpathSync(os.tmpdir()),
+		realpathPromise: await fs.promises.realpath(os.tmpdir()),
+	});
+	
+})();
 const testDir = path.dirname(path.dirname(process.cwd()));
 console.log({
 	testDir,

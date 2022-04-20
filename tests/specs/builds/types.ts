@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from '../../utils/create-fixture';
@@ -24,82 +25,84 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
+			console.log('dir', fs.readdirSync(path.join(fixture.path, 'dist')));
+
 			const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
 			expect(content).toMatch('declare function');
 
 			await fixture.cleanup();
 		});
 
-		test('emits multiple', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
+		// test('emits multiple', async () => {
+		// 	const fixture = await createFixture('./tests/fixture-package');
 
-			await fixture.writeJson('package.json', {
-				exports: {
-					'./utils': {
-						types: './dist/utils.d.ts',
-					},
-					'./nested': {
-						types: './dist/nested/index.d.ts',
-					},
-				},
-			});
+		// 	await fixture.writeJson('package.json', {
+		// 		exports: {
+		// 			'./utils': {
+		// 				types: './dist/utils.d.ts',
+		// 			},
+		// 			'./nested': {
+		// 				types: './dist/nested/index.d.ts',
+		// 			},
+		// 		},
+		// 	});
 
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
+		// 	await fixture.writeJson('tsconfig.json', {
+		// 		compilerOptions: {
+		// 			typeRoots: [
+		// 				path.resolve('node_modules/@types'),
+		// 			],
+		// 		},
+		// 	});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
+		// 	expect(pkgrollProcess.exitCode).toBe(0);
+		// 	expect(pkgrollProcess.stderr).toBe('');
 
-			const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
-			expect(utilsDts).toMatch('declare function');
+		// 	const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
+		// 	expect(utilsDts).toMatch('declare function');
 
-			const nestedDts = await fixture.readFile('dist/nested/index.d.ts', 'utf8');
-			expect(nestedDts).toMatch('declare function sayHello');
+		// 	const nestedDts = await fixture.readFile('dist/nested/index.d.ts', 'utf8');
+		// 	expect(nestedDts).toMatch('declare function sayHello');
 
-			await fixture.cleanup();
-		});
+		// 	await fixture.cleanup();
+		// });
 
-		test('emits multiple - same name', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
+		// test('emits multiple - same name', async () => {
+		// 	const fixture = await createFixture('./tests/fixture-package');
 
-			await fixture.writeJson('package.json', {
-				exports: {
-					'./a': {
-						types: './dist/utils.d.ts',
-					},
-					'./b': {
-						types: './dist/nested/utils.d.ts',
-					},
-				},
-			});
+		// 	await fixture.writeJson('package.json', {
+		// 		exports: {
+		// 			'./a': {
+		// 				types: './dist/utils.d.ts',
+		// 			},
+		// 			'./b': {
+		// 				types: './dist/nested/utils.d.ts',
+		// 			},
+		// 		},
+		// 	});
 
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
+		// 	await fixture.writeJson('tsconfig.json', {
+		// 		compilerOptions: {
+		// 			typeRoots: [
+		// 				path.resolve('node_modules/@types'),
+		// 			],
+		// 		},
+		// 	});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
+		// 	expect(pkgrollProcess.exitCode).toBe(0);
+		// 	expect(pkgrollProcess.stderr).toBe('');
 
-			const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
-			expect(utilsDts).toMatch('declare function sayHello');
+		// 	const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
+		// 	expect(utilsDts).toMatch('declare function sayHello');
 
-			const nestedDts = await fixture.readFile('dist/nested/utils.d.ts', 'utf8');
-			expect(nestedDts).toMatch('declare function sayGoodbye');
+		// 	const nestedDts = await fixture.readFile('dist/nested/utils.d.ts', 'utf8');
+		// 	expect(nestedDts).toMatch('declare function sayGoodbye');
 
-			await fixture.cleanup();
-		});
+		// 	await fixture.cleanup();
+		// });
 	});
 });

@@ -14,10 +14,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 		// runTestSuite(specMain, nodePath);
 		// runTestSuite(specModule, nodePath);
 		// runTestSuite(specTarget, nodePath);
-		// runTestSuite(specTypes, nodePath);
+		runTestSuite(specTypes, nodePath);
 		// runTestSuite(specExports, nodePath);
 		// runTestSuite(specImports, nodePath);
-		runTestSuite(specBin, nodePath);
+		// runTestSuite(specBin, nodePath);
 		// runTestSuite(specExternalizeDependencies, nodePath);
 		// runTestSuite(specSrcDist, nodePath);
 	});

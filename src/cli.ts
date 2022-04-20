@@ -93,7 +93,7 @@ if (tsconfigTarget) {
 		 * Tests since symlinks because tmpdir is a symlink:
 		 * /var/ -> /private/var/
 		 */
-		normalizePath(fs.realpathSync(sourcePath), true),
+		normalizePath(fs.realpathSync.native(sourcePath), true),
 		distPath,
 		sourcePaths,
 		argv.flags,

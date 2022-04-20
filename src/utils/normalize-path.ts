@@ -1,10 +1,15 @@
+import path from 'path';
+
 const hasPathPrefixPattern = /^[/.]/;
 
 export const normalizePath = (
 	filePath: string,
 	isDirectory?: boolean,
 ) => {
-	if (!hasPathPrefixPattern.test(filePath)) {
+	if (
+		!path.isAbsolute(filePath) // Windows paths starts with C:\\
+		&& !hasPathPrefixPattern.test(filePath)
+	) {
 		filePath = `./${filePath}`;
 	}
 

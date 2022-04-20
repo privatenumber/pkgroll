@@ -71,6 +71,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			console.log(await fs.readdir(fixture.path));
 			console.log(await fs.readdir(path.join(fixture.path, 'dist')));
+			console.log(await fs.readdir(path.join(fixture.path, 'dist/nested')));
 
 			expect(await fixture.exists('dist/nested/index.js')).toBe(true);
 			expect(await fixture.exists('dist/nested/index.mjs')).toBe(true);

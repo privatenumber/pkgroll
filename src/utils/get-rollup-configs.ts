@@ -122,9 +122,17 @@ export async function getRollupConfigs(
 				 * This is particularly problematic with tests since
 				 * the tmpdir is a symlink: /var/ -> /private/var/
 				*/
-				entryFileNames: chunk => fs.realpathSync.native(chunk.facadeModuleId!)
+				entryFileNames: chunk => {
+					console.log({
+						facadeModuleId: fs.realpathSync.native(chunk.facadeModuleId!),
+						sourceDirectoryPath,
+						extension,
+					});
+
+					return fs.realpathSync.native(chunk.facadeModuleId!)
 					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension),
+					.replace(/\.\w+$/, extension);
+				},
 
 				exports: 'auto',
 				format: 'esm',
@@ -157,9 +165,17 @@ export async function getRollupConfigs(
 				],
 
 				// Preserve source path
-				entryFileNames: chunk => chunk.facadeModuleId!
+				entryFileNames: chunk => {
+					console.log({
+						facadeModuleId: chunk.facadeModuleId!,
+						sourceDirectoryPath,
+						extension,
+					});
+	
+					return chunk.facadeModuleId!
 					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension),
+					.replace(/\.\w+$/, extension);
+				},
 			};
 
 			outputs.push(outputOptions);

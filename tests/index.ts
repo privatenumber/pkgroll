@@ -19,7 +19,7 @@ const nodeVersions = [
 	for (const nodeVersion of nodeVersions) {
 		const node = await getNode(nodeVersion);
 		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
-			runTestSuite(specErrorCases, node.path);
+			// runTestSuite(specErrorCases, node.path);
 			runTestSuite(specBuilds, node.path);
 		});
 	}

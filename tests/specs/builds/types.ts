@@ -6,71 +6,70 @@ import { pkgroll } from '../../utils/pkgroll';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('types', ({ test }) => {
-		// test('emits', async () => {
-		// 	const fixture = await createFixture('./tests/fixture-package');
+		test('emits', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
 
-		// 	await fixture.writeJson('package.json', {
-		// 		types: './dist/utils.d.ts',
-		// 	});
-		// 	await fixture.writeJson('tsconfig.json', {
-		// 		compilerOptions: {
-		// 			typeRoots: [
-		// 				path.resolve('node_modules/@types'),
-		// 			],
-		// 		},
-		// 	});
+			await fixture.writeJson('package.json', {
+				types: './dist/utils.d.ts',
+			});
+			await fixture.writeJson('tsconfig.json', {
+				compilerOptions: {
+					typeRoots: [
+						path.resolve('node_modules/@types'),
+					],
+				},
+			});
 
-		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-		// 	expect(pkgrollProcess.exitCode).toBe(0);
-		// 	expect(pkgrollProcess.stderr).toBe('');
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
 
-		// 	const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
-		// 	expect(content).toMatch('declare function');
+			const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
+			expect(content).toMatch('declare function');
 
-		// 	await fixture.cleanup();
-		// });
+			await fixture.cleanup();
+		});
 
-		// test('emits multiple', async () => {
-		// 	const fixture = await createFixture('./tests/fixture-package');
+		test('emits multiple', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
 
-		// 	await fixture.writeJson('package.json', {
-		// 		exports: {
-		// 			'./utils': {
-		// 				types: './dist/utils.d.ts',
-		// 			},
-		// 			'./nested': {
-		// 				types: './dist/nested/index.d.ts',
-		// 			},
-		// 		},
-		// 	});
+			await fixture.writeJson('package.json', {
+				exports: {
+					'./utils': {
+						types: './dist/utils.d.ts',
+					},
+					'./nested': {
+						types: './dist/nested/index.d.ts',
+					},
+				},
+			});
 
-		// 	await fixture.writeJson('tsconfig.json', {
-		// 		compilerOptions: {
-		// 			typeRoots: [
-		// 				path.resolve('node_modules/@types'),
-		// 			],
-		// 		},
-		// 	});
+			await fixture.writeJson('tsconfig.json', {
+				compilerOptions: {
+					typeRoots: [
+						path.resolve('node_modules/@types'),
+					],
+				},
+			});
 
-		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-		// 	expect(pkgrollProcess.exitCode).toBe(0);
-		// 	expect(pkgrollProcess.stderr).toBe('');
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
 
-		// 	const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
-		// 	expect(utilsDts).toMatch('declare function');
+			const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
+			expect(utilsDts).toMatch('declare function');
 
-		// 	const nestedDts = await fixture.readFile('dist/nested/index.d.ts', 'utf8');
-		// 	expect(nestedDts).toMatch('declare function sayHello');
+			const nestedDts = await fixture.readFile('dist/nested/index.d.ts', 'utf8');
+			expect(nestedDts).toMatch('declare function sayHello');
 
-		// 	await fixture.cleanup();
-		// });
+			await fixture.cleanup();
+		});
 
 		test('emits multiple - same name', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
-			console.log(fixture.path);
 			await fixture.writeJson('package.json', {
 				exports: {
 					'./a': {
@@ -92,8 +91,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-			console.log(pkgrollProcess);
-
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
@@ -103,7 +100,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const nestedDts = await fixture.readFile('dist/nested/utils.d.ts', 'utf8');
 			expect(nestedDts).toMatch('declare function sayGoodbye');
 
-			// await fixture.cleanup();
+			await fixture.cleanup();
 		});
 	});
 });

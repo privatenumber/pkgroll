@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from '../../utils/create-fixture';
 import { pkgroll } from '../../utils/pkgroll';
@@ -18,6 +20,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
+
+			console.log(fs.readdirSync(fixture.path));
+			console.log(fs.readdirSync(path.join(fixture.path, 'dist')));
+
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('module.exports =');

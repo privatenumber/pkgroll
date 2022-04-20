@@ -7,7 +7,7 @@ export const normalizePath = (
 	isDirectory?: boolean,
 ) => {
 	if (
-		!path.isAbsolute(filePath)
+		!path.isAbsolute(filePath) // Windows paths starts with C:\\
 		&& !hasPathPrefixPattern.test(filePath)
 	) {
 		filePath = `./${filePath}`;

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import slash from 'slash';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
@@ -58,13 +59,12 @@ console.log({
 	realpathSlash: fs.realpathSync(slash(process.cwd()) + '/'),
 });
 
-try {
-	console.log({
-		readlinkSlash: fs.readlinkSync(slash(process.cwd()) + '/'),
-	});
-} catch {
-	console.log('cwd not symlink');
-}
+const testDir = path.dirname(path.dirname(process.cwd()));
+console.log({
+	testDir,
+	realpath: fs.realpathSync(testDir),
+
+});
  
 // Needs to be resolved because a symlink can be passed in as a cwd (eg. execa)
 const cwd = fs.realpathSync(process.cwd());

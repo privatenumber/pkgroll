@@ -65,7 +65,13 @@ console.log({
 	realpath: fs.realpathSync(testDir),
 
 });
- 
+
+try {
+	console.log(fs.realpathSync('C:\\Users\\RUNNER~1\\AppData\\Local\\Temp'));
+} catch (err) {
+	console.log(err);
+}
+
 // Needs to be resolved because a symlink can be passed in as a cwd (eg. execa)
 const cwd = fs.realpathSync(process.cwd());
 

@@ -97,7 +97,9 @@ export async function getRollupConfigs(
 
 	const configs: RollupConfigs = Object.create(null);
 
-	for (const { input, exportEntry } of inputs) {
+	for (let { input, exportEntry } of inputs) {
+		input = fs.realpathSync.native(input);
+
 		if (exportEntry.type === 'types') {
 			let config = configs.type;
 
@@ -124,12 +126,12 @@ export async function getRollupConfigs(
 				*/
 				entryFileNames: chunk => {
 					console.log({
-						facadeModuleId: fs.realpathSync.native(chunk.facadeModuleId!),
+						facadeModuleId: chunk.facadeModuleId!,
 						sourceDirectoryPath,
 						extension,
 					});
 
-					return fs.realpathSync.native(chunk.facadeModuleId!)
+					return chunk.facadeModuleId!
 					.slice(sourceDirectoryPath.length)
 					.replace(/\.\w+$/, extension);
 				},

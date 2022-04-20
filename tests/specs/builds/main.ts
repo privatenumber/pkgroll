@@ -7,11 +7,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		test('js', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
+			console.log(fixture.path);
 			await fixture.writeJson('package.json', {
 				main: './dist/index.js',
 			});
 
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			console.log(pkgrollProcess);
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -22,23 +25,23 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		test('mjs', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
+		// test('mjs', async () => {
+		// 	const fixture = await createFixture('./tests/fixture-package');
 
-			await fixture.writeJson('package.json', {
-				main: './dist/index.mjs',
-			});
+		// 	await fixture.writeJson('package.json', {
+		// 		main: './dist/index.mjs',
+		// 	});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
+		// 	expect(pkgrollProcess.exitCode).toBe(0);
+		// 	expect(pkgrollProcess.stderr).toBe('');
 
-			const content = await fixture.readFile('dist/index.mjs', 'utf8');
-			expect(content).toMatch('export { index as default }');
+		// 	const content = await fixture.readFile('dist/index.mjs', 'utf8');
+		// 	expect(content).toMatch('export { index as default }');
 
-			await fixture.cleanup();
-		});
+		// 	await fixture.cleanup();
+		// });
 
 		// describe('type module', ({ test }) => {
 		// 	test('js', async () => {

@@ -52,6 +52,8 @@ const argv = cli({
 
 const cwd = process.cwd();
 
+console.log('cwd', cwd);
+
 /**
  * The sourcepath may be a symlink.
  * In the tests, the temp directory is a symlink:

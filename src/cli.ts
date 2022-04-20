@@ -55,12 +55,12 @@ console.log({
 	cwd: process.cwd(),
 	realpath: fs.realpathSync(process.cwd()),
 	cwdSlash: slash(process.cwd()),
-	realpathSlash: fs.realpathSync(slash(process.cwd())),
+	realpathSlash: fs.realpathSync(slash(process.cwd()) + '/'),
 });
 
 try {
 	console.log({
-		readlinkSlash: fs.readlinkSync(slash(process.cwd())),
+		readlinkSlash: fs.readlinkSync(slash(process.cwd()) + '/'),
 	});
 } catch {
 	console.log('cwd not symlink');

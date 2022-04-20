@@ -157,17 +157,9 @@ export async function getRollupConfigs(
 				],
 
 				// Preserve source path
-				entryFileNames: (chunk) => {
-					console.log({
-						facadeModuleId: chunk.facadeModuleId,
-						sourceDirectoryPath,
-						extension,
-					});
-
-					return chunk.facadeModuleId!
+				entryFileNames: chunk => chunk.facadeModuleId!
 					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension);
-				},
+					.replace(/\.\w+$/, extension),
 			};
 
 			outputs.push(outputOptions);

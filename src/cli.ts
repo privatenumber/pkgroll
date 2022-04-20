@@ -63,11 +63,13 @@ console.log({
 console.log({
 	tmpdir: os.tmpdir(),
 	realpathSync: fs.realpathSync(os.tmpdir()),
+	realpathNative: fs.realpathSync.native(os.tmpdir()),
 });
 (async () => {
 	console.log({
 		tmpdir: os.tmpdir(),
 		realpathSync: fs.realpathSync(os.tmpdir()),
+		realpathNative: fs.realpathSync.native(os.tmpdir()),
 		realpathPromise: await fs.promises.realpath(os.tmpdir()),
 	});
 	

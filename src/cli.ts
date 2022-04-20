@@ -58,6 +58,14 @@ console.log({
 	realpathSlash: fs.realpathSync(slash(process.cwd())),
 });
 
+try {
+	console.log({
+		readlinkSlash: fs.readlinkSync(slash(process.cwd())),
+	});
+} catch {
+	console.log('cwd not symlink');
+}
+ 
 // Needs to be resolved because a symlink can be passed in as a cwd (eg. execa)
 const cwd = fs.realpathSync(process.cwd());
 

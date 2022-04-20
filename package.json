@@ -63,8 +63,7 @@
 		"@rollup/pluginutils": "^4.2.0",
 		"esbuild": "^0.14.29",
 		"magic-string": "^0.26.1",
-		"rollup": "^2.70.1",
-		"slash": "^4.0.0"
+		"rollup": "^2.70.1"
 	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.19.1",
@@ -82,6 +81,7 @@
 		"manten": "^0.0.3",
 		"rimraf": "^3.0.2",
 		"rollup-plugin-dts": "^4.2.0",
+		"slash": "^4.0.0",
 		"type-fest": "^2.12.2",
 		"typescript": "^4.6.3"
 	},

@@ -53,42 +53,8 @@ const argv = cli({
 	},
 });
 
-console.log({
-	cwd: process.cwd(),
-	realpath: fs.realpathSync(process.cwd()),
-	cwdSlash: slash(process.cwd()),
-	realpathSlash: fs.realpathSync(slash(process.cwd()) + '/'),
-});
-
-console.log({
-	tmpdir: os.tmpdir(),
-	realpathSync: fs.realpathSync(os.tmpdir()),
-	realpathNative: fs.realpathSync.native(os.tmpdir()),
-});
-(async () => {
-	console.log({
-		tmpdir: os.tmpdir(),
-		realpathSync: fs.realpathSync(os.tmpdir()),
-		realpathNative: fs.realpathSync.native(os.tmpdir()),
-		realpathPromise: await fs.promises.realpath(os.tmpdir()),
-	});
-	
-})();
-const testDir = path.dirname(path.dirname(process.cwd()));
-console.log({
-	testDir,
-	realpath: fs.realpathSync(testDir),
-
-});
-
-try {
-	console.log(fs.realpathSync('C:\\Users\\RUNNER~1\\AppData\\Local\\Temp'));
-} catch (err) {
-	console.log(err);
-}
-
 // Needs to be resolved because a symlink can be passed in as a cwd (eg. execa)
-const cwd = fs.realpathSync(process.cwd());
+const cwd = fs.realpathSync.native(process.cwd());
 
 /**
  * The sourcepath may be a symlink.
@@ -131,7 +97,7 @@ if (tsconfigTarget) {
 		 * Tests since symlinks because tmpdir is a symlink:
 		 * /var/ -> /private/var/
 		 */
-		normalizePath(fs.realpathSync(sourcePath), true),
+		normalizePath(fs.realpathSync.native(sourcePath), true),
 		distPath,
 		sourcePaths,
 		argv.flags,

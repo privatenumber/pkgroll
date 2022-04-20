@@ -1,26 +1,11 @@
-import { describe } from 'manten';
-import getNode from 'get-node';
-import specErrorCases from './specs/error-cases';
-import specBuilds from './specs/builds';
+import fs from 'fs';
+import path from 'path';
 
-const nodeVersions = [
-	'12.22.9',
-	...(
-		process.env.CI
-			? [
-				'14.18.3',
-				'16.13.2',
-			]
-			: []
-	),
-];
+console.log('cwd', process.cwd());
+console.log('contents', fs.readdirSync(process.cwd()));
 
-(async () => {
-	for (const nodeVersion of nodeVersions) {
-		const node = await getNode(nodeVersion);
-		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
-			runTestSuite(specErrorCases, node.path);
-			runTestSuite(specBuilds, node.path);
-		});
-	}
-})();
+const pkgrollBinPath = path.resolve('./dist/cli.js');
+
+console.log('bin', pkgrollBinPath);
+console.log('contents', fs.readdirSync(path.dirname(pkgrollBinPath)));
+

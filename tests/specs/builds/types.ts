@@ -6,32 +6,30 @@ import { pkgroll } from '../../utils/pkgroll';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('types', ({ test }) => {
-		test('emits', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
+		// test('emits', async () => {
+		// 	const fixture = await createFixture('./tests/fixture-package');
 
-			await fixture.writeJson('package.json', {
-				types: './dist/utils.d.ts',
-			});
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
+		// 	await fixture.writeJson('package.json', {
+		// 		types: './dist/utils.d.ts',
+		// 	});
+		// 	await fixture.writeJson('tsconfig.json', {
+		// 		compilerOptions: {
+		// 			typeRoots: [
+		// 				path.resolve('node_modules/@types'),
+		// 			],
+		// 		},
+		// 	});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
+		// 	expect(pkgrollProcess.exitCode).toBe(0);
+		// 	expect(pkgrollProcess.stderr).toBe('');
 
-			console.log('dir', fs.readdirSync(path.join(fixture.path, 'dist')));
+		// 	const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
+		// 	expect(content).toMatch('declare function');
 
-			const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
-			expect(content).toMatch('declare function');
-
-			await fixture.cleanup();
-		});
+		// 	await fixture.cleanup();
+		// });
 
 		// test('emits multiple', async () => {
 		// 	const fixture = await createFixture('./tests/fixture-package');
@@ -69,40 +67,43 @@ export default testSuite(({ describe }, nodePath: string) => {
 		// 	await fixture.cleanup();
 		// });
 
-		// test('emits multiple - same name', async () => {
-		// 	const fixture = await createFixture('./tests/fixture-package');
+		test('emits multiple - same name', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
 
-		// 	await fixture.writeJson('package.json', {
-		// 		exports: {
-		// 			'./a': {
-		// 				types: './dist/utils.d.ts',
-		// 			},
-		// 			'./b': {
-		// 				types: './dist/nested/utils.d.ts',
-		// 			},
-		// 		},
-		// 	});
+			console.log(fixture.path);
+			await fixture.writeJson('package.json', {
+				exports: {
+					'./a': {
+						types: './dist/utils.d.ts',
+					},
+					'./b': {
+						types: './dist/nested/utils.d.ts',
+					},
+				},
+			});
 
-		// 	await fixture.writeJson('tsconfig.json', {
-		// 		compilerOptions: {
-		// 			typeRoots: [
-		// 				path.resolve('node_modules/@types'),
-		// 			],
-		// 		},
-		// 	});
+			await fixture.writeJson('tsconfig.json', {
+				compilerOptions: {
+					typeRoots: [
+						path.resolve('node_modules/@types'),
+					],
+				},
+			});
 
-		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-		// 	expect(pkgrollProcess.exitCode).toBe(0);
-		// 	expect(pkgrollProcess.stderr).toBe('');
+			console.log(pkgrollProcess);
 
-		// 	const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
-		// 	expect(utilsDts).toMatch('declare function sayHello');
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
 
-		// 	const nestedDts = await fixture.readFile('dist/nested/utils.d.ts', 'utf8');
-		// 	expect(nestedDts).toMatch('declare function sayGoodbye');
+			const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
+			expect(utilsDts).toMatch('declare function sayHello');
 
-		// 	await fixture.cleanup();
-		// });
+			const nestedDts = await fixture.readFile('dist/nested/utils.d.ts', 'utf8');
+			expect(nestedDts).toMatch('declare function sayGoodbye');
+
+			// await fixture.cleanup();
+		});
 	});
 });

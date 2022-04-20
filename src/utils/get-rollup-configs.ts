@@ -97,16 +97,7 @@ export async function getRollupConfigs(
 
 	const configs: RollupConfigs = Object.create(null);
 
-	for (let { input, exportEntry } of inputs) {
-
-		/**
-		 * Few reasons:
-		 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
-		 * - input may be an absolute symlink path
-		 * - test tmpdir is a symlink: /var/ -> /private/var/
-		*/
-		input = fs.realpathSync.native(input);
-
+	for (const { input, exportEntry } of inputs) {
 		if (exportEntry.type === 'types') {
 			let config = configs.type;
 
@@ -123,10 +114,18 @@ export async function getRollupConfigs(
 			config.output = [{
 				dir: distributionDirectoryPath,
 
-				// Preserve source path in dist path
-				entryFileNames: chunk => chunk.facadeModuleId!
-					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension),
+				/**
+				 * Preserve source path in dist path
+				 * realpath used for few reasons:
+				 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
+				 * - input may be an absolute symlink path
+				 * - test tmpdir is a symlink: /var/ -> /private/var/
+				*/
+				entryFileNames: chunk => (
+					fs.realpathSync.native(chunk.facadeModuleId!)
+						.slice(sourceDirectoryPath.length)
+						.replace(/\.\w+$/, extension)
+				),
 
 				exports: 'auto',
 				format: 'esm',
@@ -158,10 +157,18 @@ export async function getRollupConfigs(
 					isFormatEsm(exportEntry.type === 'module'),
 				],
 
-				// Preserve source path
-				entryFileNames: chunk => chunk.facadeModuleId!
-					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension),
+				/**
+				 * Preserve source path in dist path
+				 * realpath used for few reasons:
+				 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
+				 * - input may be an absolute symlink path
+				 * - test tmpdir is a symlink: /var/ -> /private/var/
+				*/
+				entryFileNames: chunk => (
+					fs.realpathSync.native(chunk.facadeModuleId!)
+						.slice(sourceDirectoryPath.length)
+						.replace(/\.\w+$/, extension)
+				),
 			};
 
 			outputs.push(outputOptions);

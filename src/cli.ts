@@ -50,7 +50,8 @@ const argv = cli({
 	},
 });
 
-const cwd = process.cwd();
+// Needs to be resolved because a symlink can be passed in as a cwd (eg. execa)
+const cwd = fs.realpathSync(process.cwd());
 
 console.log('cwd', cwd);
 

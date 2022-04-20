@@ -4,11 +4,6 @@ import os from 'os';
 
 const temporaryDirectory = path.join(os.tmpdir(), 'pkgroll');
 
-const tmpDir = os.tmpdir();
-fs.realpath(tmpDir).then(
-	(realpath) => console.log('temporaryDirectory', tmpDir, realpath),
-);
-
 class Fixture {
 	path: string;
 

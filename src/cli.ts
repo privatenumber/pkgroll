@@ -1,7 +1,4 @@
 import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import slash from 'slash';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { readPackageJson } from './utils/read-package-json';

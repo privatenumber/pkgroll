@@ -6,7 +6,6 @@ export const normalizePath = (
 	filePath: string,
 	isDirectory?: boolean,
 ) => {
-	
 	if (
 		!path.isAbsolute(filePath)
 		&& !hasPathPrefixPattern.test(filePath)

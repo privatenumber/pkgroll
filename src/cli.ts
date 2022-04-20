@@ -102,8 +102,6 @@ if (tsconfigTarget) {
 		externalDependencies,
 	);
 
-	console.log(JSON.stringify(rollupConfigs, null, 2));
-
 	if (argv.flags.watch) {
 		log('Watch initialized');
 

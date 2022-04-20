@@ -98,6 +98,13 @@ export async function getRollupConfigs(
 	const configs: RollupConfigs = Object.create(null);
 
 	for (let { input, exportEntry } of inputs) {
+
+		/**
+		 * Few reasons:
+		 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
+		 * - input may be an absolute symlink path
+		 * - test tmpdir is a symlink: /var/ -> /private/var/
+		*/
 		input = fs.realpathSync.native(input);
 
 		if (exportEntry.type === 'types') {
@@ -115,26 +122,11 @@ export async function getRollupConfigs(
 
 			config.output = [{
 				dir: distributionDirectoryPath,
-				/**
-				 * Preserve source path in dist path
-				 *
-				 * In contrast with the app config, the dts
-				 * config doesn't seem to resolve symlink paths.
-				 *
-				 * This is particularly problematic with tests since
-				 * the tmpdir is a symlink: /var/ -> /private/var/
-				*/
-				entryFileNames: chunk => {
-					console.log({
-						facadeModuleId: chunk.facadeModuleId!,
-						sourceDirectoryPath,
-						extension,
-					});
 
-					return chunk.facadeModuleId!
+				// Preserve source path in dist path
+				entryFileNames: chunk => chunk.facadeModuleId!
 					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension);
-				},
+					.replace(/\.\w+$/, extension),
 
 				exports: 'auto',
 				format: 'esm',
@@ -167,17 +159,9 @@ export async function getRollupConfigs(
 				],
 
 				// Preserve source path
-				entryFileNames: chunk => {
-					console.log({
-						facadeModuleId: chunk.facadeModuleId!,
-						sourceDirectoryPath,
-						extension,
-					});
-	
-					return chunk.facadeModuleId!
+				entryFileNames: chunk => chunk.facadeModuleId!
 					.slice(sourceDirectoryPath.length)
-					.replace(/\.\w+$/, extension);
-				},
+					.replace(/\.\w+$/, extension),
 			};
 
 			outputs.push(outputOptions);

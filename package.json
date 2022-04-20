@@ -63,7 +63,8 @@
 		"@rollup/pluginutils": "^4.2.0",
 		"esbuild": "^0.14.29",
 		"magic-string": "^0.26.1",
-		"rollup": "^2.70.1"
+		"rollup": "^2.70.1",
+		"slash": "^4.0.0"
 	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.19.1",

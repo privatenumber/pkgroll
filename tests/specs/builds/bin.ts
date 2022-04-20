@@ -14,6 +14,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
+			console.log(pkgrollProcess);
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
@@ -28,25 +29,25 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		test('supports object', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
+		// test('supports object', async () => {
+		// 	const fixture = await createFixture('./tests/fixture-package');
 
-			await fixture.writeJson('package.json', {
-				bin: {
-					a: './dist/index.mjs',
-					b: './dist/index.js',
-				},
-			});
+		// 	await fixture.writeJson('package.json', {
+		// 		bin: {
+		// 			a: './dist/index.mjs',
+		// 			b: './dist/index.js',
+		// 		},
+		// 	});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+		// 	const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
+		// 	expect(pkgrollProcess.exitCode).toBe(0);
+		// 	expect(pkgrollProcess.stderr).toBe('');
 
-			expect(await fixture.exists('dist/index.mjs')).toBe(true);
-			expect(await fixture.exists('dist/index.js')).toBe(true);
+		// 	expect(await fixture.exists('dist/index.mjs')).toBe(true);
+		// 	expect(await fixture.exists('dist/index.js')).toBe(true);
 
-			await fixture.cleanup();
-		});
+		// 	await fixture.cleanup();
+		// });
 	});
 });

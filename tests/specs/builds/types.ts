@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from '../../utils/create-fixture';

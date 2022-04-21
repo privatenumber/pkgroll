@@ -181,7 +181,7 @@ Because _pkgroll_ uses Rollup, it's able to produce CJS modules that are minimal
 This means you can technically output in CommonJS to get ESM and CommonJS support.
 
 #### `require()` in ESM
-Sometimes it's useful to use `require()` or `require.resolve()` in ESM. This can be seamlessly compiled to CommonJS. But when compiling to ESM, Node.js will error because `require` doesn't exist in the module scope.
+Sometimes it's useful to use `require()` or `require.resolve()` in ESM. ESM code that uses `require()` can be seamlessly compiled to CommonJS, but when compiling to ESM, Node.js will error because `require` doesn't exist in the module scope.
 
 When compiling to ESM, _Pkgroll_ detects `require()` usages and shims it with [`createRequire(import.meta.url)`](https://nodejs.org/api/module.html#modulecreaterequirefilename).
 

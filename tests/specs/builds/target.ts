@@ -38,6 +38,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/target.js', 'utf8');
 			expect(content).toMatch('e?.y()');
 
+			// Name should be minified
+			expect(content).not.toMatch('exports.foo=foo');
+
 			await fixture.cleanup();
 		});
 

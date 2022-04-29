@@ -4,30 +4,12 @@ import { pkgroll } from '../../utils/pkgroll';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: module', ({ describe, test }) => {
-		test('{ type: module, field: main, distExt: js }', async () => {
+		test('{ type: module, field: main, srcExt: js, distExt: js }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
 				main: './dist/index.js',
-			});
-
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
-
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
-
-			const content = await fixture.readFile('dist/index.cjs', 'utf8');
-			expect(content).toMatch('export { index as default }');
-
-			await fixture.cleanup();
-		});
-
-		test('{ type: commonjs, field: main, distExt: mjs }', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/index.mjs',
 			});
 
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
@@ -41,7 +23,25 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		test('{ type: commonjs, field: module, distExt: js }', async () => {
+		test('{ type: commonjs, field: main, srcExt: js, distExt: mjs }', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/index.mjs',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('export { index as default }');
+
+			await fixture.cleanup();
+		});
+
+		test('{ type: commonjs, field: module, srcExt: js, distExt: js }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 	
 			await fixture.writeJson('package.json', {
@@ -59,7 +59,23 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		// src/index.mjs -> dist/index.cjs
+		test('{ type: commonjs, field: main, srcExt: cjs, distExt: mjs }', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+	
+			await fixture.writeJson('package.json', {
+				main: './dist/cjs.mjs',
+			});
+	
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+	
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+	
+			const content = await fixture.readFile('dist/cjs.mjs', 'utf8');
+			expect(content).toMatch('export { cjs as default }');
+	
+			await fixture.cleanup();
+		});
 	
 		test('require() works in esm', async () => {
 			const fixture = await createFixture('./tests/fixture-package');

@@ -18,8 +18,8 @@ async function tryExtensions(
 const sourceExtensions = {
 	'.d.ts': ['.d.ts', '.ts'],
 	'.js': ['.js', '.ts', '.tsx'],
-	'.mjs': ['.mjs', '.js', '.mts', '.ts'],
-	'.cjs': ['.cjs', '.js', '.cts', '.ts'],
+	'.mjs': ['.mjs', '.js', '.cjs', '.mts', '.ts'],
+	'.cjs': ['.cjs', '.js', '.mjs', '.cts', '.ts'],
 } as const;
 
 export async function getSourcePath(

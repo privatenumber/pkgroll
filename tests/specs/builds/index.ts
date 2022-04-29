@@ -1,5 +1,6 @@
 import { testSuite } from 'manten';
-import specMain from './output-commonjs';
+import specOutputCommonjs from './output-commonjs';
+import specOutputModule from './output-module';
 import specEnv from './env';
 import specTarget from './target';
 import specMinification from './minification';
@@ -12,7 +13,8 @@ import specSrcDist from './src-dist';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('builds', async ({ runTestSuite }) => {
-		runTestSuite(specMain, nodePath);
+		runTestSuite(specOutputCommonjs, nodePath);
+		runTestSuite(specOutputModule, nodePath);
 		runTestSuite(specEnv, nodePath);
 		runTestSuite(specTarget, nodePath);
 		runTestSuite(specTypes, nodePath);

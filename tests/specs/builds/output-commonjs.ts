@@ -4,7 +4,7 @@ import { pkgroll } from '../../utils/pkgroll';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs', ({ describe, test }) => {
-		test('{ type: commonjs, field: main, distExt: js }', async () => {
+		test('{ type: commonjs, field: main, srcExt: js, distExt: js }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
@@ -22,7 +22,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		test('{ type: module, field: main, distExt: cjs }', async () => {
+		test('{ type: module, field: main, srcExt: js, distExt: cjs }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
@@ -41,7 +41,23 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		// src/index.mjs -> dist/index.cjs
+		test('{ type: commonjs, field: main, srcExt: mjs, distExt: cjs }', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+	
+			await fixture.writeJson('package.json', {
+				main: './dist/mjs.cjs',
+			});
+	
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+	
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+	
+			const content = await fixture.readFile('dist/mjs.cjs', 'utf8');
+			expect(content).toMatch('exports.sayHello =');
+	
+			await fixture.cleanup();
+		});
 
 		test('nested directory', async () => {
 			const fixture = await createFixture('./tests/fixture-package');

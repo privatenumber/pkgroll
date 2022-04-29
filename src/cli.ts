@@ -43,10 +43,26 @@ const argv = cli({
 			alias: 'w',
 			default: false,
 		},
+		env: {
+			type: [function Env(flagValue: string) {
+				const [key, value] = flagValue.split('=');
+				return { key, value };
+			}],
+			description: 'Compile-time environment variables (eg. --env.NODE_ENV=production)',
+		},
 	},
 
 	help: {
 		description: 'Minimalistic package bundler',
+		render(nodes, renderers) {
+			renderers.flagOperator = flagData => (
+				(flagData.name === 'env')
+					? '.key='
+					: ' '
+			);
+
+			return renderers.render(nodes);
+		},
 	},
 });
 

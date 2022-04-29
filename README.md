@@ -185,6 +185,13 @@ Sometimes it's useful to use `require()` or `require.resolve()` in ESM. ESM code
 
 When compiling to ESM, _Pkgroll_ detects `require()` usages and shims it with [`createRequire(import.meta.url)`](https://nodejs.org/api/module.html#modulecreaterequirefilename).
 
+### Environment variables
+Pass in compile-time environment variables with the `--env` flag.
+
+This will replace all instances of `process.env.NODE_ENV` with `'production'` and remove unused code:
+```sh
+pkgroll --env.NODE_ENV=production
+```
 
 ### Minification
 Pass in the `--minify` flag to minify assets.

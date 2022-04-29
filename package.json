@@ -66,10 +66,10 @@
 		"rollup": "^2.70.2"
 	},
 	"devDependencies": {
-		"@pvtnbr/eslint-config": "^0.19.1",
+		"@pvtnbr/eslint-config": "^0.20.0",
 		"@types/node": "^17.0.29",
 		"@types/rimraf": "^3.0.2",
-		"cleye": "^1.1.0",
+		"cleye": "^1.2.0",
 		"eslint": "^8.14.0",
 		"esno": "^0.14.1",
 		"execa": "^6.1.0",
@@ -97,16 +97,6 @@
 						"describe",
 						"test"
 					]
-				}
-			],
-			"unicorn/prevent-abbreviations": [
-				"error",
-				{
-					"replacements": {
-						"pkg": false,
-						"src": false,
-						"dist": false
-					}
 				}
 			]
 		}

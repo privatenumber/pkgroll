@@ -3,7 +3,7 @@ import { createFixture } from '../../utils/create-fixture';
 import { pkgroll } from '../../utils/pkgroll';
 
 export default testSuite(({ describe }, nodePath: string) => {
-	describe('exports', ({ test }) => {
+	describe('package exports', ({ test }) => {
 		test('string', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 

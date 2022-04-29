@@ -55,7 +55,7 @@ const argv = cli({
 	help: {
 		description: 'Minimalistic package bundler',
 		render(nodes, renderers) {
-			renderers.flagOperator = (flagData) => (
+			renderers.flagOperator = flagData => (
 				(flagData.name === 'env')
 					? '.key='
 					: ' '

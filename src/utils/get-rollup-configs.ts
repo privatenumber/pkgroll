@@ -125,10 +125,9 @@ export async function getRollupConfigs(
 
 	const configs: RollupConfigs = Object.create(null);
 
-	const env = flags.env.reduce((obj, { key, value }) => {
-		obj[`process.env.${key}`] = JSON.stringify(value);
-		return obj;
-	}, {} as EnvObject);
+	const env: EnvObject = Object.fromEntries(
+		flags.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
+	);
 
 	for (const { input, exportEntry } of inputs) {
 		if (exportEntry.type === 'types') {

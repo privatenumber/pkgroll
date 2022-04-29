@@ -23,27 +23,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		test('minification', async () => {
-			const fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/target.js',
-			});
-
-			const pkgrollProcess = await pkgroll(['--minify', '--target', 'esnext'], { cwd: fixture.path, nodePath });
-
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
-
-			const content = await fixture.readFile('dist/target.js', 'utf8');
-			expect(content).toMatch('e?.y()');
-
-			// Name should be minified
-			expect(content).not.toMatch('exports.foo=foo');
-
-			await fixture.cleanup();
-		});
-
 		describe('node protocol', () => {
 			test('strips node protocol', async () => {
 				const fixture = await createFixture('./tests/fixture-package');

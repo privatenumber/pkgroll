@@ -26,6 +26,8 @@ type EnvObject = {
 	[key: string]: string;
 };
 
+const stripQuery = (url: string) => url.split('?')[0];
+
 const getConfig = {
 	async type(
 		options: Options,
@@ -85,7 +87,9 @@ const getConfig = {
 						})]
 						: []
 				),
-				commonjs(),
+				commonjs({
+					strictRequires: true,
+				}),
 				json(),
 				esbuildTransform(esbuildConfig),
 				createRequire(),
@@ -154,7 +158,7 @@ export async function getRollupConfigs(
 				 * - test tmpdir is a symlink: /var/ -> /private/var/
 				*/
 				entryFileNames: chunk => (
-					fs.realpathSync.native(chunk.facadeModuleId!)
+					fs.realpathSync.native(stripQuery(chunk.facadeModuleId!))
 						.slice(sourceDirectoryPath.length)
 						.replace(/\.\w+$/, extension)
 				),
@@ -197,7 +201,7 @@ export async function getRollupConfigs(
 				 * - test tmpdir is a symlink: /var/ -> /private/var/
 				 */
 				entryFileNames: chunk => (
-					fs.realpathSync.native(chunk.facadeModuleId!)
+					fs.realpathSync.native(stripQuery(chunk.facadeModuleId!))
 						.slice(sourceDirectoryPath.length)
 						.replace(/\.\w+$/, extension)
 				),

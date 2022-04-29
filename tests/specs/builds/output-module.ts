@@ -72,7 +72,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cjs.mjs', 'utf8');
-			expect(content).toMatch('export { cjs as default }');
+			expect(content).toMatch('export { cjsExports as default }');
 
 			await fixture.cleanup();
 		});
@@ -95,6 +95,24 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const mjs = await fixture.readFile('dist/require.mjs', 'utf8');
 			expect(mjs).toMatch('createRequire');
+
+			await fixture.cleanup();
+		});
+
+		test('conditional require() no side-effects', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/conditional-require.mjs',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
+			expect(content).toMatch('\tconsole.log(\'side effect\');');
 
 			await fixture.cleanup();
 		});

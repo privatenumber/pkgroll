@@ -1,6 +1,6 @@
 if (process.env.NODE_ENV === 'production') {
 	console.log('production');
-	require('./target');
+	require('./cjs.cjs');
 } else {
 	console.log('development');
 }

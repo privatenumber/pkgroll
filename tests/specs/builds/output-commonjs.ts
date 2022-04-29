@@ -3,7 +3,7 @@ import { createFixture } from '../../utils/create-fixture';
 import { pkgroll } from '../../utils/pkgroll';
 
 export default testSuite(({ describe }, nodePath: string) => {
-	describe('output: commonjs', ({ describe, test }) => {
+	describe('output: commonjs', ({ test }) => {
 		test('{ type: commonjs, field: main, srcExt: js, distExt: js }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
@@ -43,19 +43,19 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: mjs, distExt: cjs }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
-	
+
 			await fixture.writeJson('package.json', {
 				main: './dist/mjs.cjs',
 			});
-	
+
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
-	
+
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
-	
+
 			const content = await fixture.readFile('dist/mjs.cjs', 'utf8');
 			expect(content).toMatch('exports.sayHello =');
-	
+
 			await fixture.cleanup();
 		});
 

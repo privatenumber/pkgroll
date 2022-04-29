@@ -5,6 +5,7 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
+import replace from '@rollup/plugin-replace';
 import type { ExportEntry, AliasMap } from '../types';
 import { isFormatEsm, createRequire } from './rollup-plugins/create-require';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild';
@@ -15,6 +16,14 @@ import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs
 type Options = {
 	minify: boolean;
 	target: string[];
+	env: {
+		key: string;
+		value: string;
+	}[];
+};
+
+type EnvObject = {
+	[key: string]: string;
 };
 
 const getConfig = {
@@ -41,6 +50,7 @@ const getConfig = {
 	app(
 		options: Options,
 		aliases: AliasMap,
+		env: EnvObject,
 		executablePaths: string[],
 	) {
 		const esbuildConfig = {
@@ -61,11 +71,29 @@ const getConfig = {
 					// Order from https://nodejs.org/api/packages.html#conditional-exports
 					exportConditions: ['node', 'import', 'require', 'default'],
 				}),
+				...(
+					Object.keys(env).length > 0
+						? [replace({
+							preventAssignment: true,
+
+							/**
+							 * Seems this currently doesn't work:
+							 * https://github.com/rollup/plugins/pull/1084#discussion_r861447543
+							 */
+							objectGuards: true,
+							values: env,
+						})]
+						: []
+				),
 				commonjs(),
 				json(),
 				esbuildTransform(esbuildConfig),
 				createRequire(),
-				...(options.minify ? [esbuildMinify(esbuildConfig)] : []),
+				...(
+					options.minify
+						? [esbuildMinify(esbuildConfig)]
+						: []
+				),
 				patchBinary(executablePaths),
 			],
 			output: [] as OutputOptions[] & Record<string, any>,
@@ -96,6 +124,11 @@ export async function getRollupConfigs(
 		.map(({ exportEntry }) => exportEntry.outputPath);
 
 	const configs: RollupConfigs = Object.create(null);
+
+	const env = flags.env.reduce((obj, { key, value }) => {
+		obj[`process.env.${key}`] = JSON.stringify(value);
+		return obj;
+	}, {} as EnvObject);
 
 	for (const { input, exportEntry } of inputs) {
 		if (exportEntry.type === 'types') {
@@ -135,7 +168,7 @@ export async function getRollupConfigs(
 
 		let config = configs.app;
 		if (!config) {
-			config = getConfig.app(flags, aliases, executablePaths);
+			config = getConfig.app(flags, aliases, env, executablePaths);
 			config.external = external;
 			configs.app = config;
 		}
@@ -163,7 +196,7 @@ export async function getRollupConfigs(
 				 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
 				 * - input may be an absolute symlink path
 				 * - test tmpdir is a symlink: /var/ -> /private/var/
-				*/
+				 */
 				entryFileNames: chunk => (
 					fs.realpathSync.native(chunk.facadeModuleId!)
 						.slice(sourceDirectoryPath.length)

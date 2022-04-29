@@ -1,5 +1,6 @@
 import { testSuite } from 'manten';
 import specMain from './main';
+import specEnv from './env';
 import specModule from './module';
 import specTarget from './target';
 import specTypes from './types';
@@ -12,6 +13,7 @@ import specSrcDist from './src-dist';
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('builds', async ({ runTestSuite }) => {
 		runTestSuite(specMain, nodePath);
+		runTestSuite(specEnv, nodePath);
 		runTestSuite(specModule, nodePath);
 		runTestSuite(specTarget, nodePath);
 		runTestSuite(specTypes, nodePath);

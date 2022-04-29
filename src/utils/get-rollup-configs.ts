@@ -87,9 +87,7 @@ const getConfig = {
 						})]
 						: []
 				),
-				commonjs({
-					strictRequires: true,
-				}),
+				commonjs(),
 				json(),
 				esbuildTransform(esbuildConfig),
 				createRequire(),

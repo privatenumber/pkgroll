@@ -106,13 +106,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/conditional-require.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=dev'], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
-			expect(content).not.toMatch('console.log(\'side effect\');');
+			expect(content).toMatch('\tconsole.log(\'side effect\');');
 
 			await fixture.cleanup();
 		});

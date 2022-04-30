@@ -25,7 +25,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.cleanup();
 		});
 
-		test('dependency with exports.require', async () => {
+		test('dual package - require', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
@@ -38,7 +38,25 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/dependency-exports-require.js', 'utf8');
-			expect(content).toMatch('1234');
+			expect(content).toMatch('cjs');
+
+			await fixture.cleanup();
+		});
+
+		test('dual package - import', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/dependency-exports-import.js',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/dependency-exports-import.js', 'utf8');
+			expect(content).toMatch('esm');
 
 			await fixture.cleanup();
 		});

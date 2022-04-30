@@ -8,7 +8,7 @@ import specTypes from './types';
 import specPackageExports from './package-exports';
 import specPackageImports from './package-imports';
 import specBin from './bin';
-import specExternalizeDependencies from './externalize-dependencies';
+import specDependencies from './dependencies';
 import specSrcDist from './src-dist';
 
 export default testSuite(({ describe }, nodePath: string) => {
@@ -22,7 +22,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(specPackageExports, nodePath);
 		runTestSuite(specPackageImports, nodePath);
 		runTestSuite(specBin, nodePath);
-		runTestSuite(specExternalizeDependencies, nodePath);
+		runTestSuite(specDependencies, nodePath);
 		runTestSuite(specSrcDist, nodePath);
 	});
 });

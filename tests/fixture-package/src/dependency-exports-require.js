@@ -1,4 +1,1 @@
-import someValue from 'dependency-exports-require';
-
-console.log(someValue);
- 
+console.log(require('dependency-exports-dual'));

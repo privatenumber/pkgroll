@@ -70,8 +70,6 @@ const getConfig = {
 				}),
 				nodeResolve({
 					extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
-					// Order from https://nodejs.org/api/packages.html#conditional-exports
-					exportConditions: ['node', 'import', 'require', 'default'],
 				}),
 				...(
 					Object.keys(env).length > 0

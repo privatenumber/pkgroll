@@ -43,7 +43,7 @@ export const createRequire = (): Plugin => ({
 
 		export default (
 			${isEsmVariableName}
-				? createRequire(import.meta.url)
+				? /* @__PURE__ */ createRequire(import.meta.url)
 				: require
 		);
 		`;

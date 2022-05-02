@@ -116,5 +116,26 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.cleanup();
 		});
+
+		test('require() & createRequire gets completely removed on conditional', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/conditional-require.mjs',
+			});
+
+			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development', '--minify'], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
+			expect(content).not.toMatch('\tconsole.log(\'side effect\');');
+
+			const [, createRequireMangledVariable] = content.toString().match(/createRequire as (\w+)/)!;
+			expect(content).not.toMatch(`${createRequireMangledVariable}(`);
+
+			await fixture.cleanup();
+		});
 	});
 });

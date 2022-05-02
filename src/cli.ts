@@ -50,6 +50,10 @@ const argv = cli({
 			}],
 			description: 'Compile-time environment variables (eg. --env.NODE_ENV=production)',
 		},
+		exportCondition: {
+			type: [String],
+			description: 'Export conditions for resolving dependency export and import maps (eg. --export-condition=node)',
+		},
 	},
 
 	help: {

@@ -16,6 +16,7 @@ import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs
 type Options = {
 	minify: boolean;
 	target: string[];
+	exportCondition: string[];
 	env: {
 		key: string;
 		value: string;
@@ -70,6 +71,7 @@ const getConfig = {
 				}),
 				nodeResolve({
 					extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+					exportConditions: options.exportCondition,
 				}),
 				...(
 					Object.keys(env).length > 0
@@ -167,7 +169,12 @@ export async function getRollupConfigs(
 
 		let config = configs.app;
 		if (!config) {
-			config = getConfig.app(flags, aliases, env, executablePaths);
+			config = getConfig.app(
+				flags,
+				aliases,
+				env,
+				executablePaths,
+			);
 			config.external = external;
 			configs.app = config;
 		}

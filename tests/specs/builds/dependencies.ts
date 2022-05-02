@@ -60,5 +60,41 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.cleanup();
 		});
+
+		test('imports map - default', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/dependency-imports-map.js',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
+			expect(content).toMatch('default');
+
+			await fixture.cleanup();
+		});
+
+		test('imports map - node', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/dependency-imports-map.js',
+			});
+
+			const pkgrollProcess = await pkgroll(['--export-condition=node'], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
+			expect(content).toMatch('node');
+
+			await fixture.cleanup();
+		});
 	});
 });

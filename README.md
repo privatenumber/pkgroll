@@ -150,8 +150,8 @@ The target specifies the environments the output should support. Depending on ho
 
 By default, the target is set to the version of Node.js used. It can be overwritten with the `--target` flag:
 
-```
-pkgroll --target es2020 --target node14.18.0
+```sh
+pkgroll --target=es2020 --target=node14.18.0
 ```
 
 It will also automatically detect and include the `target` specified in `tsconfig.json#compilerOptions`.
@@ -160,17 +160,27 @@ It will also automatically detect and include the `target` specified in `tsconfi
 #### Strip `node:` protocol
 Node.js builtin modules can be prefixed with the [`node:` protocol](https://nodejs.org/api/esm.html#node-imports) for explicitness:
 
-```
-import fs from 'node:fs/promises';
+```js
+import fs from 'node:fs/promises'
 ```
 
 This is a new feature and may not work in older versions of Node.js. While you can opt out of using it, your dependencies may still be using it (example package using `node:`: [path-exists](https://github.com/sindresorhus/path-exists/blob/7c95f5c1f5f811c7f4dac78ab5b9e258491f03af/index.js#L1)).
 
 Pass in a Node.js target that that doesn't support it to strip the `node:` protocol from imports:
 
+```sh
+pkgroll --target=node12.19
 ```
-pkgroll --target node12.19
+
+### Export condition
+
+Similarly to the target, the export condition specifies which fields to read from when evaluating [export](https://nodejs.org/api/packages.html#exports) and [import](https://nodejs.org/api/packages.html#imports) maps.
+
+For example, to simulate import resolutions in Node.js, pass in `node` as the export condition:
+```sh
+pkgroll --export-condition=node
 ```
+
 
 ### ESM ⇄ CJS interoperability
 

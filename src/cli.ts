@@ -157,6 +157,6 @@ if (tsconfigTarget) {
 		);
 	}
 })().catch((error) => {
-	console.error('Error:', error.message);
+	console.error(error);
 	process.exit(1);
 });

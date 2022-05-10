@@ -79,5 +79,11 @@ export async function createFixture(
 
 	await fixture.createFrom(fromFixtureTemplatePath);
 
+	await fs.symlink(
+		path.resolve('node_modules/typescript'),
+		path.join(fixture.path, 'node_modules/typescript'),
+		'dir',
+	);
+
 	return fixture;
 }

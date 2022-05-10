@@ -27,9 +27,10 @@
 	"scripts": {
 		"Target is 12.20 for import(), node: prefix is not used": "",
 		"build": "esno src/cli.ts --minify --target node12.20",
-		"pretest": "npm run build",
+		"postbuild": "npm test",
 		"test": "esno tests/index.ts",
-		"lint": "eslint --cache ."
+		"lint": "eslint --cache .",
+		"prepublishOnly": "npm run build"
 	},
 	"husky": {
 		"hooks": {

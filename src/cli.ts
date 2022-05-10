@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
+import { version } from '../package.json';
 import { readPackageJson } from './utils/read-package-json';
 import { getExportEntries } from './utils/parse-package-json/get-export-entries';
 import { getExternalDependencies } from './utils/parse-package-json/get-external-dependencies';
@@ -13,6 +14,8 @@ import { log } from './utils/log';
 
 const argv = cli({
 	name: 'pkgroll',
+
+	version,
 
 	flags: {
 		src: {

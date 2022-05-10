@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: Enable Git Symlink
       if: ${{ matrix.os == 'windows-latest' }}
-      run: git config core.symlinks true
+      run: git config --global core.symlinks true
     - name: Checkout
       uses: actions/checkout@v2
     - name: Use Node.js

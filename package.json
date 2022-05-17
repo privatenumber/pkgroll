@@ -26,9 +26,9 @@
 	"bin": "dist/cli.js",
 	"scripts": {
 		"Target is 12.20 for import(), node: prefix is not used": "",
-		"build": "esno src/cli.ts --minify --target node12.20",
+		"build": "tsx src/cli.ts --minify --target node12.20",
 		"postbuild": "npm test",
-		"test": "esno tests/index.ts",
+		"test": "tsx tests/index.ts",
 		"lint": "eslint --cache .",
 		"prepublishOnly": "npm run build"
 	},
@@ -72,7 +72,6 @@
 		"@types/rimraf": "^3.0.2",
 		"cleye": "^1.2.0",
 		"eslint": "^8.15.0",
-		"esno": "^0.14.1",
 		"execa": "^6.1.0",
 		"get-node": "^12.1.0",
 		"get-tsconfig": "^3.0.1",
@@ -82,6 +81,7 @@
 		"manten": "^0.0.3",
 		"rimraf": "^3.0.2",
 		"rollup-plugin-dts": "^4.2.1",
+		"tsx": "^3.1.0",
 		"type-fest": "^2.12.2",
 		"typescript": "^4.6.4"
 	},

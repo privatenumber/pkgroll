@@ -23,7 +23,7 @@
 	"files": [
 		"dist"
 	],
-	"bin": "dist/cli.js",
+	"bin": "./dist/cli.js",
 	"scripts": {
 		"Target is 12.20 for import(), node: prefix is not used": "",
 		"build": "tsx src/cli.ts --minify --target node12.20",

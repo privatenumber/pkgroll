@@ -9,6 +9,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const fixture = await createFixture('./tests/fixture-package');
 			await fixture.writeJson('package.json', {
 				bin: './dist/index.mjs',
+				exports: './dist/index.mjs',
 			});
 
 			await test('supports single path', async () => {

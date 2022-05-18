@@ -111,9 +111,11 @@ function addExportPath(
 		if (existingExportPath.platform !== platform) {
 			throw new Error(`Conflicting export platforms "${existingExportPath.platform}" & "${platform}" found for ${exportPath}`);
 		}
-	}
 
-	exportPathsMap[exportPath] = exportEntry;
+		Object.assign(existingExportPath, exportEntry);
+	} else {
+		exportPathsMap[exportPath] = exportEntry;
+	}
 }
 
 export const getExportEntries = (packageJson: PackageJson) => {

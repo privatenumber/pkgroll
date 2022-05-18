@@ -59,16 +59,16 @@
 		"@rollup/plugin-commonjs": "^22.0.0",
 		"@rollup/plugin-inject": "^4.0.4",
 		"@rollup/plugin-json": "^4.1.0",
-		"@rollup/plugin-node-resolve": "^13.2.1",
+		"@rollup/plugin-node-resolve": "^13.3.0",
 		"@rollup/plugin-replace": "^4.0.0",
 		"@rollup/pluginutils": "^4.2.1",
-		"esbuild": "^0.14.38",
-		"magic-string": "^0.26.1",
-		"rollup": "^2.70.2"
+		"esbuild": "^0.14.39",
+		"magic-string": "^0.26.2",
+		"rollup": "^2.73.0"
 	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^0.22.0",
-		"@types/node": "^17.0.30",
+		"@types/node": "^17.0.34",
 		"@types/rimraf": "^3.0.2",
 		"cleye": "^1.2.0",
 		"eslint": "^8.15.0",
@@ -81,7 +81,7 @@
 		"manten": "^0.0.3",
 		"rimraf": "^3.0.2",
 		"rollup-plugin-dts": "^4.2.1",
-		"tsx": "^3.1.0",
+		"tsx": "^3.3.1",
 		"type-fest": "^2.12.2",
 		"typescript": "^4.6.4"
 	},

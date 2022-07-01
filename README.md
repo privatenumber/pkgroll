@@ -38,9 +38,9 @@ npm install --save-dev pkgroll
 
 	    // Define output files for Node.js export maps (https://nodejs.org/api/packages.html#exports)
 	    "exports": {
+	        "types": "./dist/file.d.ts",
 	        "require": "./dist/file.js",
-	        "import": "./dist/file.mjs",
-	        "types": "./dist/file.d.ts"
+	        "import": "./dist/file.mjs"
 	    },
 
 	    // bin files will be compiled to be executable with the Node.js hashbang

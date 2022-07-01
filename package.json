@@ -30,8 +30,7 @@
 		"postbuild": "npm test",
 		"test": "tsx tests/index.ts",
 		"lint": "eslint --cache .",
-		"prepublishOnly": "npm run build",
-		"prepare": "husky install"
+		"prepublishOnly": "npm run build"
 	},
 	"imports": {
 		"typescript": "./src/local-typescript-loader.ts"

@@ -32,17 +32,6 @@
 		"lint": "eslint --cache .",
 		"prepublishOnly": "npm run build"
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run build && lint-staged && npm test"
-		}
-	},
-	"lint-staged": {
-		"*.{js,ts}": [
-			"eslint",
-			"npm test"
-		]
-	},
 	"imports": {
 		"typescript": "./src/local-typescript-loader.ts"
 	},
@@ -75,9 +64,7 @@
 		"execa": "^6.1.0",
 		"get-node": "^12.1.0",
 		"get-tsconfig": "^3.0.1",
-		"husky": "^4.3.8",
 		"kolorist": "^1.5.1",
-		"lint-staged": "^12.4.1",
 		"manten": "^0.0.3",
 		"rimraf": "^3.0.2",
 		"rollup-plugin-dts": "^4.2.1",

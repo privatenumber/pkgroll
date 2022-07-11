@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('minification', ({ test }) => {
@@ -22,7 +22,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			// Name should be minified
 			expect(content).not.toMatch('exports.foo=foo');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

@@ -1,7 +1,7 @@
 import path from 'path';
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll, installTypeScript } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('target', ({ describe, test }) => {
@@ -20,12 +20,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/target.js', 'utf8');
 			expect(content).toMatch('Math.pow');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		describe('node protocol', () => {
 			test('strips node protocol', async () => {
 				const fixture = await createFixture('./tests/fixture-package');
+
+				await installTypeScript(fixture.path);
 
 				await fixture.writeJson('package.json', {
 					main: './dist/utils.js',
@@ -53,11 +55,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(content).toMatch('declare function');
 				expect(content).not.toMatch('node:');
 
-				await fixture.cleanup();
+				await fixture.rm();
 			});
 
 			test('keeps node protocol', async () => {
 				const fixture = await createFixture('./tests/fixture-package');
+
+				installTypeScript(fixture.path);
 
 				await fixture.writeJson('package.json', {
 					main: './dist/utils.js',
@@ -85,7 +89,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(content).toMatch('\'fs\'');
 				expect(content).toMatch('\'node:fs\'');
 
-				await fixture.cleanup();
+				await fixture.rm();
 			});
 		});
 	});

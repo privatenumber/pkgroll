@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs/promises';
 import { execaNode } from 'execa';
 
 const pkgrollBinPath = path.resolve('./dist/cli.js');
@@ -23,4 +24,10 @@ export const pkgroll = async (
 		cwd,
 		nodePath,
 	},
+);
+
+export const installTypeScript = (fixturePath: string) => fs.symlink(
+	path.resolve('node_modules/typescript'),
+	path.join(fixturePath, 'node_modules/typescript'),
+	'dir',
 );

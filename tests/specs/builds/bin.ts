@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('bin', ({ test }) => {
@@ -31,7 +31,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 			}
 
-			await fixture.cleanup();
+			await fixture.rm();
 		})();
 
 		test('supports object', async () => {
@@ -52,7 +52,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/index.js')).toBe(true);
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

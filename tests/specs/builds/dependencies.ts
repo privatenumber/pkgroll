@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('dependencies', ({ test }) => {
@@ -22,7 +22,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dependency-external.js', 'utf8');
 			expect(content).toMatch('require(\'@org/name/path\')');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('dual package - require', async () => {
@@ -40,7 +40,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dependency-exports-require.js', 'utf8');
 			expect(content).toMatch('cjs');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('dual package - import', async () => {
@@ -58,7 +58,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dependency-exports-import.js', 'utf8');
 			expect(content).toMatch('esm');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('imports map - default', async () => {
@@ -76,7 +76,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
 			expect(content).toMatch('default');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('imports map - node', async () => {
@@ -94,7 +94,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
 			expect(content).toMatch('node');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

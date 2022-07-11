@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package imports', ({ test }) => {
@@ -27,7 +27,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(content).toMatch('sayGoodbye');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

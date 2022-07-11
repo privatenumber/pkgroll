@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs', ({ test }) => {
@@ -19,7 +19,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('module.exports =');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('{ type: module, field: main, srcExt: js, distExt: cjs }', async () => {
@@ -38,7 +38,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
 			expect(content).toMatch('module.exports =');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('{ type: commonjs, field: main, srcExt: mjs, distExt: cjs }', async () => {
@@ -56,7 +56,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/mjs.cjs', 'utf8');
 			expect(content).toMatch('exports.sayHello =');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('nested directory', async () => {
@@ -74,7 +74,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/nested/index.js', 'utf8');
 			expect(content).toMatch('nested entry point');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

@@ -30,7 +30,8 @@
 		"postbuild": "npm test",
 		"test": "tsx tests/index.ts",
 		"lint": "eslint --cache .",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"prepack": "clean-pkg-json"
 	},
 	"imports": {
 		"typescript": "./src/local-typescript-loader.ts"
@@ -59,6 +60,7 @@
 		"@pvtnbr/eslint-config": "^0.22.0",
 		"@types/node": "^17.0.34",
 		"@types/rimraf": "^3.0.2",
+		"clean-pkg-json": "^1.0.0",
 		"cleye": "^1.2.0",
 		"eslint": "^8.15.0",
 		"execa": "^6.1.0",

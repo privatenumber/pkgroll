@@ -11,6 +11,7 @@ specifiers:
   '@rollup/pluginutils': ^4.2.1
   '@types/node': ^17.0.34
   '@types/rimraf': ^3.0.2
+  clean-pkg-json: ^1.0.0
   cleye: ^1.2.0
   esbuild: ^0.14.39
   eslint: ^8.15.0
@@ -44,6 +45,7 @@ devDependencies:
   '@pvtnbr/eslint-config': 0.22.0_hcfsmds2fshutdssjqluwm76uu
   '@types/node': 17.0.34
   '@types/rimraf': 3.0.2
+  clean-pkg-json: 1.0.0
   cleye: 1.2.0
   eslint: 8.15.0
   execa: 6.1.0
@@ -763,6 +765,11 @@ packages:
 
   /ci-info/3.3.0:
     resolution: {integrity: sha512-riT/3vI5YpVH6/qomlDnJow6TBee2PBKSEpx3O32EGPYbWGIRsIlGRms3Sm74wYE1JMo8RnO04Hb12+v1J5ICw==}
+    dev: true
+
+  /clean-pkg-json/1.0.0:
+    resolution: {integrity: sha512-J29Lf+6KaLFF28S7REbPgJmrAh89TTAELrtR1zB9PNjW+POHU5QzvZLDEp7m4WBY2Km7rdmD7Hf3dmptAxExBg==}
+    hasBin: true
     dev: true
 
   /clean-regexp/1.0.0:

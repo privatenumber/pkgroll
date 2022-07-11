@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: module', ({ test }) => {
@@ -20,7 +20,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('export { index as default }');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('{ type: commonjs, field: main, srcExt: js, distExt: mjs }', async () => {
@@ -38,7 +38,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
 			expect(content).toMatch('export { index as default }');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('{ type: commonjs, field: module, srcExt: js, distExt: js }', async () => {
@@ -56,7 +56,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('export { index as default }');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('{ type: commonjs, field: main, srcExt: cjs, distExt: mjs }', async () => {
@@ -74,7 +74,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/cjs.mjs', 'utf8');
 			expect(content).toMatch('export { cjs as default }');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('require() works in esm', async () => {
@@ -96,7 +96,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const mjs = await fixture.readFile('dist/require.mjs', 'utf8');
 			expect(mjs).toMatch('createRequire');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('conditional require() no side-effects', async () => {
@@ -114,7 +114,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
 			expect(content).toMatch('\tconsole.log(\'side effect\');');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('require() & createRequire gets completely removed on conditional', async () => {
@@ -135,7 +135,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const [, createRequireMangledVariable] = content.toString().match(/createRequire as (\w+)/)!;
 			expect(content).not.toMatch(`${createRequireMangledVariable}(`);
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

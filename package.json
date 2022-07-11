@@ -62,6 +62,7 @@
 		"cleye": "^1.2.0",
 		"eslint": "^8.15.0",
 		"execa": "^6.1.0",
+		"fs-fixture": "^1.0.0",
 		"get-node": "^12.1.0",
 		"get-tsconfig": "^3.0.1",
 		"kolorist": "^1.5.1",

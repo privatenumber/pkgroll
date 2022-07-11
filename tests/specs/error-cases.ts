@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../utils/create-fixture';
-import { pkgroll } from '../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('Error handling', ({ test }) => {
@@ -17,7 +17,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('package.json not found');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('invalid package.json', async () => {
@@ -35,7 +35,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('Cannot parse package.json');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('no entry in package.json', async () => {
@@ -56,7 +56,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('conflicting entry in package.json', async () => {
@@ -79,7 +79,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('Error: Conflicting export types "commonjs" & "module" found for ./dist/index.js');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('absolute path entry in package.json', async () => {
@@ -101,7 +101,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('is not in directory ./dist');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

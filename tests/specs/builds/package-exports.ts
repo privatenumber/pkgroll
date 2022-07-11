@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from '../../utils/create-fixture';
-import { pkgroll } from '../../utils/pkgroll';
+import { createFixture } from 'fs-fixture';
+import { pkgroll } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
@@ -19,7 +19,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('module.exports =');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('type module - string', async () => {
@@ -38,7 +38,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('export {');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('type module - object - string', async () => {
@@ -59,7 +59,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('export {');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		/**
@@ -97,7 +97,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const utilsCjs = await fixture.readFile('dist/utils.cjs', 'utf8');
 			expect(utilsCjs).toMatch('exports.sayHello =');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 
 		test('conditions - import should allow cjs', async () => {
@@ -123,7 +123,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const utilsMjs = await fixture.readFile('dist/utils.js', 'utf8');
 			expect(utilsMjs).toMatch('exports.sayHello =');
 
-			await fixture.cleanup();
+			await fixture.rm();
 		});
 	});
 });

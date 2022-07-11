@@ -15,6 +15,7 @@ specifiers:
   esbuild: ^0.14.39
   eslint: ^8.15.0
   execa: ^6.1.0
+  fs-fixture: ^1.0.0
   get-node: ^12.1.0
   get-tsconfig: ^3.0.1
   kolorist: ^1.5.1
@@ -46,6 +47,7 @@ devDependencies:
   cleye: 1.2.0
   eslint: 8.15.0
   execa: 6.1.0
+  fs-fixture: 1.0.0
   get-node: 12.1.0
   get-tsconfig: 3.0.1
   kolorist: 1.5.1
@@ -1981,6 +1983,10 @@ packages:
 
   /fs-constants/1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
+    dev: true
+
+  /fs-fixture/1.0.0:
+    resolution: {integrity: sha512-p8/NVxnToe3sHTz8vZUWg2qY4GsVctOoab6FdjRMA9CrM4tGmJiSxEieOrMz+sEFDgz/0sx5qAfMBNCZbtwN1A==}
     dev: true
 
   /fs.realpath/1.0.0:

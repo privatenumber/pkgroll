@@ -36,7 +36,7 @@ const argv = cli({
 		},
 		target: {
 			type: [String],
-			default: [`node${process.versions.node}`],
+			default: ['node14'],
 			description: 'Environments to support. `target` in tsconfig.json is automatically added. Defaults to the current Node.js version.',
 			alias: 't',
 		},

@@ -163,8 +163,8 @@ export const getExportEntries = (packageJson: PackageJson) => {
 		} else {
 			for (const [binName, binPath] of Object.entries(bin)) {
 				addExportPath(exportEntriesMap, {
-					outputPath: binPath,
-					type: getFileType(binPath) ?? packageType,
+					outputPath: binPath!,
+					type: getFileType(binPath!) ?? packageType,
 					isExecutable: true,
 					from: `bin.${binName}`,
 				});

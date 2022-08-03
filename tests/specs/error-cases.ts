@@ -11,8 +11,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 				{
 					cwd: fixture.path,
 					nodePath,
+					reject: false,
 				},
-			).catch(error => error);
+			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('package.json not found');
@@ -29,8 +30,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 				{
 					cwd: fixture.path,
 					nodePath,
+					reject: false,
 				},
-			).catch(error => error);
+			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('Cannot parse package.json');
@@ -50,8 +52,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 				{
 					cwd: fixture.path,
 					nodePath,
+					reject: false,
 				},
-			).catch(error => error);
+			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
@@ -73,8 +76,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 				{
 					cwd: fixture.path,
 					nodePath,
+					reject: false,
 				},
-			).catch(error => error);
+			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('Error: Conflicting export types "commonjs" & "module" found for ./dist/index.js');
@@ -95,8 +99,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 				{
 					cwd: fixture.path,
 					nodePath,
+					reject: false,
 				},
-			).catch(error => error);
+			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('Ignoring entry outside of ./dist/ directory: package.json#main="/dist/main.js"');

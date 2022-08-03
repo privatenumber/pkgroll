@@ -1,28 +1,20 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { execaNode } from 'execa';
+import { execaNode, type NodeOptions } from 'execa';
 
 const pkgrollBinPath = path.resolve('./dist/cli.js');
 
-type Options = {
-	arguments?: string[];
-	cwd: string;
-	nodePath: string;
-};
+type Options = NodeOptions<string>;
 
 export const pkgroll = async (
 	cliArguments: string[],
-	{
-		cwd,
-		nodePath,
-	}: Options,
+	options: Options,
 ) => await execaNode(
 	pkgrollBinPath,
 	cliArguments,
 	{
+		...options,
 		nodeOptions: [],
-		cwd,
-		nodePath,
 	},
 );
 

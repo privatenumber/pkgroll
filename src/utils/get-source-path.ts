@@ -27,10 +27,6 @@ export async function getSourcePath(
 	source: string,
 	dist: string,
 ) {
-	if (!exportEntry.outputPath.startsWith(dist)) {
-		throw new Error(`Export path ${stringify(exportEntry.outputPath)} from ${stringify(`package.json#${exportEntry.from}`)} is not in directory ${dist}`);
-	}
-
 	const sourcePath = source + exportEntry.outputPath.slice(dist.length);
 
 	for (const extension of (Object.keys(sourceExtensions) as (keyof typeof sourceExtensions)[])) {
@@ -46,5 +42,5 @@ export async function getSourcePath(
 		}
 	}
 
-	throw new Error(`Could not find mathing source file for export path ${stringify(exportEntry.outputPath)}`);
+	throw new Error(`Could not find matching source file for export path ${stringify(exportEntry.outputPath)}`);
 }

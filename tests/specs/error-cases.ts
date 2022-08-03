@@ -82,7 +82,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.rm();
 		});
 
-		test('absolute path entry in package.json', async () => {
+		test('ignore and warn on path entry outside of dist directory', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
@@ -99,7 +99,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			).catch(error => error);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('is not in directory ./dist');
+			expect(pkgrollProcess.stderr).toMatch('Ignoring entry outside of ./dist/ directory: package.json#main="/dist/main.js"');
+			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
 
 			await fixture.rm();
 		});

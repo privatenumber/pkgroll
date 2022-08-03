@@ -74,6 +74,7 @@ const argv = cli({
 });
 
 const cwd = process.cwd();
+const { stringify } = JSON;
 
 /**
  * The sourcepath may be a symlink.
@@ -90,7 +91,18 @@ if (tsconfigTarget) {
 
 (async () => {
 	const packageJson = await readPackageJson(cwd);
-	const exportEntries = getExportEntries(packageJson);
+
+	let exportEntries = getExportEntries(packageJson);
+
+	exportEntries = exportEntries.filter((entry) => {
+		const validPath = entry.outputPath.startsWith(distPath);
+
+		if (!validPath) {
+			console.warn(`Ignoring entry outside of ${distPath} directory: package.json#${entry.from}=${stringify(entry.outputPath)}`);
+		}
+
+		return validPath;
+	});
 
 	if (exportEntries.length === 0) {
 		throw new Error('No export entries found in package.json');

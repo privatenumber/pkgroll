@@ -23,6 +23,9 @@
 	"files": [
 		"dist"
 	],
+	"imports": {
+		"typescript": "./src/local-typescript-loader.ts"
+	},
 	"bin": "./dist/cli.js",
 	"scripts": {
 		"Target is 12.20 for import(), node: prefix is not used": "",
@@ -30,11 +33,9 @@
 		"postbuild": "npm test",
 		"test": "tsx tests/index.ts",
 		"lint": "eslint --cache .",
+		"type-check": "tsc --noEmit",
 		"prepublishOnly": "npm run build",
 		"prepack": "clean-pkg-json"
-	},
-	"imports": {
-		"typescript": "./src/local-typescript-loader.ts"
 	},
 	"peerDependencies": {
 		"typescript": "^4.1"
@@ -57,23 +58,23 @@
 		"rollup": "^2.77.2"
 	},
 	"devDependencies": {
-		"@pvtnbr/eslint-config": "^0.26.2",
+		"@pvtnbr/eslint-config": "^0.33.0",
 		"@types/node": "^18.6.3",
 		"@types/rimraf": "^3.0.2",
-		"clean-pkg-json": "^1.0.0",
+		"clean-pkg-json": "^1.2.0",
 		"cleye": "^1.2.1",
-		"eslint": "^8.21.0",
+		"eslint": "^8.28.0",
 		"execa": "^6.1.0",
 		"fs-fixture": "^1.1.0",
-		"get-node": "^13.1.0",
+		"get-node": "^13.5.0",
 		"get-tsconfig": "^4.2.0",
 		"kolorist": "^1.5.1",
-		"manten": "^0.2.1",
+		"manten": "^0.5.0",
 		"rimraf": "^3.0.2",
 		"rollup-plugin-dts": "^4.2.2",
-		"tsx": "^3.8.0",
+		"tsx": "^3.12.1",
 		"type-fest": "^2.18.0",
-		"typescript": "^4.7.4"
+		"typescript": "^4.9.3"
 	},
 	"eslintConfig": {
 		"extends": "@pvtnbr",

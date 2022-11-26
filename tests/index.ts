@@ -1,7 +1,5 @@
 import { describe } from 'manten';
 import getNode from 'get-node';
-import specErrorCases from './specs/error-cases';
-import specBuilds from './specs/builds';
 
 const nodeVersions = [
 	'12.22.9',
@@ -19,8 +17,8 @@ const nodeVersions = [
 	for (const nodeVersion of nodeVersions) {
 		const node = await getNode(nodeVersion);
 		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
-			runTestSuite(specErrorCases, node.path);
-			runTestSuite(specBuilds, node.path);
+			runTestSuite(import('./specs/error-cases'), node.path);
+			runTestSuite(import('./specs/builds'), node.path);
 		});
 	}
 })();

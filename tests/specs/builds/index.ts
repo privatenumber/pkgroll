@@ -1,28 +1,17 @@
 import { testSuite } from 'manten';
-import specOutputCommonjs from './output-commonjs';
-import specOutputModule from './output-module';
-import specEnv from './env';
-import specTarget from './target';
-import specMinification from './minification';
-import specTypes from './types';
-import specPackageExports from './package-exports';
-import specPackageImports from './package-imports';
-import specBin from './bin';
-import specDependencies from './dependencies';
-import specSrcDist from './src-dist';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('builds', async ({ runTestSuite }) => {
-		runTestSuite(specOutputCommonjs, nodePath);
-		runTestSuite(specOutputModule, nodePath);
-		runTestSuite(specEnv, nodePath);
-		runTestSuite(specTarget, nodePath);
-		runTestSuite(specTypes, nodePath);
-		runTestSuite(specMinification, nodePath);
-		runTestSuite(specPackageExports, nodePath);
-		runTestSuite(specPackageImports, nodePath);
-		runTestSuite(specBin, nodePath);
-		runTestSuite(specDependencies, nodePath);
-		runTestSuite(specSrcDist, nodePath);
+		runTestSuite(import('./output-commonjs'), nodePath);
+		runTestSuite(import('./output-module'), nodePath);
+		runTestSuite(import('./env'), nodePath);
+		runTestSuite(import('./target'), nodePath);
+		runTestSuite(import('./types'), nodePath);
+		runTestSuite(import('./minification'), nodePath);
+		runTestSuite(import('./package-exports'), nodePath);
+		runTestSuite(import('./package-imports'), nodePath);
+		runTestSuite(import('./bin'), nodePath);
+		runTestSuite(import('./dependencies'), nodePath);
+		runTestSuite(import('./src-dist'), nodePath);
 	});
 });

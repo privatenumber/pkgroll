@@ -158,7 +158,7 @@ export async function getRollupConfigs(
 				entryFileNames: chunk => (
 					fs.realpathSync.native(stripQuery(chunk.facadeModuleId!))
 						.slice(sourceDirectoryPath.length)
-						.replace(/\.\w+$/, extension)
+						.replace(/(:?\.d)?\.\w+$/, extension)
 				),
 
 				exports: 'auto',

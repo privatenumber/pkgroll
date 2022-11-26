@@ -32,13 +32,25 @@ function parseExportsMap(
 		}
 
 		if (Array.isArray(exportMap)) {
-			const exportPaths = exportMap.filter(isPath);
+			return exportMap.flatMap(
+				(exportPath, index) => {
+					const from = `${packagePath}[${index}]`;
 
-			return exportPaths.map((exportPath, index) => ({
-				outputPath: exportPath,
-				type: getFileType(exportPath) || packageType,
-				from: `${packagePath}[${index}]`,
-			}));
+					return (
+						typeof exportPath === 'string'
+							? (
+								isPath(exportPath)
+									? {
+										outputPath: exportPath,
+										type: getFileType(exportPath) || packageType,
+										from,
+									}
+									: []
+							)
+							: parseExportsMap(exportPath, packageType, from)
+					);
+				},
+			);
 		}
 
 		if (typeof exportMap === 'object') {

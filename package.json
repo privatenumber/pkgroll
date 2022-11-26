@@ -33,8 +33,7 @@
 		"test": "pnpm build && tsx tests/index.ts",
 		"lint": "eslint --cache .",
 		"type-check": "tsc --noEmit",
-		"prepublishOnly": "pnpm build",
-		"prepack": "clean-pkg-json"
+		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"peerDependencies": {
 		"typescript": "^4.1"

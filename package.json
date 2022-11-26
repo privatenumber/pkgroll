@@ -79,17 +79,6 @@
 		"extends": "@pvtnbr",
 		"ignorePatterns": [
 			"tests/fixture-package"
-		],
-		"rules": {
-			"@typescript-eslint/no-shadow": [
-				"error",
-				{
-					"allow": [
-						"describe",
-						"test"
-					]
-				}
-			]
-		}
+		]
 	}
 }

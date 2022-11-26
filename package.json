@@ -53,7 +53,7 @@
 		"@rollup/plugin-node-resolve": "^13.3.0",
 		"@rollup/plugin-replace": "^4.0.0",
 		"@rollup/pluginutils": "^4.2.1",
-		"esbuild": "^0.14.54",
+		"esbuild": "^0.15.15",
 		"magic-string": "^0.26.7",
 		"rollup": "^2.79.1"
 	},

@@ -25,7 +25,7 @@ export function esbuildTransform(
 				// https://github.com/evanw/esbuild/issues/1932#issuecomment-1013380565
 				sourcefile: id.replace(/\.[cm]ts/, '.ts'),
 
-				tsconfigRaw: tsconfig?.config,
+				tsconfigRaw: tsconfig?.config as TransformOptions['tsconfigRaw'],
 			});
 
 			return {

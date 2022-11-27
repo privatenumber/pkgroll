@@ -1,14 +1,10 @@
 # 📦 🍣 pkgroll
 
-Write your code in ESM & TypeScript and bundle it to get ESM, CommonJS, and type declaration outputs with a single command!
+Node.js packages already define entry-points in `package.json`, so why re-define them in our bundler configuration?
 
-### Features
-- **Zero config** Configuration automatically inferred from `package.json`
-- **ESM/CJS Detection** Uses `.mjs`/`.cjs` extension or `package.json#type` to infer module type
-- **Export & Import maps** Uses export and import maps to configure endpoints and aliases
-- **TypeScript friendly** Transform TS and emit `.d.ts` files (Supports `.cts`/`.mts` too!)
-- **Node.js ESM ⇄ CJS friendly** Preserves named exports from ESM to CJS
-- **Fast** Transformations powered by [esbuild](https://esbuild.github.io/)
+Pkgroll is a smart package bundler that infers how to build your package from entry-points defined in `package.json`.
+
+Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/DTS outputs!
 
 ## Install
 ```sh

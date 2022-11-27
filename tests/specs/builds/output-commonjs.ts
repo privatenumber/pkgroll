@@ -22,6 +22,24 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.rm();
 		});
 
+		test('{ type: commonjs, field: main, srcExt: mts, distExt: js }', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await fixture.writeJson('package.json', {
+				main: './dist/mts.js',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/mts.js', 'utf8');
+			expect(content).toMatch('exports.sayHello =');
+
+			await fixture.rm();
+		});
+
 		test('{ type: module, field: main, srcExt: js, distExt: cjs }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 

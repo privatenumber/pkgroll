@@ -24,7 +24,6 @@ jobs:
       with:
         version: 7
         run_install: true
-            - name: Checkout
 
     - name: Lint
       run: pnpm lint

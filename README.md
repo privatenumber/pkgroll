@@ -28,14 +28,14 @@ npm install --save-dev pkgroll
 	    // "type": "module",
 
 	    // Define the output files
-	    "main": "./dist/file.js",
+	    "main": "./dist/file.cjs",
 	    "module": "./dist/file.mjs",
 	    "types": "./dist/file.d.ts",
 
 	    // Define output files for Node.js export maps (https://nodejs.org/api/packages.html#exports)
 	    "exports": {
 	        "types": "./dist/file.d.ts",
-	        "require": "./dist/file.js",
+	        "require": "./dist/file.cjs",
 	        "import": "./dist/file.mjs"
 	    },
 

@@ -90,7 +90,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/mts.mjs', 'utf8');
-			expect(content).toMatch('export { sayGoodbye, sayHello }');
+			expect(content).toMatch('export { Component, foo, sayGoodbye, sayHello, sayHello$1 as sayHello2 }');
 
 			await fixture.rm();
 		});

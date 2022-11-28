@@ -16,7 +16,7 @@ async function tryExtensions(
 }
 
 const sourceExtensions = {
-	'.d.ts': ['.d.ts', '.ts'],
+	'.d.ts': ['.d.ts', '.ts', '.mts', '.cts'],
 	'.js': ['.js', '.ts', '.tsx', '.mts', '.cts'],
 	'.mjs': ['.mjs', '.js', '.cjs', '.mts', '.ts'],
 	'.cjs': ['.cjs', '.js', '.mjs', '.cts', '.ts'],

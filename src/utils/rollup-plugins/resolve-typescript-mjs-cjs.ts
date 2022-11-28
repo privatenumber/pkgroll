@@ -1,19 +1,19 @@
 import type { Plugin } from 'rollup';
 
 export function resolveTypescriptMjsCts(): Plugin {
-	const isMjsCjs = /\.(?:mjs|cjs)$/;
+	const isJs = /\.(?:[mc]?js|jsx)$/;
 	const isMtsCts = /\.(?:mts|cts)$/;
 
 	return {
 		name: 'resolve-typescript-mjs-cjs',
-		resolveId(source, importer, options) {
+		resolveId(id, importer, options) {
 			if (
-				isMjsCjs.test(source)
+				isJs.test(id)
 				&& importer
 				&& isMtsCts.test(importer)
 			) {
 				return this.resolve(
-					source.replace(/js$/, 'ts'),
+					id.replace(/js(x?)$/, 'ts$1'),
 					importer,
 					options,
 				);

@@ -6,7 +6,7 @@ export function resolveTypescriptMjsCts(): Plugin {
 
 	return {
 		name: 'resolve-typescript-mjs-cjs',
-		async resolveId(id, importer, options) {
+		resolveId(id, importer, options) {
 			if (
 				isJs.test(id)
 				&& importer

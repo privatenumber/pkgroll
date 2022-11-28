@@ -4,9 +4,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 	describe('builds', async ({ runTestSuite }) => {
 		runTestSuite(import('./output-commonjs'), nodePath);
 		runTestSuite(import('./output-module'), nodePath);
+		runTestSuite(import('./output-types'), nodePath);
 		runTestSuite(import('./env'), nodePath);
 		runTestSuite(import('./target'), nodePath);
-		runTestSuite(import('./types'), nodePath);
 		runTestSuite(import('./minification'), nodePath);
 		runTestSuite(import('./package-exports'), nodePath);
 		runTestSuite(import('./package-imports'), nodePath);

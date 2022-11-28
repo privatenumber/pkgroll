@@ -13,7 +13,7 @@ export function resolveTypescriptMjsCts(): Plugin {
 				&& isMtsCts.test(importer)
 			) {
 				return this.resolve(
-					id.replace(/jsx?$/, 'ts'),
+					id.replace(/js(x?)$/, 'ts$1'),
 					importer,
 					options,
 				);

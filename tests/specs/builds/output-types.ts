@@ -32,7 +32,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.rm();
 		});
 
-		test('{ srcExt: mts, distExt: .d.ts }', async () => {
+		test('{ srcExt: mts, distExt: d.ts }', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);

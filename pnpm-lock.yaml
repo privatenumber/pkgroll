@@ -24,7 +24,7 @@ specifiers:
   manten: ^0.5.0
   rimraf: ^3.0.2
   rollup: ^2.79.1
-  rollup-plugin-dts: ^4.2.3
+  rollup-plugin-dts: github:privatenumber/rollup-plugin-dts#npm/support-mts-cts
   tsx: ^3.12.1
   type-fest: ^2.19.0
   typescript: ^4.9.3
@@ -55,7 +55,7 @@ devDependencies:
   kolorist: 1.6.0
   manten: 0.5.0
   rimraf: 3.0.2
-  rollup-plugin-dts: 4.2.3_k35zwyycrckt5xfsejji7kbwn4
+  rollup-plugin-dts: github.com/privatenumber/rollup-plugin-dts/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb_k35zwyycrckt5xfsejji7kbwn4
   tsx: 3.12.1
   type-fest: 2.19.0
   typescript: 4.9.3
@@ -70,11 +70,6 @@ packages:
       '@babel/highlight': 7.18.6
     dev: true
 
-  /@babel/helper-validator-identifier/7.18.6:
-    resolution: {integrity: sha512-MmetCkz9ej86nJQV+sFCxoGGrUbU3q02kgLciwkrt9QqEB7cP39oKEY0PakknEO0Gu20SskMRi+AYZ3b1TpN9g==}
-    engines: {node: '>=6.9.0'}
-    dev: true
-
   /@babel/helper-validator-identifier/7.19.1:
     resolution: {integrity: sha512-awrNfaMtnHUr653GgGEs++LlAvW6w+DcPrOliSMXWCKo597CwL5Acf/wWdNkf/tfEQE3mjkeD1YOVZOUV/od1w==}
     engines: {node: '>=6.9.0'}
@@ -84,7 +79,7 @@ packages:
     resolution: {integrity: sha512-u7stbOuYjaPezCuLj29hNW1v64M2Md2qupEKP1fHc7WdOA3DgLh37suiSrZYY7haUB7iBeQZ9P1uiRF359do3g==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/helper-validator-identifier': 7.18.6
+      '@babel/helper-validator-identifier': 7.19.1
       chalk: 2.4.2
       js-tokens: 4.0.0
     dev: true
@@ -1270,7 +1265,7 @@ packages:
       esbuild-windows-arm64: 0.15.15
 
   /escape-string-regexp/1.0.5:
-    resolution: {integrity: sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=}
+    resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
     engines: {node: '>=0.8.0'}
     dev: true
 
@@ -3170,20 +3165,6 @@ packages:
       glob: 7.2.0
     dev: true
 
-  /rollup-plugin-dts/4.2.3_k35zwyycrckt5xfsejji7kbwn4:
-    resolution: {integrity: sha512-jlcpItqM2efqfIiKzDB/IKOS9E9fDvbkJSGw5GtK/PqPGS9eC3R3JKyw2VvpTktZA+TNgJRMu1NTv244aTUzzQ==}
-    engines: {node: '>=v12.22.12'}
-    peerDependencies:
-      rollup: ^2.55
-      typescript: ^4.1
-    dependencies:
-      magic-string: 0.26.7
-      rollup: 2.79.1
-      typescript: 4.9.3
-    optionalDependencies:
-      '@babel/code-frame': 7.18.6
-    dev: true
-
   /rollup/2.79.1:
     resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
     engines: {node: '>=10.0.0'}
@@ -3667,4 +3648,21 @@ packages:
   /yocto-queue/1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+    dev: true
+
+  github.com/privatenumber/rollup-plugin-dts/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb_k35zwyycrckt5xfsejji7kbwn4:
+    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb}
+    id: github.com/privatenumber/rollup-plugin-dts/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb
+    name: rollup-plugin-dts
+    version: 5.0.0
+    engines: {node: '>=v14'}
+    peerDependencies:
+      rollup: ^3.0.0
+      typescript: ^4.1
+    dependencies:
+      magic-string: 0.26.7
+      rollup: 2.79.1
+      typescript: 4.9.3
+    optionalDependencies:
+      '@babel/code-frame': 7.18.6
     dev: true

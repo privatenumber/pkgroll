@@ -16,7 +16,7 @@ specifiers:
   esbuild: ^0.15.15
   eslint: ^8.28.0
   execa: ^6.1.0
-  fs-fixture: ^1.1.0
+  fs-fixture: ^1.2.0
   get-node: ^13.5.0
   get-tsconfig: ^4.2.0
   kolorist: ^1.6.0
@@ -49,13 +49,13 @@ devDependencies:
   cleye: 1.3.1
   eslint: 8.28.0
   execa: 6.1.0
-  fs-fixture: 1.1.0
+  fs-fixture: 1.2.0
   get-node: 13.5.0
   get-tsconfig: 4.2.0
   kolorist: 1.6.0
   manten: 0.5.0
   rimraf: 3.0.2
-  rollup-plugin-dts: github.com/privatenumber/rollup-plugin-dts/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb_k35zwyycrckt5xfsejji7kbwn4
+  rollup-plugin-dts: github.com/privatenumber/rollup-plugin-dts/240015a3ee4eb7b9334591cf8579e9df801adfd0_k35zwyycrckt5xfsejji7kbwn4
   tsx: 3.12.1
   type-fest: 2.19.0
   typescript: 4.9.3
@@ -1817,8 +1817,9 @@ packages:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
     dev: true
 
-  /fs-fixture/1.1.0:
-    resolution: {integrity: sha512-Ic0Ri51A8sCCJ3wbye1cpWA+5FouOYGYfaK5xR6yvoT4mlKWSefYLE51XbxcIUjDcxJiYv6BuA6pDzVmXdJicw==}
+  /fs-fixture/1.2.0:
+    resolution: {integrity: sha512-bPBNW12US81zxCXzP/BQ6ntSvMXNgX76nHVUxzQJVTmHkzXnbfp+M4mNWeJ9LuCG8M1wyeFov7oiwO9wnCEBjQ==}
+    engines: {node: '>=16.7.0'}
     dev: true
 
   /fs.realpath/1.0.0:
@@ -3650,9 +3651,9 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  github.com/privatenumber/rollup-plugin-dts/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb_k35zwyycrckt5xfsejji7kbwn4:
-    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb}
-    id: github.com/privatenumber/rollup-plugin-dts/5d9b405f136497ccf8255b7c0c0e6bca1a4e4aeb
+  github.com/privatenumber/rollup-plugin-dts/240015a3ee4eb7b9334591cf8579e9df801adfd0_k35zwyycrckt5xfsejji7kbwn4:
+    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/240015a3ee4eb7b9334591cf8579e9df801adfd0}
+    id: github.com/privatenumber/rollup-plugin-dts/240015a3ee4eb7b9334591cf8579e9df801adfd0
     name: rollup-plugin-dts
     version: 5.0.0
     engines: {node: '>=v14'}

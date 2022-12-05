@@ -52,6 +52,46 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.rm();
 		});
 
+		test('{ srcExt: .mts, distExt: d.cts }', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await installTypeScript(fixture.path);
+
+			await fixture.writeJson('package.json', {
+				types: './dist/mts.d.cts',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/mts.d.cts', 'utf8');
+			expect(content).toMatch('declare function');
+
+			await fixture.rm();
+		});
+
+		test('{ srcExt: .mts, distExt: d.mts }', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			await installTypeScript(fixture.path);
+
+			await fixture.writeJson('package.json', {
+				types: './dist/mts.d.mts',
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/mts.d.mts', 'utf8');
+			expect(content).toMatch('declare function');
+
+			await fixture.rm();
+		});
+
 		test('emits multiple', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 

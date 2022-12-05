@@ -115,6 +115,8 @@ export async function getRollupConfigs(
 	distributionDirectoryPath: string,
 	inputs: {
 		input: string;
+		srcExtension: string;
+		distExtension: string;
 		exportEntry: ExportEntry;
 	}[],
 	flags: Options,
@@ -131,7 +133,7 @@ export async function getRollupConfigs(
 		flags.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
 	);
 
-	for (const { input, exportEntry } of inputs) {
+	for (const { input, srcExtension, distExtension, exportEntry } of inputs) {
 		if (exportEntry.type === 'types') {
 			let config = configs.type;
 
@@ -142,8 +144,6 @@ export async function getRollupConfigs(
 			}
 
 			config.input.push(input);
-
-			const extension = '.d.ts';
 
 			config.output = [{
 				dir: distributionDirectoryPath,
@@ -157,8 +157,8 @@ export async function getRollupConfigs(
 				*/
 				entryFileNames: chunk => (
 					fs.realpathSync.native(stripQuery(chunk.facadeModuleId!))
-						.slice(sourceDirectoryPath.length)
-						.replace(/(:?\.d)?\.\w+$/, extension)
+						.slice(sourceDirectoryPath.length, -srcExtension.length)
+						+ distExtension
 				),
 
 				exports: 'auto',

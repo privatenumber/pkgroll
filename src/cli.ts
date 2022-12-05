@@ -109,7 +109,7 @@ if (tsconfigTarget) {
 	}
 
 	const sourcePaths = await Promise.all(exportEntries.map(async exportEntry => ({
-		input: await getSourcePath(exportEntry, sourcePath, distPath),
+		...(await getSourcePath(exportEntry, sourcePath, distPath)),
 		exportEntry,
 	})));
 

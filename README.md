@@ -28,15 +28,20 @@ npm install --save-dev pkgroll
 	    // "type": "module",
 
 	    // Define the output files
-	    "main": "./dist/file.cjs",
-	    "module": "./dist/file.mjs",
-	    "types": "./dist/file.d.ts",
+	    "main": "./dist/index.cjs",
+	    "module": "./dist/index.mjs",
+	    "types": "./dist/index.d.cts",
 
 	    // Define output files for Node.js export maps (https://nodejs.org/api/packages.html#exports)
 	    "exports": {
-	        "types": "./dist/file.d.ts",
-	        "require": "./dist/file.cjs",
-	        "import": "./dist/file.mjs"
+	        "require": {
+	            "types": "./dist/index.d.cts",
+	            "default": "./dist/index.cjs"
+	        },
+	        "import": {
+	            "types": "./dist/index.d.mts",
+	            "default": "./dist/index.mjs"
+	        }
 	    },
 
 	    // bin files will be compiled to be executable with the Node.js hashbang

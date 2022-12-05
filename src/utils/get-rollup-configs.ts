@@ -145,9 +145,11 @@ export async function getRollupConfigs(
 				configs.type = config;
 			}
 
-			config.input.push(input);
+			if (!config.input.includes(input)) {
+				config.input.push(input);
+			}
 
-			config.output = [{
+			config.output.push({
 				dir: distributionDirectoryPath,
 
 				/**
@@ -165,7 +167,8 @@ export async function getRollupConfigs(
 
 				exports: 'auto',
 				format: 'esm',
-			}];
+			});
+
 			continue;
 		}
 

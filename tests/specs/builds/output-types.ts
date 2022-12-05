@@ -168,6 +168,46 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.rm();
 		});
 
+		test('emits multiple - different extension', async () => {
+			const fixture = await createFixture('./tests/fixture-package');
+
+			installTypeScript(fixture.path);
+
+			await fixture.writeJson('package.json', {
+				exports: {
+					require: {
+						types: './dist/utils.d.cts',
+						default: './dist/utils.cjs',
+					},
+					import: {
+						types: './dist/utils.d.mts',
+						default: './dist/utils.mjs',
+					},
+				},
+			});
+
+			await fixture.writeJson('tsconfig.json', {
+				compilerOptions: {
+					typeRoots: [
+						path.resolve('node_modules/@types'),
+					],
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const utilsDMts = await fixture.readFile('dist/utils.d.mts', 'utf8');
+			expect(utilsDMts).toMatch('declare function sayHello');
+
+			const utilsDCts = await fixture.readFile('dist/utils.d.cts', 'utf8');
+			expect(utilsDCts).toMatch('declare function sayHello');
+
+			await fixture.rm();
+		});
+
 		test('bundles .d.ts', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 

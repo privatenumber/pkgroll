@@ -40,13 +40,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.writeJson('package.json', {
 				types: './dist/mts.d.ts',
 			});
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
 
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 

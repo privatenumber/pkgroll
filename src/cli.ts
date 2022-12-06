@@ -57,6 +57,10 @@ const argv = cli({
 			type: [String],
 			description: 'Export conditions for resolving dependency export and import maps (eg. --export-condition=node)',
 		},
+		sourcemap: {
+			type: String,
+			description: 'Sourcemap generation. Provide `inline` option for inline sourcemap (eg. --sourcemap, --sourcemap=inline)',
+		},
 	},
 
 	help: {

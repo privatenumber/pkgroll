@@ -21,6 +21,7 @@ type Options = {
 		key: string;
 		value: string;
 	}[];
+	sourcemap?: string;
 };
 
 type EnvObject = {
@@ -188,6 +189,8 @@ export async function getRollupConfigs(
 			config.input.push(input);
 		}
 
+		const sourcemapTable = Object.create({ '': true, inline: 'inline' });
+
 		const outputs = config.output;
 		const extension = path.extname(exportEntry.outputPath);
 		const key = `${exportEntry.type}-${extension}`;
@@ -197,6 +200,7 @@ export async function getRollupConfigs(
 				exports: 'auto',
 				format: exportEntry.type,
 				chunkFileNames: `[name]-[hash]${extension}`,
+				sourcemap: flags.sourcemap !== undefined && (sourcemapTable[flags.sourcemap] || false),
 				plugins: [
 					isFormatEsm(exportEntry.type === 'module'),
 				],

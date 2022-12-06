@@ -13,5 +13,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./bin'), nodePath);
 		runTestSuite(import('./dependencies'), nodePath);
 		runTestSuite(import('./src-dist'), nodePath);
+		runTestSuite(import('./sourcemap'), nodePath);
 	});
 });

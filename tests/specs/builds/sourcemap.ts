@@ -21,6 +21,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.exists('dist/index.js.map')).toBe(true);
+			expect(await fixture.exists('dist/index.mjs.map')).toBe(true);
 
 			await fixture.rm();
 		});
@@ -41,12 +42,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			const sourcemap = (await fixture.readFile('dist/index.js', 'utf8') as string)
-				.trim()
-				.split('\n')
-				.at(-1);
-
-			expect(sourcemap?.length).toBeGreaterThan(100);
+			expect(
+				await fixture.readFile('dist/index.js', 'utf8'),
+			).toMatch(/\/\/# sourceMappingURL=data:application\/json;charset=utf-8;base64,\w+/);
 			expect(await fixture.exists('dist/index.js.map')).toBe(false);
 
 			await fixture.rm();

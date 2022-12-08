@@ -21,7 +21,7 @@ specifiers:
   get-tsconfig: ^4.2.0
   kolorist: ^1.6.0
   magic-string: ^0.26.7
-  manten: ^0.5.0
+  manten: ^0.6.0
   rimraf: ^3.0.2
   rollup: ^2.79.1
   rollup-plugin-dts: github:privatenumber/rollup-plugin-dts#npm/support-mts-cts
@@ -53,7 +53,7 @@ devDependencies:
   get-node: 13.5.0
   get-tsconfig: 4.2.0
   kolorist: 1.6.0
-  manten: 0.5.0
+  manten: 0.6.0
   rimraf: 3.0.2
   rollup-plugin-dts: github.com/privatenumber/rollup-plugin-dts/240015a3ee4eb7b9334591cf8579e9df801adfd0_k35zwyycrckt5xfsejji7kbwn4
   tsx: 3.12.1
@@ -179,8 +179,8 @@ packages:
       '@jest/schemas': 29.0.0
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.11.9
-      '@types/yargs': 17.0.14
+      '@types/node': 18.11.11
+      '@types/yargs': 17.0.17
       chalk: 4.1.2
     dev: true
 
@@ -405,12 +405,12 @@ packages:
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
     dev: true
 
-  /@types/node/18.11.9:
-    resolution: {integrity: sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==}
-    dev: true
+  /@types/node/18.11.11:
+    resolution: {integrity: sha512-KJ021B1nlQUBLopzZmPBVuGU9un7WJd/W4ya7Ih02B4Uwky5Nja0yGYav2EfYIk0RR2Q9oVhf60S2XR1BCWJ2g==}
 
   /@types/node/18.6.3:
     resolution: {integrity: sha512-6qKpDtoaYLM+5+AFChLhHermMQxc3TOEFIDzrZLPRGHPrLEwqFkkT5Kx3ju05g6X7uDPazz3jHbKPX0KzCjntg==}
+    dev: true
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -419,7 +419,7 @@ packages:
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 18.6.3
+      '@types/node': 18.11.11
     dev: false
 
   /@types/rimraf/3.0.2:
@@ -445,8 +445,8 @@ packages:
     resolution: {integrity: sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==}
     dev: true
 
-  /@types/yargs/17.0.14:
-    resolution: {integrity: sha512-9Pj7abXoW1RSTcZaL2Hk6G2XyLMlp5ECdVC/Zf2p/KBjC3srijLGgRAXOBjtFrJoIrvxdTKyKDA14bEcbxBaWw==}
+  /@types/yargs/17.0.17:
+    resolution: {integrity: sha512-72bWxFKTK6uwWJAVT+3rF6Jo6RTojiJ27FQo8Rf60AL+VZbzoVPnMFhKsUnbjR8A3BTCYQ7Mv3hnl8T0A+CX9g==}
     dependencies:
       '@types/yargs-parser': 21.0.0
     dev: true
@@ -2380,7 +2380,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.3.1
-      '@types/node': 18.11.9
+      '@types/node': 18.11.11
       chalk: 4.1.2
       ci-info: 3.7.0
       graceful-fs: 4.2.10
@@ -2549,8 +2549,8 @@ packages:
     dependencies:
       sourcemap-codec: 1.4.8
 
-  /manten/0.5.0:
-    resolution: {integrity: sha512-IDy6DR457piGAZzTGSxyVbNJc992wLKSsjdUFUn7V/taFfjoLkTbSG93p62Y/TDI5i2SVaLEQGNx0mzUu9kMQw==}
+  /manten/0.6.0:
+    resolution: {integrity: sha512-8OqNXWdPnP1xJ6F6wi1uY/T1pKFkZ+T0/BQxSkuTS5SKKyOPWj4yLWFsE9k0Z4CuyHz1DHB9/B/SOCGCRgQmMA==}
     dependencies:
       expect: 29.3.1
     dev: true

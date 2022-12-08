@@ -12,6 +12,8 @@ import { getRollupConfigs } from './utils/get-rollup-configs';
 import { tsconfig } from './utils/tsconfig';
 import { log } from './utils/log';
 
+const { stringify } = JSON;
+
 const argv = cli({
 	name: 'pkgroll',
 
@@ -57,6 +59,19 @@ const argv = cli({
 			type: [String],
 			description: 'Export conditions for resolving dependency export and import maps (eg. --export-condition=node)',
 		},
+		sourcemap: {
+			type(flagValue: string) {
+				if (flagValue === '') {
+					return true;
+				}
+				if (flagValue === 'inline') {
+					return flagValue;
+				}
+
+				throw new Error(`Invalid sourcemap option ${stringify(flagValue)}`);
+			},
+			description: 'Sourcemap generation. Provide `inline` option for inline sourcemap (eg. --sourcemap, --sourcemap=inline)',
+		},
 	},
 
 	help: {
@@ -74,7 +89,6 @@ const argv = cli({
 });
 
 const cwd = process.cwd();
-const { stringify } = JSON;
 
 /**
  * The sourcepath may be a symlink.

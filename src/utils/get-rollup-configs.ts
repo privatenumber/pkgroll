@@ -21,6 +21,7 @@ type Options = {
 		key: string;
 		value: string;
 	}[];
+	sourcemap?: true | 'inline';
 };
 
 type EnvObject = {
@@ -197,6 +198,7 @@ export async function getRollupConfigs(
 				exports: 'auto',
 				format: exportEntry.type,
 				chunkFileNames: `[name]-[hash]${extension}`,
+				sourcemap: flags.sourcemap,
 				plugins: [
 					isFormatEsm(exportEntry.type === 'module'),
 				],

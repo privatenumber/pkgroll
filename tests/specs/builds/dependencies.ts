@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll, installTypeScript } from '../../utils';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('dependencies', ({ test }) => {
@@ -21,6 +21,66 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dependency-external.js', 'utf8');
 			expect(content).toMatch('require(\'@org/name/path\')');
+
+			await fixture.rm();
+		});
+
+		test('externalize types', async () => {
+			const fixture = await createFixture({
+				'package.json': JSON.stringify({
+					types: 'dist/index.d.ts',
+					dependencies: {
+						'@types/pkg': '*',
+					},
+				}),
+				'node_modules/@types/pkg/index.d.ts': `
+				export type SomeType = {};
+				`,
+				'src/index.d.ts': `
+				import type { SomeType } from 'pkg';
+				declare const a: SomeType;
+				export default a;
+				`,
+			});
+
+			installTypeScript(fixture.path);
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.d.ts', 'utf8');
+			expect(content).toMatch('from \'pkg\'');
+
+			await fixture.rm();
+		});
+
+		test('externalize types with org', async () => {
+			const fixture = await createFixture({
+				'package.json': JSON.stringify({
+					types: 'dist/index.d.ts',
+					dependencies: {
+						'@types/square-icons__react': '*',
+					},
+				}),
+				'node_modules/@types/square-icons__react/index.d.ts': `
+				export type SomeType = {};
+				`,
+				'src/index.d.ts': `
+				import type { SomeType } from '@square-icons/react';
+				declare const a: SomeType;
+				export default a;
+				`,
+			});
+
+			installTypeScript(fixture.path);
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.d.ts', 'utf8');
+			expect(content).toMatch('from \'@square-icons/react\'');
 
 			await fixture.rm();
 		});

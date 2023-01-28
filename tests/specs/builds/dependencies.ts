@@ -59,6 +59,71 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.rm();
 		});
 
+		test('bundle in types if only in devDependency', async () => {
+			const fixture = await createFixture({
+				'package.json': JSON.stringify({
+					types: 'dist/index.d.ts',
+					devDependencies: {
+						'@types/react': '*',
+					},
+				}),
+				'node_modules/@types/react': {
+					'index.d.ts': 'declare const A: { b: number }; export { A }',
+				},
+				'src/index.d.ts': 'export { A } from "react"',
+			});
+
+			installTypeScript(fixture.path);
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.d.ts', 'utf8');
+			expect(content).toBe('declare const A: { b: number };\n\nexport { A };\n');
+
+			await fixture.rm();
+		});
+
+		test('externalize dependency & type despite devDependency type', async () => {
+			const fixture = await createFixture({
+				'package.json': JSON.stringify({
+					main: 'dist/index.js',
+					types: 'dist/index.d.ts',
+					dependencies: {
+						react: '*',
+					},
+					devDependencies: {
+						'@types/react': '*',
+					},
+				}),
+				node_modules: {
+					'@types/react': {
+						'index.d.ts': 'declare const A: { b: number }; export { A }',
+					},
+					react: {
+						'index.js': 'export const A = {}',
+					},
+				},
+				'src/index.ts': 'export { A } from "react"',
+			});
+
+			installTypeScript(fixture.path);
+
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const contentJs = await fixture.readFile('dist/index.js', 'utf8');
+			expect(contentJs).toMatch('require(\'react\')');
+
+			// Types externalized despite @types/react being a devDependency
+			const contentTypes = await fixture.readFile('dist/index.d.ts', 'utf8');
+			expect(contentTypes).toBe('export { A } from \'react\';\n');
+
+			await fixture.rm();
+		});
+
 		test('dual package - require', async () => {
 			const fixture = await createFixture('./tests/fixture-package');
 

@@ -30,7 +30,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		test('resolves .jsx from .js', async () => {
 			const fixture = await createFixture({
 				src: {
-					'index.ts': 'import "./file.js"',
+					'index.js': 'import "./file.jsx"',
 					'file.jsx': 'console.log(1)',
 				},
 				'package.json': JSON.stringify({

@@ -1,8 +1,6 @@
 # 📦 🍣 pkgroll
 
-Node.js packages already define entry-points in `package.json`, so why re-define them in our bundler configuration?
-
-Pkgroll is a smart package bundler that infers how to build your package from entry-points defined in `package.json`.
+Pkgroll is a next-gen package bundler that infers how to build your package from entry-points defined in `package.json`. No configuration necessary!
 
 Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/DTS outputs!
 

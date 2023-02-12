@@ -14,20 +14,30 @@ export const getExternalDependencies = (packageJson: PackageJson) => {
 	for (const property of externalProperties) {
 		const externalDependenciesObject = packageJson[property];
 
-		if (externalDependenciesObject) {
-			const packageNames = Object.keys(externalDependenciesObject);
-			externalDependencies.push(...packageNames);
+		if (!externalDependenciesObject) {
+			continue;
+		}
 
-			for (const packageName of packageNames) {
-				if (packageName.startsWith(typesPrefix)) {
-					let originalPackageName = packageName.slice(typesPrefix.length);
+		const packageNames = Object.keys(externalDependenciesObject);
+		externalDependencies.push(...packageNames);
 
-					if (originalPackageName.includes('__')) {
-						originalPackageName = `@${originalPackageName.replace('__', '/')}`;
-					}
+		for (const packageName of packageNames) {
+			/**
+			 * @types/ is externalized, the original should be externalized too
+			 * e.g. If '@types/react' is externalized, 'react' will be too
+			 * Because `@types/react` is imported via 'react' in the source
+			 *
+			 * This is primarily designed for @types/estree, which doesn't
+			 * actually have a runtime package. It's a type-only package.
+			 */
+			if (packageName.startsWith(typesPrefix)) {
+				let originalPackageName = packageName.slice(typesPrefix.length);
 
-					externalDependencies.push(originalPackageName);
+				if (originalPackageName.includes('__')) {
+					originalPackageName = `@${originalPackageName.replace('__', '/')}`;
 				}
+
+				externalDependencies.push(originalPackageName);
 			}
 		}
 	}

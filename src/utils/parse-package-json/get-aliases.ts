@@ -14,7 +14,7 @@ export const getAliases = (
 				continue;
 			}
 
-			const subpath = imports[alias];
+			const subpath = imports[alias as keyof PackageJson.Imports];
 			if (typeof subpath !== 'string') {
 				continue;
 			}

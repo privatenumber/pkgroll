@@ -11,9 +11,10 @@ const typesPrefix = '@types/';
 export const getExternalDependencies = (
 	packageJson: PackageJson,
 	aliases: Record<string, unknown>,
-	normalizeTypePackage = false,
+	forTypes = false,
 ) => {
 	const externalDependencies = [];
+	const { devDependencies } = packageJson;
 
 	for (const property of externalProperties) {
 		const externalDependenciesObject = packageJson[property];
@@ -37,7 +38,7 @@ export const getExternalDependencies = (
 			 * actually have a runtime package. It's a type-only package.
 			 */
 			if (packageName.startsWith(typesPrefix)) {
-				if (normalizeTypePackage) {
+				if (forTypes) {
 					let originalPackageName = packageName.slice(typesPrefix.length);
 
 					if (originalPackageName.includes('__')) {
@@ -47,6 +48,16 @@ export const getExternalDependencies = (
 					externalDependencies.push(originalPackageName);
 				}
 			} else {
+				if (devDependencies && forTypes) {
+					const typePackageName = typesPrefix + packageName.replace('@', '').replace('/', '__');
+					if (
+						devDependencies[typePackageName]
+						&& !(typePackageName in externalDependenciesObject)
+					) {
+						console.warn(`Recommendation: "${typePackageName}" is externalized because "${packageName}" is in "${property}". Place "${typePackageName}" in "${property}" as well so users don't have missing types.`);
+					}
+				}
+
 				externalDependencies.push(packageName);
 			}
 		}

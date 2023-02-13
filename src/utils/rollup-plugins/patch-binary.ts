@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import type { Plugin, RenderedChunk, OutputChunk, SourceMapInput } from 'rollup';
+import type {
+	Plugin, RenderedChunk, OutputChunk, SourceMapInput,
+} from 'rollup';
 import MagicString from 'magic-string';
 
 export const patchBinary = (

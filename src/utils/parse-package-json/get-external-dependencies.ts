@@ -8,7 +8,11 @@ const externalProperties = [
 
 const typesPrefix = '@types/';
 
-export const getExternalDependencies = (packageJson: PackageJson) => {
+export const getExternalDependencies = (
+	packageJson: PackageJson,
+	aliases: Record<string, unknown>,
+	normalizeTypePackage = false,
+) => {
 	const externalDependencies = [];
 
 	for (const property of externalProperties) {
@@ -19,28 +23,37 @@ export const getExternalDependencies = (packageJson: PackageJson) => {
 		}
 
 		const packageNames = Object.keys(externalDependenciesObject);
-		externalDependencies.push(...packageNames);
 
 		for (const packageName of packageNames) {
+			if (packageName in aliases) {
+				continue;
+			}
+
 			/**
-			 * @types/ is externalized, the original should be externalized too
-			 * e.g. If '@types/react' is externalized, 'react' will be too
-			 * Because `@types/react` is imported via 'react' in the source
+			 * "@types/name" is imported in source as "name"
+			 * e.g. '@types/react' is imported as 'react'
 			 *
-			 * This is primarily designed for @types/estree, which doesn't
+			 * This was motivated by @types/estree, which doesn't
 			 * actually have a runtime package. It's a type-only package.
 			 */
 			if (packageName.startsWith(typesPrefix)) {
-				let originalPackageName = packageName.slice(typesPrefix.length);
+				if (normalizeTypePackage) {
+					let originalPackageName = packageName.slice(typesPrefix.length);
 
-				if (originalPackageName.includes('__')) {
-					originalPackageName = `@${originalPackageName.replace('__', '/')}`;
+					if (originalPackageName.includes('__')) {
+						originalPackageName = `@${originalPackageName.replace('__', '/')}`;
+					}
+
+					externalDependencies.push(originalPackageName);
 				}
-
-				externalDependencies.push(originalPackageName);
+			} else {
+				externalDependencies.push(packageName);
 			}
 		}
 	}
 
-	return externalDependencies;
+	return externalDependencies.flatMap(dependency => [
+		dependency,
+		new RegExp(`^${dependency}/`),
+	]);
 };

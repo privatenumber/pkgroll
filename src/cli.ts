@@ -4,7 +4,6 @@ import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
 import { readPackageJson } from './utils/read-package-json';
 import { getExportEntries } from './utils/parse-package-json/get-export-entries';
-import { getExternalDependencies } from './utils/parse-package-json/get-external-dependencies';
 import { getAliases } from './utils/parse-package-json/get-aliases';
 import { normalizePath } from './utils/normalize-path';
 import { getSourcePath } from './utils/get-source-path';
@@ -127,14 +126,6 @@ if (tsconfigTarget) {
 		exportEntry,
 	})));
 
-	const aliases = getAliases(packageJson, cwd);
-	const externalDependencies = getExternalDependencies(packageJson).filter(
-		dependency => !(dependency in aliases),
-	).flatMap(dependency => [
-		dependency,
-		new RegExp(`^${dependency}/`),
-	]);
-
 	const rollupConfigs = await getRollupConfigs(
 		/**
 		 * Resolve symlink in source path.
@@ -146,8 +137,8 @@ if (tsconfigTarget) {
 		distPath,
 		sourcePaths,
 		argv.flags,
-		aliases,
-		externalDependencies,
+		getAliases(packageJson, cwd),
+		packageJson,
 	);
 
 	if (argv.flags.watch) {

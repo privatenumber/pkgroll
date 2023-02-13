@@ -10,7 +10,6 @@ specifiers:
   '@rollup/plugin-replace': ^4.0.0
   '@rollup/pluginutils': ^4.2.1
   '@types/node': ^18.6.3
-  '@types/rimraf': ^3.0.2
   clean-pkg-json: ^1.2.0
   cleye: ^1.3.1
   esbuild: ^0.15.15
@@ -22,7 +21,6 @@ specifiers:
   kolorist: ^1.6.0
   magic-string: ^0.26.7
   manten: ^0.6.0
-  rimraf: ^3.0.2
   rollup: ^2.79.1
   rollup-plugin-dts: github:privatenumber/rollup-plugin-dts#npm/support-mts-cts
   tsx: ^3.12.1
@@ -44,7 +42,6 @@ dependencies:
 devDependencies:
   '@pvtnbr/eslint-config': 0.33.0_hsf322ms6xhhd4b5ne6lb74y4a
   '@types/node': 18.6.3
-  '@types/rimraf': 3.0.2
   clean-pkg-json: 1.2.0
   cleye: 1.3.1
   eslint: 8.28.0
@@ -54,7 +51,6 @@ devDependencies:
   get-tsconfig: 4.2.0
   kolorist: 1.6.0
   manten: 0.6.0
-  rimraf: 3.0.2
   rollup-plugin-dts: github.com/privatenumber/rollup-plugin-dts/240015a3ee4eb7b9334591cf8579e9df801adfd0_k35zwyycrckt5xfsejji7kbwn4
   tsx: 3.12.1
   type-fest: 2.19.0
@@ -360,13 +356,6 @@ packages:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
     dev: false
 
-  /@types/glob/7.2.0:
-    resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
-    dependencies:
-      '@types/minimatch': 3.0.5
-      '@types/node': 18.6.3
-    dev: true
-
   /@types/http-cache-semantics/4.0.1:
     resolution: {integrity: sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==}
     dev: true
@@ -401,10 +390,6 @@ packages:
       '@types/unist': 2.0.6
     dev: true
 
-  /@types/minimatch/3.0.5:
-    resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
-    dev: true
-
   /@types/node/18.11.11:
     resolution: {integrity: sha512-KJ021B1nlQUBLopzZmPBVuGU9un7WJd/W4ya7Ih02B4Uwky5Nja0yGYav2EfYIk0RR2Q9oVhf60S2XR1BCWJ2g==}
 
@@ -421,13 +406,6 @@ packages:
     dependencies:
       '@types/node': 18.11.11
     dev: false
-
-  /@types/rimraf/3.0.2:
-    resolution: {integrity: sha512-F3OznnSLAUxFrCEu/L5PY8+ny8DtcFRjx7fZZ9bycvXRi3KPTRS9HOitGZwvPg0juRhXFWIeKX58cnX5YqLohQ==}
-    dependencies:
-      '@types/glob': 7.2.0
-      '@types/node': 18.6.3
-    dev: true
 
   /@types/semver/7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}

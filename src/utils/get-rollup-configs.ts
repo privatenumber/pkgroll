@@ -6,12 +6,14 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
+import type { PackageJson } from 'type-fest';
 import type { ExportEntry, AliasMap } from '../types';
 import { isFormatEsm, createRequire } from './rollup-plugins/create-require';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins';
 import { patchBinary } from './rollup-plugins/patch-binary';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs';
+import { getExternalDependencies } from './parse-package-json/get-external-dependencies';
 
 type Options = {
 	minify: boolean;
@@ -122,7 +124,7 @@ export async function getRollupConfigs(
 	}[],
 	flags: Options,
 	aliases: AliasMap,
-	external: (string | RegExp)[],
+	packageJson: PackageJson,
 ) {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)
@@ -134,6 +136,9 @@ export async function getRollupConfigs(
 		flags.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
 	);
 
+	const externalDependencies = getExternalDependencies(packageJson, aliases);
+	const externalTypeDependencies = getExternalDependencies(packageJson, aliases, true);
+
 	for (const {
 		input, srcExtension, distExtension, exportEntry,
 	} of inputs) {
@@ -142,7 +147,7 @@ export async function getRollupConfigs(
 
 			if (!config) {
 				config = await getConfig.type(flags);
-				config.external = external;
+				config.external = externalTypeDependencies;
 				configs.type = config;
 			}
 
@@ -181,7 +186,7 @@ export async function getRollupConfigs(
 				env,
 				executablePaths,
 			);
-			config.external = external;
+			config.external = externalDependencies;
 			configs.app = config;
 		}
 

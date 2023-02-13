@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { Plugin, RenderedChunk, OutputChunk } from 'rollup';
+import type { Plugin, RenderedChunk, OutputChunk, SourceMapInput } from 'rollup';
 import MagicString from 'magic-string';
 
 export const patchBinary = (
@@ -28,7 +28,7 @@ export const patchBinary = (
 				code: transformed.toString(),
 				map: (
 					outputOptions.sourcemap
-						? transformed.generateMap({ hires: true })
+						? transformed.generateMap({ hires: true }) as SourceMapInput
 						: undefined
 				),
 			};

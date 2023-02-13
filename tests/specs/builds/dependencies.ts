@@ -112,7 +112,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
+			expect(pkgrollProcess.stderr).toBe(
+				'Recommendation: "@types/react" is externalized because "react" is in "dependencies". Place "@types/react" in "dependencies" as well so users don\'t have missing types.',
+			);
 
 			const contentJs = await fixture.readFile('dist/index.js', 'utf8');
 			expect(contentJs).toMatch('require(\'react\')');

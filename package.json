@@ -67,7 +67,7 @@
 		"get-tsconfig": "^4.4.0",
 		"kolorist": "^1.7.0",
 		"manten": "^0.6.1",
-		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/support-mts-cts",
+		"rollup-plugin-dts": "^5.1.1",
 		"tsx": "^3.12.3",
 		"type-fest": "^3.5.7",
 		"typescript": "^4.9.5"

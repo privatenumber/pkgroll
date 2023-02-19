@@ -4,7 +4,7 @@ export type ExportEntry = {
 	outputPath: string;
 	type: PackageType | 'types';
 	platform?: 'node';
-	isExecutable?: true;
+	isExecutable?: boolean;
 	from: string;
 };
 

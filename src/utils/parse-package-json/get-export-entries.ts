@@ -191,5 +191,47 @@ export const getExportEntries = (packageJson: PackageJson) => {
 		}
 	}
 
+	if (
+		packageJson.pkgroll
+		&& typeof packageJson.pkgroll === 'object'
+	) {
+		const { pkgroll } = packageJson;
+
+		if (
+			'output' in pkgroll
+			&& Array.isArray(pkgroll.output)
+		) {
+			for (let i = 0; i < pkgroll.output.length; i += 1) {
+				const output = pkgroll.output[i];
+				if (!output) {
+					continue;
+				}
+
+				const from = `pkgroll.output[${i}]`;
+
+				if (typeof output === 'string') {
+					addExportPath(exportEntriesMap, {
+						outputPath: output,
+						type: getFileType(output) ?? packageType,
+						from,
+					});
+				}
+
+				if (
+					typeof output === 'object'
+					&& 'path' in output
+					&& typeof output.path === 'string'
+				) {
+					addExportPath(exportEntriesMap, {
+						outputPath: output.path,
+						type: getFileType(output.path) ?? packageType,
+						isExecutable: output.executable === true,
+						from,
+					});
+				}
+			}
+		}
+	}
+
 	return Object.values(exportEntriesMap);
 };

@@ -10,6 +10,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./minification'), nodePath);
 		runTestSuite(import('./package-exports'), nodePath);
 		runTestSuite(import('./package-imports'), nodePath);
+		runTestSuite(import('./package-pkgroll'), nodePath);
 		runTestSuite(import('./bin'), nodePath);
 		runTestSuite(import('./dependencies'), nodePath);
 		runTestSuite(import('./src-dist'), nodePath);

@@ -23,10 +23,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 				const content = await fixture.readFile('dist/index.mjs', 'utf8');
 				expect(content).toMatch('#!/usr/bin/env node');
 
-				const stats = await fs.stat(`${fixture.path}/dist/index.mjs`);
-				const unixFilePermissions = `0${(stats.mode & 0o777).toString(8)}`; // eslint-disable-line no-bitwise
-
-				expect(unixFilePermissions).toBe('0755');
+				if (process.platform !== 'win32') {
+					const stats = await fs.stat(`${fixture.path}/dist/index.mjs`);
+					const unixFilePermissions = `0${(stats.mode & 0o777).toString(8)}`; // eslint-disable-line no-bitwise
+	
+					expect(unixFilePermissions).toBe('0755');
+				}
 			});
 
 			await fixture.rm();

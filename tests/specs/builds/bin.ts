@@ -26,7 +26,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				if (process.platform !== 'win32') {
 					const stats = await fs.stat(`${fixture.path}/dist/index.mjs`);
 					const unixFilePermissions = `0${(stats.mode & 0o777).toString(8)}`; // eslint-disable-line no-bitwise
-	
+
 					expect(unixFilePermissions).toBe('0755');
 				}
 			});

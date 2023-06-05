@@ -240,6 +240,6 @@ pkgroll --watch
 
 - **Type dependencies** must be declared in the `dependencies` object in `package.json`, instead of `devDependencies`, to be resolved by the consumer.
 
-This may seem counterintuitive because types are a development enhancement. By bundling them in with your package, you remove the need for an external type dependency. Additionally, bundling only keeps the types that are actually used which helps minimize unnecessary bloat.
+	This may seem counterintuitive because types are a development enhancement. By bundling them in with your package, you remove the need for an external type dependency. Additionally, bundling only keeps the types that are actually used which helps minimize unnecessary bloat.
 
 - **Minification** strips dead-code, comments, white-space, and shortens variable names.

@@ -237,9 +237,9 @@ pkgroll --watch
 
 	Compiling dependencies will make sure new syntax & features are downgraded to support the same environments. And also prevent any unexpected changes from sneaking in during installation.
 
-- **Type dependencies** must be declared in the `dependencies` object in  `package.json` for it to be resolved by the consumer.
 
-	This can be unintuitive because types are a development enhancement and also adds installation bloat. Bundling filters out unused types and allows type dependencies to be declared in `devDependencies`. 
+- **Type dependencies** must be declared in the `dependencies` object in `package.json`, instead of `devDependencies`, to be resolved by the consumer.
 
+This may seem counterintuitive because types are a development enhancement. By bundling them in with your package, you remove the need for an external type dependency. Additionally, bundling only keeps the types that are actually used which helps minimize unnecessary bloat.
 
 - **Minification** strips dead-code, comments, white-space, and shortens variable names.

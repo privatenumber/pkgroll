@@ -15,7 +15,7 @@ npm install --save-dev pkgroll
 2. Define package entry-files in `package.json`.
 
     [These configurations](https://nodejs.org/api/packages.html#package-entry-points) are for Node.js to determine how to import the package.
-    
+
     Pkgroll leverages the same configuration to determine how to build the package.
 
 	```json5
@@ -169,6 +169,14 @@ Pass in a Node.js target that that doesn't support it to strip the `node:` proto
 
 ```sh
 pkgroll --target=node12.19
+```
+
+### Alternative tsconfig.json
+
+By default, _Pkgroll_ looks for `tsconfig.json` configuration file. You can alter this behavior and use your custom filename with the `--tsconfig` flag:
+
+```sh
+pkgroll --tsconfig=tsconfig.build.json
 ```
 
 ### Export condition

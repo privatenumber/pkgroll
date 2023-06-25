@@ -7,6 +7,7 @@ import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import type { PackageJson } from 'type-fest';
+import type { TsConfigJsonResolved } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types';
 import { isFormatEsm, createRequire } from './rollup-plugins/create-require';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild';
@@ -58,9 +59,11 @@ const getConfig = {
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
+		tsconfigRaw: TsConfigJsonResolved
 	) {
 		const esbuildConfig = {
 			target: options.target,
+			tsconfigRaw: tsconfigRaw as string,
 		};
 
 		return {
@@ -125,6 +128,7 @@ export async function getRollupConfigs(
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
+	tsconfigRaw: TsConfigJsonResolved
 ) {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)
@@ -185,6 +189,7 @@ export async function getRollupConfigs(
 				aliases,
 				env,
 				executablePaths,
+				tsconfigRaw
 			);
 			config.external = externalDependencies;
 			configs.app = config;

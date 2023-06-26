@@ -8,7 +8,7 @@ import { getAliases } from './utils/parse-package-json/get-aliases';
 import { normalizePath } from './utils/normalize-path';
 import { getSourcePath } from './utils/get-source-path';
 import { getRollupConfigs } from './utils/get-rollup-configs';
-import { getTsconfig } from 'get-tsconfig';
+import { parseTsconfig } from 'get-tsconfig';
 import { log } from './utils/log';
 
 const { stringify } = JSON;
@@ -102,9 +102,9 @@ const cwd = process.cwd();
  */
 const sourcePath = normalizePath(argv.flags.src, true);
 const distPath = normalizePath(argv.flags.dist, true);
-const tsconfig = getTsconfig(undefined, argv.flags.tsconfig);
+const tsconfig = parseTsconfig(argv.flags.tsconfig);
 
-const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
+const tsconfigTarget = tsconfig?.compilerOptions?.target;
 if (tsconfigTarget) {
 	argv.flags.target.push(tsconfigTarget);
 }
@@ -146,7 +146,7 @@ if (tsconfigTarget) {
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,
-		tsconfig?.config || {}
+		tsconfig
 	);
 
 	if (argv.flags.watch) {

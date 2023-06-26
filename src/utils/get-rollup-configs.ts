@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { OutputOptions } from 'rollup';
+import type { TransformOptions } from 'esbuild';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -63,7 +64,7 @@ const getConfig = {
 	) {
 		const esbuildConfig = {
 			target: options.target,
-			tsconfigRaw: tsconfigRaw as string,
+			tsconfigRaw: tsconfigRaw as TransformOptions['tsconfigRaw'],
 		};
 
 		return {

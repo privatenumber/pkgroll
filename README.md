@@ -4,6 +4,8 @@ Pkgroll is a next-gen package bundler that infers how to build your package from
 
 Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/DTS outputs!
 
+<sub>Found this package useful? Show your support & appreciation by [sponsoring](https://github.com/sponsors/privatenumber)! ❤️</sub>
+
 ## Install
 ```sh
 npm install --save-dev pkgroll
@@ -243,3 +245,10 @@ pkgroll --watch
 	This may seem counterintuitive because types are a development enhancement. By bundling them in with your package, you remove the need for an external type dependency. Additionally, bundling only keeps the types that are actually used which helps minimize unnecessary bloat.
 
 - **Minification** strips dead-code, comments, white-space, and shortens variable names.
+
+## Sponsors
+<p align="center">
+	<a href="https://github.com/sponsors/privatenumber">
+		<img src="https://cdn.jsdelivr.net/gh/privatenumber/sponsors/sponsorkit/sponsors.svg">
+	</a>
+</p>

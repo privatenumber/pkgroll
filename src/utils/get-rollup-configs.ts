@@ -7,13 +7,13 @@ import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import type { PackageJson } from 'type-fest';
-import type { ExportEntry, AliasMap } from '../types';
-import { isFormatEsm, createRequire } from './rollup-plugins/create-require';
-import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild';
-import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins';
-import { patchBinary } from './rollup-plugins/patch-binary';
-import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs';
-import { getExternalDependencies } from './parse-package-json/get-external-dependencies';
+import type { ExportEntry, AliasMap } from '../types.js';
+import { isFormatEsm, createRequire } from './rollup-plugins/create-require.js';
+import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
+import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
+import { patchBinary } from './rollup-plugins/patch-binary.js';
+import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
 type Options = {
 	minify: boolean;

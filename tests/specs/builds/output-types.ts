@@ -1,7 +1,7 @@
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, installTypeScript } from '../../utils';
+import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('types', ({ test }) => {
@@ -99,7 +99,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await fixture.writeJson('package.json', {
 				exports: {
-					'./utils': {
+					'./utils.js': {
 						types: './dist/utils.d.ts',
 					},
 					'./nested': {

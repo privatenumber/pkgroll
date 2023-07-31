@@ -1,7 +1,7 @@
 import type { Plugin, InternalModuleFormat } from 'rollup';
 import { createFilter } from '@rollup/pluginutils';
 import { transform, type TransformOptions, type Format } from 'esbuild';
-import { tsconfig } from '../tsconfig';
+import { tsconfig } from '../tsconfig.js';
 
 export function esbuildTransform(
 	options?: TransformOptions,

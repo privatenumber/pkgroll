@@ -1,6 +1,6 @@
 import path from 'path';
 import type { PackageJson } from 'type-fest';
-import type { AliasMap } from '../../types';
+import type { AliasMap } from '../../types.js';
 
 export const getAliases = (
 	{ imports }: PackageJson,

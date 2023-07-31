@@ -1,5 +1,5 @@
-import type { ExportEntry } from '../types';
-import { fsExists } from './fs-exists';
+import type { ExportEntry } from '../types.js';
+import { fsExists } from './fs-exists.js';
 
 const { stringify } = JSON;
 

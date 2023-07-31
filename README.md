@@ -133,8 +133,8 @@ Native Node.js import mapping supports conditional imports (eg. resolving differ
     // ...
 
     "imports": {
-        // Mapping '~utils' to './src/utils'
-        "~utils": "./src/utils",
+        // Mapping '~utils' to './src/utils.js'
+        "~utils": "./src/utils.js",
 
         // Native Node.js import mapping (can't reference ./src)
         "#internal-package": "./vendors/package/index.js",

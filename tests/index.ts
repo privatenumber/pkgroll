@@ -17,8 +17,8 @@ const nodeVersions = [
 	for (const nodeVersion of nodeVersions) {
 		const node = await getNode(nodeVersion);
 		await describe(`Node ${node.version}`, ({ runTestSuite }) => {
-			runTestSuite(import('./specs/error-cases'), node.path);
-			runTestSuite(import('./specs/builds'), node.path);
+			runTestSuite(import('./specs/error-cases.js'), node.path);
+			runTestSuite(import('./specs/builds/index.js'), node.path);
 		});
 	}
 })();

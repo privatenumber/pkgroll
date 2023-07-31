@@ -1,6 +1,6 @@
 import value from './value.js';
 import { Component } from './component.tsx';
-import { sayHello } from './utils';
+import { sayHello } from './utils.js';
 import { sayHello as sayHelloMjs } from './mjs.mjs';
 import { sayHello as sayHelloMts } from './mts.mts';
 import { sayHello as sayHelloCjs } from './cjs.cjs';

@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package imports', ({ test }) => {
@@ -14,7 +14,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			});
 			await fixture.writeFile('src/entry.ts', `
-				import { sayGoodbye } from '~/utils';
+				import { sayGoodbye } from '~/utils.js';
 				console.log(sayGoodbye);
 			`);
 

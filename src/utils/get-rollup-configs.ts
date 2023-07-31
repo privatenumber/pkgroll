@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { OutputOptions } from 'rollup';
+import type { OutputOptions, RollupOptions, Plugin } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -48,11 +48,11 @@ const getConfig = {
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
-				}),
+				}) as Plugin,
 			],
 			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
-		};
+		} satisfies RollupOptions;
 	},
 
 	app(
@@ -105,7 +105,7 @@ const getConfig = {
 			],
 			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
-		};
+		} satisfies RollupOptions;
 	},
 };
 
@@ -229,5 +229,5 @@ export async function getRollupConfigs(
 		}
 	}
 
-	return configs;
+	return configs satisfies Record<string, RollupOptions>;
 }

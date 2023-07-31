@@ -32,6 +32,8 @@ type EnvObject = {
 
 const stripQuery = (url: string) => url.split('?')[0];
 
+type Output = OutputOptions[] & Record<string, OutputOptions>;
+
 const getConfig = {
 	async type(
 		options: Options,
@@ -48,7 +50,7 @@ const getConfig = {
 					respectExternal: true,
 				}),
 			],
-			output: [] as OutputOptions[] & Record<string, any>,
+			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
 		};
 	},
@@ -101,7 +103,7 @@ const getConfig = {
 				),
 				patchBinary(executablePaths),
 			],
-			output: [] as OutputOptions[] & Record<string, any>,
+			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
 		};
 	},

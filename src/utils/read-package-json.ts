@@ -17,6 +17,6 @@ export const readPackageJson = async (directoryPath: string): Promise<PackageJso
 	try {
 		return JSON.parse(packageJsonString);
 	} catch (error) {
-		throw new Error(`Cannot parse package.json: ${(error as any).message}`);
+		throw new Error(`Cannot parse package.json: ${(error as Error).message}`);
 	}
 };

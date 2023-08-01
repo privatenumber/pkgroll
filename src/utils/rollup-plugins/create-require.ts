@@ -52,11 +52,18 @@ export const createRequire = (): Plugin => ({
 
 export const isFormatEsm = (
 	isEsm: boolean,
-): Plugin => ({
-	name: 'create-require-insert-format',
-
-	// Pick out renderChunk because it's used as an output plugin
-	renderChunk: replace({
+): Plugin => {
+	const handler = replace({
 		[isEsmVariableName]: isEsm,
-	}).renderChunk!,
-});
+	}).renderChunk!;
+
+	return ({
+		name: 'create-require-insert-format',
+
+		// Pick out renderChunk because it's used as an output plugin
+		renderChunk: {
+			order: 'pre',
+			handler: typeof handler == 'function' ? handler : handler.handler,
+		},
+	});
+};

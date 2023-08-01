@@ -17,7 +17,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/target.js', 'utf8');
-			expect(content).toMatch('e?.y()');
+
+			// Optional chaining function call
+			expect(content).toMatch(/\w\?\.\w\(\)/);
 
 			// Name should be minified
 			expect(content).not.toMatch('exports.foo=foo');

@@ -63,7 +63,7 @@ export const isFormatEsm = (
 		// Pick out renderChunk because it's used as an output plugin
 		renderChunk: {
 			order: 'pre',
-			handler: typeof handler == 'function' ? handler : handler.handler,
+			handler: typeof handler === 'function' ? handler : handler.handler,
 		},
 	});
 };

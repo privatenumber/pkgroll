@@ -20,7 +20,7 @@ export const patchBinary = (
 		}
 
 		const entryFileNames = outputOptions.entryFileNames as (chunk: RenderedChunk) => string;
-		const outputPath = `./${path.join(outputOptions.dir!, entryFileNames(chunk))}`;
+		const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(chunk))}`;
 
 		if (executablePaths.includes(outputPath)) {
 			const transformed = new MagicString(code);
@@ -44,7 +44,7 @@ export const patchBinary = (
 			const outputChunk = chunk as OutputChunk;
 
 			if (outputChunk.isEntry && outputChunk.facadeModuleId) {
-				const outputPath = path.join(outputOptions.dir!, entryFileNames(outputChunk));
+				const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(outputChunk))}`;
 				await fs.promises.chmod(outputPath, 0o755);
 			}
 		});

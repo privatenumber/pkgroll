@@ -34,6 +34,11 @@ export const patchBinary = (
 						: undefined
 				),
 			};
+		} else {
+			console.log('no match', {
+				executablePaths,
+				outputPath,
+			});
 		}
 	},
 

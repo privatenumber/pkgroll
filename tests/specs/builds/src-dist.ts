@@ -6,8 +6,9 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('change src', ({ test }) => {
-		test('nested directory - relative path', async () => {
+		test('nested directory - relative path', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -38,12 +39,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/nested/index.js')).toBe(true);
 			expect(await fixture.exists('dist/nested/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/nested/index.d.ts')).toBe(true);
-
-			await fixture.rm();
 		});
 
-		test('nested directory - absolute path', async () => {
+		test('nested directory - absolute path', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -74,14 +74,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/nested/index.js')).toBe(true);
 			expect(await fixture.exists('dist/nested/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/nested/index.d.ts')).toBe(true);
-
-			await fixture.rm();
 		});
 	});
 
 	describe('change dist', ({ test }) => {
-		test('nested directory', async () => {
+		test('nested directory', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 
@@ -98,8 +97,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('nested/index.js')).toBe(true);
 			expect(await fixture.exists('nested/index.mjs')).toBe(true);
 			expect(await fixture.exists('nested/index.d.ts')).toBe(true);
-
-			await fixture.rm();
 		});
 	});
 });

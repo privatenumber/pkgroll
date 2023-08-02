@@ -4,8 +4,9 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('minification', ({ test }) => {
-		test('minification', async () => {
+		test('minification', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/target.js',
@@ -17,12 +18,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/target.js', 'utf8');
+
+			// Optional chaining function call
 			expect(content).toMatch(/\w\?\.\w\(\)/);
 
 			// Name should be minified
 			expect(content).not.toMatch('exports.foo=foo');
-
-			await fixture.rm();
 		});
 	});
 });

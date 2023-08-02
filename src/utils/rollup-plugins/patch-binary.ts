@@ -34,11 +34,6 @@ export const patchBinary = (
 						: undefined
 				),
 			};
-		} else {
-			console.log('no match', {
-				executablePaths,
-				outputPath,
-			});
 		}
 	},
 
@@ -49,8 +44,14 @@ export const patchBinary = (
 			const outputChunk = chunk as OutputChunk;
 
 			if (outputChunk.isEntry && outputChunk.facadeModuleId) {
-				const outputPath = path.join(outputOptions.dir!, entryFileNames(outputChunk));
+				const outputPath = path.posix.join(outputOptions.dir!, entryFileNames(outputChunk));
 				await fs.promises.chmod(outputPath, 0o755);
+			} else {
+				console.log('no match', {
+					executablePaths,
+					outputChunk,
+					outputOptions,
+				});
 			}
 		});
 

@@ -64,7 +64,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const fixture = await createFixture('./tests/fixture-package');
 			onTestFinish(async () => await fixture.rm());
 
-
 			await fixture.writeJson('package.json', {
 				name: 'pkg',
 				main: 'dist/index.js',

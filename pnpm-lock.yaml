@@ -68,8 +68,8 @@ devDependencies:
     specifier: ^1.8.0
     version: 1.8.0
   manten:
-    specifier: ^0.7.0
-    version: 0.7.0
+    specifier: ^1.0.0
+    version: 1.0.0
   rollup-plugin-dts:
     specifier: 5.2.0
     version: 5.2.0(rollup@2.79.1)(typescript@4.9.5)
@@ -2978,8 +2978,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: false
 
-  /manten@0.7.0:
-    resolution: {integrity: sha512-CTGbnhYI9Y8nVUm9BQXuv8KW55Q9FxZMmZYtedMxHQJsBLXMMntdvZJefRAxBCISCFkQk1+/7vBwh/8z22BZ+Q==}
+  /manten@1.0.0:
+    resolution: {integrity: sha512-TQzGMEFtwooIQbg+xnJbPHjYRRoDRgjpBJ9XtLgt00nr7byRnw8I0dEOztyErXKZO5IbavcoljmmZalkf1xk4A==}
     dependencies:
       expect: 29.6.2
     dev: true

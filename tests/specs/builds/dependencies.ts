@@ -4,8 +4,9 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('dependencies', ({ test }) => {
-		test('externalize dependencies', async () => {
+		test('externalize dependencies', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-external.js',
@@ -21,11 +22,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dependency-external.js', 'utf8');
 			expect(content).toMatch('require(\'@org/name/path\')');
-
-			await fixture.rm();
 		});
 
-		test('externalize types', async () => {
+		test('externalize types', async ({ onTestFinish }) => {
 			const fixture = await createFixture({
 				'package.json': JSON.stringify({
 					types: 'dist/index.d.ts',
@@ -45,6 +44,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				export const b: typeB;
 				`,
 			});
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -55,11 +55,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.d.ts', 'utf8');
 			expect(content).toMatch('from \'pkg\'');
 			expect(content).toMatch('from \'@square-icons/react\'');
-
-			await fixture.rm();
 		});
 
-		test('bundle in types if only in devDependency', async () => {
+		test('bundle in types if only in devDependency', async ({ onTestFinish }) => {
 			const fixture = await createFixture({
 				'package.json': JSON.stringify({
 					types: 'dist/index.d.ts',
@@ -72,6 +70,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 				'src/index.d.ts': 'export { A } from "react"',
 			});
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -81,11 +80,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/index.d.ts', 'utf8');
 			expect(content).toBe('declare const A: { b: number };\n\nexport { A };\n');
-
-			await fixture.rm();
 		});
 
-		test('externalize dependency & type despite devDependency type', async () => {
+		test('externalize dependency & type despite devDependency type', async ({ onTestFinish }) => {
 			const fixture = await createFixture({
 				'package.json': JSON.stringify({
 					main: 'dist/index.js',
@@ -107,6 +104,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 				'src/index.ts': 'export { A } from "react"',
 			});
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -122,12 +120,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 			// Types externalized despite @types/react being a devDependency
 			const contentTypes = await fixture.readFile('dist/index.d.ts', 'utf8');
 			expect(contentTypes).toBe('export { A } from \'react\';\n');
-
-			await fixture.rm();
 		});
 
-		test('dual package - require', async () => {
+		test('dual package - require', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-exports-require.js',
@@ -140,12 +137,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dependency-exports-require.js', 'utf8');
 			expect(content).toMatch('cjs');
-
-			await fixture.rm();
 		});
 
-		test('dual package - import', async () => {
+		test('dual package - import', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-exports-import.js',
@@ -158,12 +154,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dependency-exports-import.js', 'utf8');
 			expect(content).toMatch('esm');
-
-			await fixture.rm();
 		});
 
-		test('imports map - default', async () => {
+		test('imports map - default', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-imports-map.js',
@@ -176,12 +171,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
 			expect(content).toMatch('default');
-
-			await fixture.rm();
 		});
 
-		test('imports map - node', async () => {
+		test('imports map - node', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-imports-map.js',
@@ -194,8 +188,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
 			expect(content).toMatch('node');
-
-			await fixture.rm();
 		});
 	});
 });

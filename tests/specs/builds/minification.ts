@@ -4,8 +4,9 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('minification', ({ test }) => {
-		test('minification', async () => {
+		test('minification', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/target.js',
@@ -23,8 +24,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			// Name should be minified
 			expect(content).not.toMatch('exports.foo=foo');
-
-			await fixture.rm();
 		});
 	});
 });

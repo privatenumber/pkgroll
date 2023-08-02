@@ -1,11 +1,12 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('generate sourcemap', ({ test }) => {
-		test('separate files', async () => {
+		test('separate files', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/index.js',
@@ -22,12 +23,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(await fixture.exists('dist/index.js.map')).toBe(true);
 			expect(await fixture.exists('dist/index.mjs.map')).toBe(true);
-
-			await fixture.rm();
 		});
 
-		test('inline sourcemap', async () => {
+		test('inline sourcemap', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -46,8 +46,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 				await fixture.readFile('dist/index.js', 'utf8'),
 			).toMatch(/\/\/# sourceMappingURL=data:application\/json;charset=utf-8;base64,\w+/);
 			expect(await fixture.exists('dist/index.js.map')).toBe(false);
-
-			await fixture.rm();
 		});
 	});
 });

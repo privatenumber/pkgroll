@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { OutputOptions } from 'rollup';
+import type { OutputOptions, RollupOptions, Plugin } from 'rollup';
 import type { TransformOptions } from 'esbuild';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -9,13 +9,13 @@ import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigJsonResolved } from 'get-tsconfig';
-import type { ExportEntry, AliasMap } from '../types';
-import { isFormatEsm, createRequire } from './rollup-plugins/create-require';
-import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild';
-import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins';
-import { patchBinary } from './rollup-plugins/patch-binary';
-import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs';
-import { getExternalDependencies } from './parse-package-json/get-external-dependencies';
+import type { ExportEntry, AliasMap } from '../types.js';
+import { isFormatEsm, createRequire } from './rollup-plugins/create-require.js';
+import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
+import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
+import { patchBinary } from './rollup-plugins/patch-binary.js';
+import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
 type Options = {
 	minify: boolean;
@@ -34,6 +34,8 @@ type EnvObject = {
 
 const stripQuery = (url: string) => url.split('?')[0];
 
+type Output = OutputOptions[] & Record<string, OutputOptions>;
+
 const getConfig = {
 	async type(
 		options: Options,
@@ -48,11 +50,11 @@ const getConfig = {
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
-				}),
+				}) as Plugin,
 			],
-			output: [] as OutputOptions[] & Record<string, any>,
+			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
-		};
+		} satisfies RollupOptions;
 	},
 
 	app(
@@ -105,9 +107,9 @@ const getConfig = {
 				),
 				patchBinary(executablePaths),
 			],
-			output: [] as OutputOptions[] & Record<string, any>,
+			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
-		};
+		} satisfies RollupOptions;
 	},
 };
 
@@ -233,5 +235,5 @@ export async function getRollupConfigs(
 		}
 	}
 
-	return configs;
+	return configs satisfies Record<string, RollupOptions>;
 }

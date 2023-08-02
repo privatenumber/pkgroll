@@ -2,14 +2,14 @@ import fs from 'fs';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
-import { readPackageJson } from './utils/read-package-json';
-import { getExportEntries } from './utils/parse-package-json/get-export-entries';
-import { getAliases } from './utils/parse-package-json/get-aliases';
-import { normalizePath } from './utils/normalize-path';
-import { getSourcePath } from './utils/get-source-path';
-import { getRollupConfigs } from './utils/get-rollup-configs';
+import { readPackageJson } from './utils/read-package-json.js';
+import { getExportEntries } from './utils/parse-package-json/get-export-entries.js';
+import { getAliases } from './utils/parse-package-json/get-aliases.js';
+import { normalizePath } from './utils/normalize-path.js';
+import { getSourcePath } from './utils/get-source-path.js';
+import { getRollupConfigs } from './utils/get-rollup-configs.js';
 import { parseTsconfig } from 'get-tsconfig';
-import { log } from './utils/log';
+import { log } from './utils/log.js';
 
 const { stringify } = JSON;
 

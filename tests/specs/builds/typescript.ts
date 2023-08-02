@@ -1,10 +1,10 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('TypeScript', ({ test }) => {
-		test('resolves .jsx -> .tsx', async () => {
+		test('resolves .jsx -> .tsx', async ({ onTestFinish }) => {
 			const fixture = await createFixture({
 				src: {
 					'index.ts': 'import "./file.jsx"',
@@ -15,6 +15,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					type: 'module',
 				}),
 			});
+			onTestFinish(async () => await fixture.rm());
 
 			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], { cwd: fixture.path, nodePath });
 
@@ -23,11 +24,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toBe('console.log(1);\n');
-
-			await fixture.rm();
 		});
 
-		test('resolves .jsx from .js', async () => {
+		test('resolves .jsx from .js', async ({ onTestFinish }) => {
 			const fixture = await createFixture({
 				src: {
 					'index.js': 'import "./file.jsx"',
@@ -38,6 +37,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					type: 'module',
 				}),
 			});
+			onTestFinish(async () => await fixture.rm());
 
 			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], { cwd: fixture.path, nodePath });
 
@@ -46,8 +46,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toBe('console.log(1);\n');
-
-			await fixture.rm();
 		});
 	});
 });

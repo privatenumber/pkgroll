@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { PackageJson } from 'type-fest';
-import { fsExists } from './fs-exists';
+import { fsExists } from './fs-exists.js';
 
 export const readPackageJson = async (directoryPath: string): Promise<PackageJson> => {
 	const packageJsonPath = path.join(directoryPath, 'package.json');
@@ -17,6 +17,6 @@ export const readPackageJson = async (directoryPath: string): Promise<PackageJso
 	try {
 		return JSON.parse(packageJsonString);
 	} catch (error) {
-		throw new Error(`Cannot parse package.json: ${(error as any).message}`);
+		throw new Error(`Cannot parse package.json: ${(error as Error).message}`);
 	}
 };

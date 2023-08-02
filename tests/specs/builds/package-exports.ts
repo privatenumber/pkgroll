@@ -1,11 +1,12 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
-		test('string', async () => {
+		test('string', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				exports: './dist/index.js',
@@ -18,12 +19,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('module.exports =');
-
-			await fixture.rm();
 		});
 
-		test('type module - string', async () => {
+		test('type module - string', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -37,12 +37,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('export {');
-
-			await fixture.rm();
 		});
 
-		test('type module - object - string', async () => {
+		test('type module - object - string', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -58,8 +57,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content).toMatch('export {');
-
-			await fixture.rm();
 		});
 
 		/**
@@ -70,8 +67,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 		 * instead of two just to remove one file. If this is problematic,
 		 * we can consider deleting or intercepting file emission.
 		 */
-		test('conditions', async () => {
+		test('conditions', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				exports: {
@@ -96,12 +94,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const utilsCjs = await fixture.readFile('dist/utils.cjs', 'utf8');
 			expect(utilsCjs).toMatch('exports.sayHello =');
-
-			await fixture.rm();
 		});
 
-		test('conditions - import should allow cjs', async () => {
+		test('conditions - import should allow cjs', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				exports: {
@@ -122,8 +119,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const utilsMjs = await fixture.readFile('dist/utils.js', 'utf8');
 			expect(utilsMjs).toMatch('exports.sayHello =');
-
-			await fixture.rm();
 		});
 	});
 });

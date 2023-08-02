@@ -1,23 +1,23 @@
 import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('bin', ({ test }) => {
-		(async () => {
+		test('supports single path', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
+
 			await fixture.writeJson('package.json', {
 				bin: './dist/index.mjs',
 				exports: './dist/index.mjs',
 			});
 
-			await test('supports single path', async () => {
-				const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
 
-				expect(pkgrollProcess.exitCode).toBe(0);
-				expect(pkgrollProcess.stderr).toBe('');
-			});
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
 
 			if (process.platform !== 'win32') {
 				await test('is executable', async () => {
@@ -30,12 +30,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 					expect(unixFilePermissions).toBe('0755');
 				});
 			}
+		});
 
-			await fixture.rm();
-		})();
-
-		test('supports object', async () => {
+		test('supports object', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				bin: {
@@ -51,8 +50,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/index.js')).toBe(true);
-
-			await fixture.rm();
 		});
 	});
 });

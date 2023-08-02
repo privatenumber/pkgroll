@@ -1,6 +1,6 @@
 import type { PackageJson } from 'type-fest';
-import type { PackageType, ExportEntry } from '../../types';
-import { normalizePath } from '../normalize-path';
+import type { PackageType, ExportEntry } from '../../types.js';
+import { normalizePath } from '../normalize-path.js';
 
 const getFileType = (filePath: string): PackageType | undefined => {
 	if (filePath.endsWith('.mjs')) {

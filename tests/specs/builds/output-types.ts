@@ -1,12 +1,13 @@
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, installTypeScript } from '../../utils';
+import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('types', ({ test }) => {
-		test('emits', async () => {
+		test('emits', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 
@@ -28,12 +29,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
 			expect(content).toMatch('declare function');
-
-			await fixture.rm();
 		});
 
-		test('{ srcExt: mts, distExt: d.ts }', async () => {
+		test('{ srcExt: mts, distExt: d.ts }', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 
@@ -48,12 +48,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/mts.d.ts', 'utf8');
 			expect(content).toMatch('declare function');
-
-			await fixture.rm();
 		});
 
-		test('{ srcExt: .mts, distExt: d.cts }', async () => {
+		test('{ srcExt: .mts, distExt: d.cts }', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 
@@ -68,12 +67,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/mts.d.cts', 'utf8');
 			expect(content).toMatch('declare function');
-
-			await fixture.rm();
 		});
 
-		test('{ srcExt: .mts, distExt: d.mts }', async () => {
+		test('{ srcExt: .mts, distExt: d.mts }', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 
@@ -88,18 +86,17 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/mts.d.mts', 'utf8');
 			expect(content).toMatch('declare function');
-
-			await fixture.rm();
 		});
 
-		test('emits multiple', async () => {
+		test('emits multiple', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
 			await fixture.writeJson('package.json', {
 				exports: {
-					'./utils': {
+					'./utils.js': {
 						types: './dist/utils.d.ts',
 					},
 					'./nested': {
@@ -126,12 +123,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const nestedDts = await fixture.readFile('dist/nested/index.d.ts', 'utf8');
 			expect(nestedDts).toMatch('declare function sayHello');
-
-			await fixture.rm();
 		});
 
-		test('emits multiple - same name', async () => {
+		test('emits multiple - same name', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -164,12 +160,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const nestedDts = await fixture.readFile('dist/nested/utils.d.ts', 'utf8');
 			expect(nestedDts).toMatch('declare function sayGoodbye');
-
-			await fixture.rm();
 		});
 
-		test('emits multiple - different extension', async () => {
+		test('emits multiple - different extension', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -204,12 +199,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const utilsDCts = await fixture.readFile('dist/utils.d.cts', 'utf8');
 			expect(utilsDCts).toMatch('declare function sayHello');
-
-			await fixture.rm();
 		});
 
-		test('bundles .d.ts', async () => {
+		test('bundles .d.ts', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 
@@ -224,8 +218,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dts.d.ts', 'utf8');
 			expect(content).toMatch('declare const');
-
-			await fixture.rm();
 		});
 	});
 });

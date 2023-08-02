@@ -1,11 +1,12 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils';
+import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package imports', ({ test }) => {
-		test('imports', async () => {
+		test('imports', async ({ onTestFinish }) => {
 			const fixture = await createFixture('./tests/fixture-package');
+			onTestFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
 				main: './dist/entry.js',
@@ -14,7 +15,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			});
 			await fixture.writeFile('src/entry.ts', `
-				import { sayGoodbye } from '~/utils';
+				import { sayGoodbye } from '~/utils.js';
 				console.log(sayGoodbye);
 			`);
 
@@ -26,8 +27,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/entry.js', 'utf8');
 
 			expect(content).toMatch('sayGoodbye');
-
-			await fixture.rm();
 		});
 	});
 });

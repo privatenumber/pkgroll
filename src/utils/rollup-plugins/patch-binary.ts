@@ -44,9 +44,9 @@ export const patchBinary = (
 			const outputChunk = chunk as OutputChunk;
 
 			if (outputChunk.isEntry && outputChunk.facadeModuleId) {
-				const outputPath = path.posix.join(outputOptions.dir!, entryFileNames(outputChunk));
+				const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(outputChunk))}`;
 				console.log('chmod', {
-					outputPath
+					outputPath,
 				});
 				await fs.promises.chmod(outputPath, 0o755);
 			} else {

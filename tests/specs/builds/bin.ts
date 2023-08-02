@@ -19,17 +19,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			if (process.platform !== 'win32') {
-				await test('is executable', async () => {
-					const content = await fixture.readFile('dist/index.mjs', 'utf8');
-					expect(content).toMatch('#!/usr/bin/env node');
+			await test('is executable', async () => {
+				const content = await fixture.readFile('dist/index.mjs', 'utf8');
+				expect(content).toMatch('#!/usr/bin/env node');
 
-					const stats = await fs.stat(`${fixture.path}/dist/index.mjs`);
-					const unixFilePermissions = `0${(stats.mode & 0o777).toString(8)}`; // eslint-disable-line no-bitwise
+				const stats = await fs.stat(`${fixture.path}/dist/index.mjs`);
+				const unixFilePermissions = `0${(stats.mode & 0o777).toString(8)}`; // eslint-disable-line no-bitwise
 
-					expect(unixFilePermissions).toBe('0755');
-				});
-			}
+				expect(unixFilePermissions).toBe('0755');
+			});
 		});
 
 		test('supports object', async ({ onTestFinish }) => {

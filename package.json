@@ -35,6 +35,9 @@
 		"type-check": "tsc --noEmit",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
+	"engines": {
+		"node": ">=14.17"
+	},
 	"peerDependencies": {
 		"typescript": "^4.1 || ^5.0"
 	},

@@ -29,7 +29,7 @@
 	"bin": "./dist/cli.js",
 	"scripts": {
 		"Target is 12.20 for import(), node: prefix is not used": "",
-		"build": "tsx src/cli.ts --minify --target node12.20",
+		"build": "tsx src/cli.ts --minify --target node14.18",
 		"test": "pnpm build && tsx tests/index.ts",
 		"lint": "eslint --cache .",
 		"type-check": "tsc --noEmit",

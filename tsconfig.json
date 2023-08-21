@@ -8,9 +8,9 @@
 		"strict": true,
 		"skipLibCheck": true,
 
-		// Node 12
+		// Node 14.18
 		"module": "esnext",
-		"target": "ES2019",
+		"target": "es2020",
 	},
 	"include": [
 		"src"

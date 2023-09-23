@@ -217,11 +217,12 @@ export async function getRollupConfigs(
 				 * - input may be an absolute symlink path
 				 * - test tmpdir is a symlink: /var/ -> /private/var/
 				 */
-				entryFileNames: chunk => (
-					fs.realpathSync.native(stripQuery(chunk.facadeModuleId!))
-						.slice(sourceDirectoryPath.length, -srcExtension.length)
-					+ distExtension
-				),
+				entryFileNames: chunk => {
+					const realPath = fs.realpathSync.native(stripQuery(chunk.facadeModuleId!));
+					const relativePath = realPath.slice(sourceDirectoryPath.length);
+					const [filePath] = relativePath.split('.');
+					return filePath + distExtension;
+				},
 			};
 
 			outputs.push(outputOptions);

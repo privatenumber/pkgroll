@@ -4,6 +4,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 	describe('builds', async ({ runTestSuite }) => {
 		runTestSuite(import('./output-commonjs.js'), nodePath);
 		runTestSuite(import('./output-module.js'), nodePath);
+		runTestSuite(import('./output-dual.js'), nodePath);
 		runTestSuite(import('./output-types.js'), nodePath);
 		runTestSuite(import('./env.js'), nodePath);
 		runTestSuite(import('./target.js'), nodePath);

@@ -28,14 +28,14 @@
 	},
 	"bin": "./dist/cli.js",
 	"scripts": {
-		"build": "tsx src/cli.ts --minify --target node16",
+		"build": "tsx src/cli.ts --minify --target node18",
 		"test": "pnpm build && tsx tests/index.ts",
 		"lint": "eslint --cache .",
 		"type-check": "tsc --noEmit",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"engines": {
-		"node": ">=16"
+		"node": ">=18"
 	},
 	"peerDependencies": {
 		"typescript": "^4.1 || ^5.0"

@@ -7,9 +7,6 @@ const nodeVersions = [
 		process.env.CI
 			? [
 				'18',
-				'16',
-				'14',
-				'12',
 			]
 			: []
 	),

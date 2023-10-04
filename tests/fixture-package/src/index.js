@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import value from './value.js';
 import { Component } from './component.tsx';
 import { sayHello } from './utils.js';

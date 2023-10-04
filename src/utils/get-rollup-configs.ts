@@ -13,6 +13,7 @@ import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
 import { patchBinary } from './rollup-plugins/patch-binary.js';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
 type Options = {
@@ -92,6 +93,7 @@ const getConfig = {
 						})]
 						: []
 				),
+				stripHashbang(),
 				commonjs(),
 				json(),
 				esbuildTransform(esbuildConfig),

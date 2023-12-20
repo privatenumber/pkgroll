@@ -51,7 +51,10 @@ const argv = cli({
 			type: [
 				(flagValue: string) => {
 					const [key, value] = flagValue.split('=');
-					return { key, value };
+					return {
+						key,
+						value,
+					};
 				},
 			],
 			description: 'Compile-time environment variables (eg. --env.NODE_ENV=production)',

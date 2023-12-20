@@ -9,5 +9,5 @@ const getLocalTypescriptPath = () => {
 	}
 };
 
-// eslint-disable-next-line n/global-require
+// eslint-disable-next-line n/global-require, import/no-dynamic-require
 export default require(getLocalTypescriptPath());

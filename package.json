@@ -23,10 +23,10 @@
 	"files": [
 		"dist"
 	],
+	"bin": "./dist/cli.js",
 	"imports": {
 		"typescript": "./src/local-typescript-loader.ts"
 	},
-	"bin": "./dist/cli.js",
 	"scripts": {
 		"build": "tsx src/cli.ts --minify --target node18",
 		"test": "pnpm build && tsx tests/index.ts",

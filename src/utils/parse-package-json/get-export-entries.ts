@@ -2,7 +2,9 @@ import type { PackageJson } from 'type-fest';
 import type { PackageType, ExportEntry } from '../../types.js';
 import { normalizePath } from '../normalize-path.js';
 
-const getFileType = (filePath: string): PackageType | undefined => {
+const getFileType = (
+	filePath: string,
+): PackageType | undefined => {
 	if (filePath.endsWith('.mjs')) {
 		return 'module';
 	}
@@ -13,11 +15,11 @@ const getFileType = (filePath: string): PackageType | undefined => {
 
 const isPath = (filePath: string) => filePath.startsWith('.');
 
-function parseExportsMap(
+const parseExportsMap = (
 	exportMap: PackageJson['exports'],
 	packageType: PackageType,
 	packagePath = 'exports',
-): ExportEntry[] {
+): ExportEntry[] => {
 	if (exportMap) {
 		if (typeof exportMap === 'string') {
 			if (isPath(exportMap)) {
@@ -104,12 +106,12 @@ function parseExportsMap(
 	}
 
 	return [];
-}
+};
 
-function addExportPath(
+const addExportPath = (
 	exportPathsMap: Record<string, ExportEntry>,
 	exportEntry: ExportEntry,
-) {
+) => {
 	exportEntry.outputPath = normalizePath(exportEntry.outputPath);
 
 	const { outputPath: exportPath, type, platform } = exportEntry;
@@ -128,7 +130,7 @@ function addExportPath(
 	} else {
 		exportPathsMap[exportPath] = exportEntry;
 	}
-}
+};
 
 export const getExportEntries = (packageJson: PackageJson) => {
 	const exportEntriesMap: Record<string, ExportEntry> = {};

@@ -15,7 +15,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll(
 				['--sourcemap'],
-				{ cwd: fixture.path, nodePath },
+				{
+					cwd: fixture.path,
+					nodePath,
+				},
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(0);
@@ -36,7 +39,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll(
 				['--sourcemap=inline'],
-				{ cwd: fixture.path, nodePath },
+				{
+					cwd: fixture.path,
+					nodePath,
+				},
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(0);

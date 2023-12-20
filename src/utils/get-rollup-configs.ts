@@ -36,9 +36,9 @@ const stripQuery = (url: string) => url.split('?')[0];
 type Output = OutputOptions[] & Record<string, OutputOptions>;
 
 const getConfig = {
-	async type(
+	type: async (
 		options: Options,
-	) {
+	) => {
 		const dts = await import('rollup-plugin-dts');
 
 		return {
@@ -56,12 +56,12 @@ const getConfig = {
 		} satisfies RollupOptions;
 	},
 
-	app(
+	app: (
 		options: Options,
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
-	) {
+	) => {
 		const esbuildConfig = {
 			target: options.target,
 		};
@@ -117,7 +117,7 @@ type RollupConfigs = {
 	[T in keyof GetConfig]?: Awaited<ReturnType<GetConfig[T]>>;
 };
 
-export async function getRollupConfigs(
+export const getRollupConfigs = async (
 	sourceDirectoryPath: string,
 	distributionDirectoryPath: string,
 	inputs: {
@@ -129,7 +129,7 @@ export async function getRollupConfigs(
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
-) {
+) => {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)
 		.map(({ exportEntry }) => exportEntry.outputPath);
@@ -233,4 +233,4 @@ export async function getRollupConfigs(
 	}
 
 	return configs satisfies Record<string, RollupOptions>;
-}
+};

@@ -33,7 +33,7 @@ export const createRequire = (): Plugin => ({
 			: null
 	),
 
-	load(id) {
+	load: (id) => {
 		if (id !== virtualModuleName) {
 			return null;
 		}

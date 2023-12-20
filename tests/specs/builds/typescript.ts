@@ -17,7 +17,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 			onTestFinish(async () => await fixture.rm());
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -39,7 +42,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			});
 			onTestFinish(async () => await fixture.rm());
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');

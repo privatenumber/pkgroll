@@ -3,10 +3,10 @@ import { fsExists } from './fs-exists.js';
 
 const { stringify } = JSON;
 
-async function tryExtensions(
+const tryExtensions = async (
 	pathWithoutExtension: string,
 	extensions: readonly string[],
-) {
+) => {
 	for (const extension of extensions) {
 		const pathWithExtension = pathWithoutExtension + extension;
 		if (await fsExists(pathWithExtension)) {
@@ -16,7 +16,7 @@ async function tryExtensions(
 			};
 		}
 	}
-}
+};
 
 const extensionMap = {
 	'.d.ts': ['.d.ts', '.d.mts', '.d.cts', '.ts', '.mts', '.cts'],
@@ -29,11 +29,11 @@ const extensionMap = {
 
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
-export async function getSourcePath(
+export const getSourcePath = async (
 	exportEntry: ExportEntry,
 	source: string,
 	dist: string,
-) {
+) => {
 	const sourcePathUnresolved = source + exportEntry.outputPath.slice(dist.length);
 
 	for (const distExtension of distExtensions) {
@@ -54,4 +54,4 @@ export async function getSourcePath(
 	}
 
 	throw new Error(`Could not find matching source file for export path ${stringify(exportEntry.outputPath)}`);
-}
+};

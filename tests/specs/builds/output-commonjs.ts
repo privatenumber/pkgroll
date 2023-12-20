@@ -12,7 +12,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/index.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -29,7 +32,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/mts.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -46,7 +52,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/cts.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -63,7 +72,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/cts.cjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -81,7 +93,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/index.cjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -98,7 +113,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/mjs.cjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -115,7 +133,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/nested/index.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');

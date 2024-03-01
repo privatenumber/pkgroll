@@ -1,0 +1,6 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "node"
+	},
+	"resources": [{ "path": "./packages/one" }, { "path": "./packages/two" }]
+}

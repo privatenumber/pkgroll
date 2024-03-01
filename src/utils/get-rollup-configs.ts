@@ -49,6 +49,7 @@ const getConfig = {
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
+					compilerOptions: { composite: false },
 				}) as Plugin,
 			],
 			output: [] as unknown as Output,

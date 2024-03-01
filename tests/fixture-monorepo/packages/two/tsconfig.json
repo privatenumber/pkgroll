@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"jsx": "react",
+		"moduleResolution": "node",
+		"composite": true,
+		"outDir": "dist"
+	},
+	"include": ["src/index.ts"],
+	"references": [{ "path": "../one" }]
+}

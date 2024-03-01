@@ -219,5 +219,44 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dts.d.ts', 'utf8');
 			expect(content).toMatch('declare const');
 		});
+
+		test('handles types in composite monorepos correctly', async ({ onTestFinish }) => {
+			const fixture = await createFixture('./tests/fixture-monorepo');
+			onTestFinish(async () => await fixture.rm());
+
+			await installTypeScript(fixture.path);
+
+			await fixture.writeJson('package.json', {
+				workspaces: ['packages/*'],
+			});
+
+			await fixture.writeJson('packages/one/package.json', {
+				name: '@org/one',
+				type: 'module',
+				exports: { types: './dist/index.d.mts' },
+			});
+
+			const pkgrollOne = await pkgroll([], { cwd: `${fixture.path}/packages/one`, nodePath });
+			expect(pkgrollOne.exitCode).toBe(0);
+			expect(pkgrollOne.stderr).toBe('');
+
+			const contentOne = await fixture.readFile('packages/one/dist/index.d.mts', 'utf8');
+			expect(contentOne).toMatch('export type { Name };');
+
+			await fixture.writeJson('packages/two/package.json', {
+				main: './dist/index.mjs',
+				type: 'module',
+				dependencies: {
+					'@org/one': 'workspace:*',
+				},
+			});
+
+			const pkgrollTwo = await pkgroll([], { cwd: `${fixture.path}/packages/two`, nodePath });
+			expect(pkgrollTwo.exitCode).toBe(0);
+			expect(pkgrollTwo.stderr).toBe('');
+
+			const contentTwo = await fixture.readFile('packages/two/dist/index.mjs', 'utf8');
+			expect(contentTwo).toMatch('export { sayHello };');
+		});
 	});
 });

@@ -304,14 +304,20 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			await installTypeScript(fixture.path);
 
-			const pkgrollOne = await pkgroll([], { cwd: `${fixture.path}/packages/one`, nodePath });
+			const pkgrollOne = await pkgroll([], {
+				cwd: `${fixture.path}/packages/one`,
+				nodePath,
+			});
 			expect(pkgrollOne.exitCode).toBe(0);
 			expect(pkgrollOne.stderr).toBe('');
 
 			const contentOne = await fixture.readFile('packages/one/dist/index.d.mts', 'utf8');
 			expect(contentOne).toMatch('export type { Name };');
 
-			const pkgrollTwo = await pkgroll([], { cwd: `${fixture.path}/packages/two`, nodePath });
+			const pkgrollTwo = await pkgroll([], {
+				cwd: `${fixture.path}/packages/two`,
+				nodePath,
+			});
 			expect(pkgrollTwo.exitCode).toBe(0);
 			expect(pkgrollTwo.stderr).toBe('');
 

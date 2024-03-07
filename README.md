@@ -1,8 +1,23 @@
-# 📦 🍣 pkgroll <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/v/pkgroll"></a> <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/dm/pkgroll"></a>
+<p align="center">
+	<img width="140" src=".github/logo.webp">
+</p>
+<h1 align="center">
+	pkgroll
+	<br>
+	<a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/v/pkgroll"></a> <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/dm/pkgroll"></a>	
+</h1>
 
-Pkgroll is a next-gen package bundler that infers how to build your package from entry-points defined in `package.json`. No configuration necessary!
+_pkgroll_ is a JavaScript package bundler powered by Rollup that automatically builds your package from entry-points defined in `package.json`. No config necessary!
 
-Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/DTS outputs!
+Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/.d.ts outputs!
+
+### Features
+- ✅ `package.json#exports` to define entry-points
+- ✅ Dependency externalization
+- ✅ Minification
+- ✅ TypeScript support + `.d.ts` bundling
+- ✅ Watch mode
+- ✅ CLI outputs (auto hashbang insertion)
 
 <br>
 

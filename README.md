@@ -1,4 +1,4 @@
-# 📦 🍣 pkgroll
+# 📦 🍣 pkgroll <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/v/pkgroll"></a> <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/dm/pkgroll"></a>
 
 Pkgroll is a next-gen package bundler that infers how to build your package from entry-points defined in `package.json`. No configuration necessary!
 

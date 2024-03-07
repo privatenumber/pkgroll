@@ -243,5 +243,80 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dts.d.ts', 'utf8');
 			expect(content).toMatch('declare const');
 		});
+
+		test('composite monorepos', async ({ onTestFinish }) => {
+			const fixture = await createFixture({
+				packages: {
+					one: {
+						'package.json': JSON.stringify({
+							name: '@org/one',
+							exports: {
+								types: './dist/index.d.mts',
+							},
+						}),
+						'tsconfig.json': JSON.stringify({
+							compilerOptions: {
+								composite: true,
+							},
+							include: [
+								'src/index.mts',
+								'src/name.mts',
+							],
+						}),
+						src: {
+							'index.mts': 'export { Name } from "./name.mjs";',
+							'name.mts': 'export type Name = string;',
+						},
+					},
+					two: {
+						'package.json': JSON.stringify({
+							main: './dist/index.mjs',
+							dependencies: {
+								'@org/one': 'workspace:*',
+							},
+						}),
+						'tsconfig.json': JSON.stringify({
+							compilerOptions: {
+								composite: true,
+							},
+							include: ['src/index.mts'],
+							references: [{ path: '../one' }],
+						}),
+						'src/index.mts': `
+						import { Name } from '@org/one';
+						export function sayHello(name: Name) {
+							console.log('Hello', name);
+						}
+						`,
+					},
+				},
+				'tsconfig.json': JSON.stringify({
+					resources: [
+						{ path: './packages/one' },
+						{ path: './packages/two' },
+					],
+				}),
+				'package.json': JSON.stringify({
+					workspaces: ['packages/*'],
+				}),
+			});
+			onTestFinish(async () => await fixture.rm());
+
+			await installTypeScript(fixture.path);
+
+			const pkgrollOne = await pkgroll([], { cwd: `${fixture.path}/packages/one`, nodePath });
+			expect(pkgrollOne.exitCode).toBe(0);
+			expect(pkgrollOne.stderr).toBe('');
+
+			const contentOne = await fixture.readFile('packages/one/dist/index.d.mts', 'utf8');
+			expect(contentOne).toMatch('export type { Name };');
+
+			const pkgrollTwo = await pkgroll([], { cwd: `${fixture.path}/packages/two`, nodePath });
+			expect(pkgrollTwo.exitCode).toBe(0);
+			expect(pkgrollTwo.stderr).toBe('');
+
+			const contentTwo = await fixture.readFile('packages/two/dist/index.mjs', 'utf8');
+			expect(contentTwo).toMatch('export { sayHello };');
+		});
 	});
 });

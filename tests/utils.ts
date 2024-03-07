@@ -18,8 +18,13 @@ export const pkgroll = async (
 	},
 );
 
-export const installTypeScript = (fixturePath: string) => fs.symlink(
-	path.resolve('node_modules/typescript'),
-	path.join(fixturePath, 'node_modules/typescript'),
-	'dir',
-);
+export const installTypeScript = async (fixturePath: string) => {
+	const nodeModulesDirectory = path.join(fixturePath, 'node_modules');
+
+	await fs.mkdir(nodeModulesDirectory, { recursive: true });
+	await fs.symlink(
+		path.resolve('node_modules/typescript'),
+		path.join(nodeModulesDirectory, 'typescript'),
+		'dir',
+	);
+};

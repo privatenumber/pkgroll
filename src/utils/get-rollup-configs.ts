@@ -49,6 +49,21 @@ const getConfig = {
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
+
+					/**
+					 * https://github.com/privatenumber/pkgroll/pull/54
+					 *
+					 * I think this is necessary because TypeScript's composite requires
+					 * that all files are passed in via `include`. However, it seems that
+					 * rollup-plugin-dts doesn't read or relay the `include` option in tsconfig.
+					 *
+					 * For now, simply disabling composite does the trick since it doesn't seem
+					 * necessary for dts bundling.
+					 *
+					 * One concern here is that this overwrites the compilerOptions. According to
+					 * the rollup-plugin-dts docs, it reads from baseUrl and paths.
+					 */
+					compilerOptions: { composite: false },
 				}) as Plugin,
 			],
 			output: [] as unknown as Output,

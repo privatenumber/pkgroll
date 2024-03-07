@@ -1,8 +1,8 @@
 <p align="center">
-	<img width="140" src=".github/logo.webp">
+	<img width="130" src=".github/logo.webp">
 </p>
 <h1 align="center">
-	pkgroll
+	<sup>pkgroll</sup>
 	<br>
 	<a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/v/pkgroll"></a> <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/dm/pkgroll"></a>	
 </h1>

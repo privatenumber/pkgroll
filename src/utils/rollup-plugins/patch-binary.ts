@@ -10,11 +10,7 @@ export const patchBinary = (
 ): Plugin => ({
 	name: 'patch-binary',
 
-	renderChunk(
-		code,
-		chunk,
-		outputOptions,
-	) {
+	renderChunk: (code, chunk, outputOptions) => {
 		if (!chunk.isEntry || !chunk.facadeModuleId) {
 			return;
 		}
@@ -37,7 +33,7 @@ export const patchBinary = (
 		}
 	},
 
-	async writeBundle(outputOptions, bundle) {
+	writeBundle: async (outputOptions, bundle) => {
 		const entryFileNames = outputOptions.entryFileNames as (chunk: OutputChunk) => string;
 
 		const chmodFiles = Object.values(bundle).map(async (chunk) => {

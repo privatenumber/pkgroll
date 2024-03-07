@@ -12,7 +12,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/conditional-require.js',
 			});
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');

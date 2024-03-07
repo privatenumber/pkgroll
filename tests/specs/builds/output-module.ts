@@ -13,7 +13,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/index.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -30,7 +33,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/index.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -47,7 +53,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				module: './dist/index.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -64,7 +73,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/cjs.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -81,7 +93,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/mts.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -98,7 +113,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/cts.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -116,7 +134,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/cts.js',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -134,7 +155,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				module: './dist/require.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll(['--minify'], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll(['--minify'], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -154,7 +178,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/conditional-require.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll([], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -171,7 +198,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 				main: './dist/conditional-require.mjs',
 			});
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development', '--minify'], { cwd: fixture.path, nodePath });
+			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development', '--minify'], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');

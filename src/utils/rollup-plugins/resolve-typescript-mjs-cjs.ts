@@ -1,6 +1,6 @@
 import type { Plugin } from 'rollup';
 
-export function resolveTypescriptMjsCts(): Plugin {
+export const resolveTypescriptMjsCts = (): Plugin => {
 	const isJs = /\.(?:[mc]?js|jsx)$/;
 
 	return {
@@ -20,4 +20,4 @@ export function resolveTypescriptMjsCts(): Plugin {
 			return null;
 		},
 	};
-}
+};

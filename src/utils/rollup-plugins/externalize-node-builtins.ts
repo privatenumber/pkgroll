@@ -42,6 +42,7 @@ export const externalizeNodeBuiltins = ({ target }: {
 		];
 
 		return !(
+
 			// 12.20.0 <= x < 13.0.0
 			(
 				compareSemver(semver, [12, 20, 0]) >= 0

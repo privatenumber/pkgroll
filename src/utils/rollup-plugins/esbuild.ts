@@ -3,16 +3,16 @@ import { createFilter } from '@rollup/pluginutils';
 import { transform, type TransformOptions, type Format } from 'esbuild';
 import { tsconfig } from '../tsconfig.js';
 
-export function esbuildTransform(
+export const esbuildTransform = (
 	options?: TransformOptions,
-): Plugin {
+): Plugin => {
 	const filter = createFilter(
 		/\.([cm]?ts|[jt]sx)$/,
 	);
 
 	return {
 		name: 'esbuild-transform',
-		async transform(code, id) {
+		transform: async (code, id) => {
 			if (!filter(id)) {
 				return null;
 			}
@@ -34,9 +34,11 @@ export function esbuildTransform(
 			};
 		},
 	};
-}
+};
 
-const getEsbuildFormat = (rollupFormat: InternalModuleFormat): Format | undefined => {
+const getEsbuildFormat = (
+	rollupFormat: InternalModuleFormat,
+): Format | undefined => {
 	if (rollupFormat === 'es') {
 		return 'esm';
 	}
@@ -46,31 +48,29 @@ const getEsbuildFormat = (rollupFormat: InternalModuleFormat): Format | undefine
 	}
 };
 
-export function esbuildMinify(
+export const esbuildMinify = (
 	options?: TransformOptions,
-): Plugin {
-	return {
-		name: 'esbuild-minify',
-		async renderChunk(code, _, rollupOptions) {
-			const result = await transform(code, {
-				/**
-				 * `target` is used to prevent new minification syntax
-				 * from being used.
-				 *
-				 * https://github.com/evanw/esbuild/releases/tag/v0.14.25#:~:text=Minification%20now%20takes%20advantage%20of%20the%20%3F.%20operator
-				 */
-				...options,
+): Plugin => ({
+	name: 'esbuild-minify',
+	renderChunk: async (code, _, rollupOptions) => {
+		const result = await transform(code, {
+			/**
+			 * `target` is used to prevent new minification syntax
+			 * from being used.
+			 *
+			 * https://github.com/evanw/esbuild/releases/tag/v0.14.25#:~:text=Minification%20now%20takes%20advantage%20of%20the%20%3F.%20operator
+			 */
+			...options,
 
-				// https://github.com/egoist/rollup-plugin-esbuild/issues/317
-				format: getEsbuildFormat(rollupOptions.format),
+			// https://github.com/egoist/rollup-plugin-esbuild/issues/317
+			format: getEsbuildFormat(rollupOptions.format),
 
-				minify: true,
-			});
+			minify: true,
+		});
 
-			return {
-				code: result.code,
-				map: result.map || null,
-			};
-		},
-	};
-}
+		return {
+			code: result.code,
+			map: result.map || null,
+		};
+	},
+});

@@ -1,16 +1,15 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"isolatedModules": true,
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"outDir": "dist",
-		"strict": true,
-		"skipLibCheck": true,
-
 		// Node 18
-		"module": "esnext",
 		"target": "ES2022",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"strict": true,
+		"outDir": "dist",
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
 	},
 	"include": [
 		"src"

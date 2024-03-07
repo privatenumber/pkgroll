@@ -48,19 +48,25 @@ const argv = cli({
 			default: false,
 		},
 		env: {
-			type: [function Env(flagValue: string) {
-				const [key, value] = flagValue.split('=');
-				return { key, value };
-			}],
+			type: [
+				(flagValue: string) => {
+					const [key, value] = flagValue.split('=');
+					return {
+						key,
+						value,
+					};
+				},
+			],
 			description: 'Compile-time environment variables (eg. --env.NODE_ENV=production)',
 		},
+
 		// TODO: rename to conditions and -C flag like Node.js
 		exportCondition: {
 			type: [String],
 			description: 'Export conditions for resolving dependency export and import maps (eg. --export-condition=node)',
 		},
 		sourcemap: {
-			type(flagValue: string) {
+			type: (flagValue: string) => {
 				if (flagValue === '') {
 					return true;
 				}
@@ -76,7 +82,7 @@ const argv = cli({
 
 	help: {
 		description: 'Minimalistic package bundler',
-		render(nodes, renderers) {
+		render: (nodes, renderers) => {
 			renderers.flagOperator = flagData => (
 				(flagData.name === 'env')
 					? '.key='
@@ -128,6 +134,7 @@ if (tsconfigTarget) {
 	})));
 
 	const rollupConfigs = await getRollupConfigs(
+
 		/**
 		 * Resolve symlink in source path.
 		 *

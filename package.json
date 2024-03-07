@@ -23,14 +23,14 @@
 	"files": [
 		"dist"
 	],
+	"bin": "./dist/cli.js",
 	"imports": {
 		"typescript": "./src/local-typescript-loader.ts"
 	},
-	"bin": "./dist/cli.js",
 	"scripts": {
 		"build": "tsx src/cli.ts --minify --target node18",
 		"test": "pnpm build && tsx tests/index.ts",
-		"lint": "eslint --cache .",
+		"lint": "lint --cache --node --ignore-pattern tests/fixture-package .",
 		"type-check": "tsc --noEmit",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
@@ -58,11 +58,11 @@
 		"rollup": "^4.9.1"
 	},
 	"devDependencies": {
-		"@pvtnbr/eslint-config": "^0.38.0",
+		"@pvtnbr/eslint-config": "^1.0.3",
 		"@types/node": "^20.10.5",
 		"clean-pkg-json": "^1.2.0",
 		"cleye": "^1.3.2",
-		"eslint": "^8.56.0",
+		"eslint": "^8.57.0",
 		"execa": "^8.0.1",
 		"fs-fixture": "^1.2.0",
 		"get-node": "^15.0.0",
@@ -73,11 +73,5 @@
 		"tsx": "^4.6.2",
 		"type-fest": "^4.8.3",
 		"typescript": "^5.3.3"
-	},
-	"eslintConfig": {
-		"extends": "@pvtnbr/eslint-config/node",
-		"ignorePatterns": [
-			"tests/fixture-package"
-		]
 	}
 }

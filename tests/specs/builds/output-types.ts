@@ -267,9 +267,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				},
 				'tsconfig.json': JSON.stringify({
-					compilerOptions: {
-						moduleResolution: 'node',
-					},
 					resources: [
 						{ path: './packages/one' },
 						{ path: './packages/two' },

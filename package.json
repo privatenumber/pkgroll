@@ -53,9 +53,9 @@
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-replace": "^5.0.5",
 		"@rollup/pluginutils": "^5.1.0",
-		"esbuild": "^0.19.10",
-		"magic-string": "^0.30.5",
-		"rollup": "^4.9.1"
+		"esbuild": "^0.20.1",
+		"magic-string": "^0.30.8",
+		"rollup": "^4.12.1"
 	},
 	"devDependencies": {
 		"@pvtnbr/eslint-config": "^1.0.3",

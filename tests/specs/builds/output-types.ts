@@ -220,21 +220,68 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare const');
 		});
 
-		test('handles types in composite monorepos correctly', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-monorepo');
+		test('composite monorepos', async ({ onTestFinish }) => {
+			const fixture = await createFixture({
+				packages: {
+					one: {
+						'package.json': JSON.stringify({
+							name: '@org/one',
+							exports: {
+								types: './dist/index.d.mts',
+							},
+						}),
+						'tsconfig.json': JSON.stringify({
+							compilerOptions: {
+								composite: true,
+							},
+							include: [
+								'src/index.mts',
+								'src/name.mts',
+							],
+						}),
+						src: {
+							'index.mts': 'export { Name } from "./name.mjs";',
+							'name.mts': 'export type Name = string;',
+						},
+					},
+					two: {
+						'package.json': JSON.stringify({
+							main: './dist/index.mjs',
+							dependencies: {
+								'@org/one': 'workspace:*',
+							},
+						}),
+						'tsconfig.json': JSON.stringify({
+							compilerOptions: {
+								composite: true,
+							},
+							include: ['src/index.mts'],
+							references: [{ path: '../one' }],
+						}),
+						'src/index.mts': `
+						import { Name } from '@org/one';
+						export function sayHello(name: Name) {
+							console.log('Hello', name);
+						}
+						`,
+					},
+				},
+				'tsconfig.json': JSON.stringify({
+					compilerOptions: {
+						moduleResolution: 'node',
+					},
+					resources: [
+						{ path: './packages/one' },
+						{ path: './packages/two' },
+					],
+				}),
+				'package.json': JSON.stringify({
+					workspaces: ['packages/*'],
+				}),
+			});
 			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				workspaces: ['packages/*'],
-			});
-
-			await fixture.writeJson('packages/one/package.json', {
-				name: '@org/one',
-				type: 'module',
-				exports: { types: './dist/index.d.mts' },
-			});
 
 			const pkgrollOne = await pkgroll([], { cwd: `${fixture.path}/packages/one`, nodePath });
 			expect(pkgrollOne.exitCode).toBe(0);
@@ -242,14 +289,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const contentOne = await fixture.readFile('packages/one/dist/index.d.mts', 'utf8');
 			expect(contentOne).toMatch('export type { Name };');
-
-			await fixture.writeJson('packages/two/package.json', {
-				main: './dist/index.mjs',
-				type: 'module',
-				dependencies: {
-					'@org/one': 'workspace:*',
-				},
-			});
 
 			const pkgrollTwo = await pkgroll([], { cwd: `${fixture.path}/packages/two`, nodePath });
 			expect(pkgrollTwo.exitCode).toBe(0);

@@ -84,18 +84,6 @@ npm install --save-dev pkgroll
 	npm run build # or npx pkgroll
 	```
 
-<br>
-
-<p align="center">
-	<a href="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=gold">
-		<picture>
-			<source width="830" media="(prefers-color-scheme: dark)" srcset="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=gold&image=dark">
-			<source width="830" media="(prefers-color-scheme: light)" srcset="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=gold&image">
-			<img width="830" src="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=gold&image" alt="Premium sponsor banner">
-		</picture>
-	</a>
-</p>
-
 ## Usage
 
 ### Entry-points
@@ -280,23 +268,6 @@ pkgroll --watch
 - **Minification** strips dead-code, comments, white-space, and shortens variable names.
 
 ## Sponsors
-
-<p align="center">
-	<a href="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver1">
-		<picture>
-			<source width="410" media="(prefers-color-scheme: dark)" srcset="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver1&image=dark">
-			<source width="410" media="(prefers-color-scheme: light)" srcset="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver1&image">
-			<img width="410" src="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver1&image" alt="Premium sponsor banner">
-		</picture>
-	</a>
-	<a href="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver2">
-		<picture>
-			<source width="410" media="(prefers-color-scheme: dark)" srcset="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver2&image=dark">
-			<source width="410" media="(prefers-color-scheme: light)" srcset="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver2&image">
-			<img width="410" src="https://privatenumber-sponsors.vercel.app/api/sponsor?tier=silver2&image" alt="Premium sponsor banner">
-		</picture>
-	</a>
-</p>
 
 <p align="center">
 	<a href="https://github.com/sponsors/privatenumber">

@@ -10,6 +10,7 @@ import { getSourcePath } from './utils/get-source-path.js';
 import { getRollupConfigs } from './utils/get-rollup-configs.js';
 import { tsconfig } from './utils/tsconfig.js';
 import { log } from './utils/log.js';
+import { cleanDist } from './utils/clean-dist.js';
 
 const { stringify } = JSON;
 
@@ -78,6 +79,11 @@ const argv = cli({
 			},
 			description: 'Sourcemap generation. Provide `inline` option for inline sourcemap (eg. --sourcemap, --sourcemap=inline)',
 		},
+		cleanDist: {
+			type: Boolean,
+			description: 'Clean dist before bundling',
+			default: false,
+		},
 	},
 
 	help: {
@@ -110,6 +116,10 @@ if (tsconfigTarget) {
 }
 
 (async () => {
+	if (argv.flags.cleanDist) {
+		await cleanDist(distPath);
+	}
+
 	const packageJson = await readPackageJson(cwd);
 
 	let exportEntries = getExportEntries(packageJson);

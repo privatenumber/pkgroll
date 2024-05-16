@@ -16,5 +16,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./src-dist.js'), nodePath);
 		runTestSuite(import('./sourcemap.js'), nodePath);
 		runTestSuite(import('./typescript.js'), nodePath);
+		runTestSuite(import('./clean-dist.js'), nodePath);
 	});
 });

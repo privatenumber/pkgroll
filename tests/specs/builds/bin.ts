@@ -2,14 +2,14 @@ import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('bin', ({ test }) => {
 		test('supports single path', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					bin: './dist/index.mjs',
 					exports: './dist/index.mjs',
 				}),
@@ -39,8 +39,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('supports object', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					bin: {
 						a: './dist/index.mjs',
 						b: './dist/index.js',

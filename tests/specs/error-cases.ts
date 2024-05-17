@@ -1,12 +1,12 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../utils.js';
-import { packageFixture } from '../fixtures.js';
+import { packageFixture, createPackageJson } from '../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('Error handling', ({ test }) => {
 		test('no package.json', async () => {
-			await using fixture = await createFixture(packageFixture);
+			await using fixture = await createFixture(packageFixture());
 
 			const pkgrollProcess = await pkgroll(
 				[],
@@ -23,7 +23,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('invalid package.json', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
+				...packageFixture(),
 				'package.json': '{ name: pkg }',
 			});
 
@@ -42,8 +42,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('no entry in package.json', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					name: 'pkg',
 				}),
 			});
@@ -63,8 +63,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('conflicting entry in package.json', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					name: 'pkg',
 					main: 'dist/index.js',
 					module: 'dist/index.js',
@@ -86,8 +86,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('ignore and warn on path entry outside of dist directory', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					name: 'pkg',
 					main: '/dist/main.js',
 				}),

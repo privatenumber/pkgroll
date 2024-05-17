@@ -1,15 +1,15 @@
 import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, installTypeScript } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { pkgroll } from '../../utils.js';
+import { packageFixture, createPackageJson, createTsconfigJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('target', ({ describe, test }) => {
 		test('transformation', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/target.js',
 				}),
 			});
@@ -29,13 +29,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 		describe('node protocol', () => {
 			test('strips node protocol', async () => {
 				await using fixture = await createFixture({
-					...packageFixture,
-					'package.json': JSON.stringify({
+					...packageFixture({ installTypeScript: true }),
+					'package.json': createPackageJson({
 						main: './dist/utils.js',
 						module: './dist/utils.mjs',
 						types: './dist/utils.d.ts',
 					}),
-					'tsconfig.json': JSON.stringify({
+					'tsconfig.json': createTsconfigJson({
 						compilerOptions: {
 							jsx: 'react',
 							typeRoots: [
@@ -44,8 +44,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 						},
 					}),
 				});
-
-				await installTypeScript(fixture.path);
 
 				const pkgrollProcess = await pkgroll(['--target', 'node12.19'], {
 					cwd: fixture.path,
@@ -65,13 +63,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			test('keeps node protocol', async () => {
 				await using fixture = await createFixture({
-					...packageFixture,
-					'package.json': JSON.stringify({
+					...packageFixture({ installTypeScript: true }),
+					'package.json': createPackageJson({
 						main: './dist/utils.js',
 						module: './dist/utils.mjs',
 						types: './dist/utils.d.ts',
 					}),
-					'tsconfig.json': JSON.stringify({
+					'tsconfig.json': createTsconfigJson({
 						compilerOptions: {
 							jsx: 'react',
 							typeRoots: [
@@ -80,8 +78,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 						},
 					}),
 				});
-
-				installTypeScript(fixture.path);
 
 				const pkgrollProcess = await pkgroll(['--target', 'node14.18'], {
 					cwd: fixture.path,

@@ -1,23 +1,20 @@
-import path from 'path';
 import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, installTypeScript } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { pkgroll } from '../../utils.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('clean dist', ({ test }) => {
 		test('no flag', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture({ installTypeScript: true }),
+				'package.json': createPackageJson({
 					main: './dist/nested/index.js',
 					module: './dist/nested/index.mjs',
 					types: './dist/nested/index.d.ts',
 				}),
 			});
-
-			installTypeScript(fixture.path);
 
 			await pkgroll(
 				[],
@@ -27,7 +24,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 
-			await fs.mkdir(path.join(fixture.path, 'src', 'nested2'));
+			await fs.mkdir(fixture.getPath('src', 'nested2'));
 			await fixture.writeFile('./src/nested2/index.ts', 'export function sayHello2(name: string) { return name; }');
 
 			await fixture.writeJson('package.json', {
@@ -57,15 +54,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('with flag', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture({ installTypeScript: true }),
+				'package.json': createPackageJson({
 					main: './dist/nested/index.js',
 					module: './dist/nested/index.mjs',
 					types: './dist/nested/index.d.ts',
 				}),
 			});
-
-			installTypeScript(fixture.path);
 
 			await pkgroll(
 				[],
@@ -75,7 +70,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 
-			await fs.mkdir(path.join(fixture.path, 'src', 'nested2'));
+			await fs.mkdir(fixture.getPath('src', 'nested2'));
 			await fixture.writeFile('./src/nested2/index.ts', 'export function sayHello2(name: string) { return name; }');
 
 			await fixture.writeJson('package.json', {

@@ -1,14 +1,14 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('generate sourcemap', ({ test }) => {
 		test('separate files', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/index.js',
 					module: './dist/index.mjs',
 				}),
@@ -31,8 +31,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('inline sourcemap', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					type: 'module',
 					main: './dist/index.js',
 				}),

@@ -1,34 +1,23 @@
-import path from 'path';
-import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, installTypeScript } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { pkgroll } from '../../utils.js';
+import {
+	packageFixture, fixtureFiles, installTypeScript, createPackageJson,
+} from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('change src', ({ test }) => {
 		test('nested directory - relative path', async () => {
+			const srcPath = 'custom-src/nested/src/';
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					main: './dist/nested/index.js',
 					module: './dist/nested/index.mjs',
 					types: './dist/nested/index.d.ts',
 				}),
+				[srcPath]: fixtureFiles,
+				...installTypeScript,
 			});
-
-			installTypeScript(fixture.path);
-
-			const srcPath = 'custom-src/nested/src/';
-			const newSourceDirectoryPath = path.join(fixture.path, srcPath);
-			await fs.mkdir(path.dirname(newSourceDirectoryPath), {
-				recursive: true,
-			});
-
-			await fs.rename(
-				path.join(fixture.path, 'src'),
-				newSourceDirectoryPath,
-			);
 
 			const pkgrollProcess = await pkgroll(
 				['--src', srcPath],
@@ -46,29 +35,19 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('nested directory - absolute path', async () => {
+			const srcPath = 'custom-src/nested/src/';
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					main: './dist/nested/index.js',
 					module: './dist/nested/index.mjs',
 					types: './dist/nested/index.d.ts',
 				}),
+				[srcPath]: fixtureFiles,
+				...installTypeScript,
 			});
-
-			installTypeScript(fixture.path);
-
-			const newSourceDirectoryPath = path.join(fixture.path, 'custom-src/nested/src/');
-			await fs.mkdir(path.dirname(newSourceDirectoryPath), {
-				recursive: true,
-			});
-
-			await fs.rename(
-				path.join(fixture.path, 'src'),
-				newSourceDirectoryPath,
-			);
 
 			const pkgrollProcess = await pkgroll(
-				['--src', newSourceDirectoryPath],
+				['--src', fixture.getPath(srcPath)],
 				{
 					cwd: fixture.path,
 					nodePath,
@@ -87,15 +66,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 	describe('change dist', ({ test }) => {
 		test('nested directory', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture({ installTypeScript: true }),
+				'package.json': createPackageJson({
 					main: './nested/index.js',
 					module: './nested/index.mjs',
 					types: './nested/index.d.ts',
 				}),
 			});
-
-			await installTypeScript(fixture.path);
 
 			const pkgrollProcess = await pkgroll(['--dist', '.'], {
 				cwd: fixture.path,

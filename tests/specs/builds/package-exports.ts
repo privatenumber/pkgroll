@@ -1,14 +1,14 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
 		test('string', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					exports: './dist/index.js',
 				}),
 			});
@@ -27,8 +27,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('type module - string', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					type: 'module',
 					exports: './dist/index.js',
 				}),
@@ -48,8 +48,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('type module - object - string', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					type: 'module',
 					exports: {
 						'./something': './dist/index.js',
@@ -79,8 +79,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 		 */
 		test('conditions', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					exports: {
 						node: {
 							import: './dist/utils.mjs',
@@ -111,8 +111,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('conditions - import should allow cjs', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					exports: {
 						node: {
 							import: './dist/utils.js',

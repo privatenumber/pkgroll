@@ -1,6 +1,7 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('TypeScript', ({ test }) => {
@@ -10,7 +11,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'index.ts': 'import "./file.jsx"',
 					'file.tsx': 'console.log(1)',
 				},
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					main: './dist/index.js',
 					type: 'module',
 				}),
@@ -34,7 +35,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'index.js': 'import "./file.jsx"',
 					'file.jsx': 'console.log(1)',
 				},
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					main: './dist/index.js',
 					type: 'module',
 				}),

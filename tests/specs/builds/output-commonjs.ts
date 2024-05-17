@@ -1,14 +1,14 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs', ({ test }) => {
 		test('{ type: commonjs, field: main, srcExt: js, distExt: js }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/index.js',
 				}),
 			});
@@ -27,8 +27,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: mts, distExt: js }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/mts.js',
 				}),
 			});
@@ -47,8 +47,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: cts, distExt: js }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/cts.js',
 				}),
 			});
@@ -67,8 +67,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: cts, distExt: cjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/cts.cjs',
 				}),
 			});
@@ -87,8 +87,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: module, field: main, srcExt: js, distExt: cjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					type: 'module',
 					main: './dist/index.cjs',
 				}),
@@ -108,8 +108,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: mjs, distExt: cjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/mjs.cjs',
 				}),
 			});
@@ -128,8 +128,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('nested directory', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/nested/index.js',
 				}),
 			});

@@ -1,14 +1,14 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: module', ({ test }) => {
 		test('{ type: module, field: main, srcExt: js, distExt: js }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					type: 'module',
 					main: './dist/index.js',
 				}),
@@ -28,8 +28,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: js, distExt: mjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/index.mjs',
 				}),
 			});
@@ -48,8 +48,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: module, srcExt: js, distExt: js }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					module: './dist/index.js',
 				}),
 			});
@@ -68,8 +68,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: cjs, distExt: mjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/cjs.mjs',
 				}),
 			});
@@ -88,8 +88,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: mts, distExt: mjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/mts.mjs',
 				}),
 			});
@@ -108,8 +108,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: commonjs, field: main, srcExt: cts, distExt: mjs }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/cts.mjs',
 				}),
 			});
@@ -128,8 +128,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('{ type: module, field: main, srcExt: cts, distExt: js }', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					type: 'module',
 					main: './dist/cts.js',
 				}),
@@ -149,8 +149,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('require() works in esm', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/require.js',
 					module: './dist/require.mjs',
 				}),
@@ -173,8 +173,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('conditional require() no side-effects', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/conditional-require.mjs',
 				}),
 			});
@@ -193,8 +193,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('require() & createRequire gets completely removed on conditional', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/conditional-require.mjs',
 				}),
 			});

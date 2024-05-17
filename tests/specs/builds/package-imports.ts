@@ -2,14 +2,14 @@ import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import outdent from 'outdent';
 import { pkgroll } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package imports', ({ test }) => {
 		test('imports', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				...packageFixture(),
+				'package.json': createPackageJson({
 					main: './dist/entry.js',
 					imports: {
 						'~': './src/nested',
@@ -30,7 +30,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/entry.js', 'utf8');
-
 			expect(content).toMatch('sayGoodbye');
 		});
 	});

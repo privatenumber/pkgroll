@@ -1,14 +1,28 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, installTypeScript } from '../../utils.js';
-import { packageFixture } from '../../fixtures.js';
+import { pkgroll } from '../../utils.js';
+import {
+	installTypeScript,
+	createPackageJson,
+	fixtureDependencyExportsMap,
+	fixtureDependencyImportsMap,
+} from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('dependencies', ({ test }) => {
 		test('externalize dependencies', async () => {
 			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
+				'src/dependency-external.js': `
+				/**
+				 * Should be imported with a package.json
+				 * with "@org/name" in the "dependency" field
+				 */
+				import someValue from '@org/name/path';
+
+				console.log(someValue);
+				`,
+
+				'package.json': createPackageJson({
 					main: './dist/dependency-external.js',
 					dependencies: {
 						'@org/name': '*',
@@ -30,7 +44,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('externalize types', async () => {
 			await using fixture = await createFixture({
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					types: 'dist/index.d.ts',
 					dependencies: {
 						'@types/pkg': '*',
@@ -47,9 +61,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 				export const a: typeA;
 				export const b: typeB;
 				`,
-			});
 
-			installTypeScript(fixture.path);
+				...installTypeScript,
+			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -65,7 +79,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('bundle in types if only in devDependency', async () => {
 			await using fixture = await createFixture({
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					types: 'dist/index.d.ts',
 					devDependencies: {
 						'@types/react': '*',
@@ -75,9 +89,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'index.d.ts': 'declare const A: { b: number }; export { A }',
 				},
 				'src/index.d.ts': 'export { A } from "react"',
+				...installTypeScript,
 			});
-
-			installTypeScript(fixture.path);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -92,7 +105,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('externalize dependency & type despite devDependency type', async () => {
 			await using fixture = await createFixture({
-				'package.json': JSON.stringify({
+				'package.json': createPackageJson({
 					main: 'dist/index.js',
 					types: 'dist/index.d.ts',
 					dependencies: {
@@ -111,9 +124,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				},
 				'src/index.ts': 'export { A } from "react"',
+				...installTypeScript,
 			});
-
-			installTypeScript(fixture.path);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -133,12 +145,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('dual package - require', async () => {
-			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
-					main: './dist/dependency-exports-require.js',
-				}),
-			});
+			await using fixture = await createFixture(
+				fixtureDependencyExportsMap('./dist/dependency-exports-require.js'),
+			);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -153,12 +162,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('dual package - import', async () => {
-			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
-					main: './dist/dependency-exports-import.js',
-				}),
-			});
+			await using fixture = await createFixture(
+				fixtureDependencyExportsMap('./dist/dependency-exports-import.js'),
+			);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -173,12 +179,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('imports map - default', async () => {
-			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
-					main: './dist/dependency-imports-map.js',
-				}),
-			});
+			await using fixture = await createFixture(fixtureDependencyImportsMap);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -193,12 +194,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('imports map - node', async () => {
-			await using fixture = await createFixture({
-				...packageFixture,
-				'package.json': JSON.stringify({
-					main: './dist/dependency-imports-map.js',
-				}),
-			});
+			await using fixture = await createFixture(fixtureDependencyImportsMap);
 
 			const pkgrollProcess = await pkgroll(['--export-condition=node'], {
 				cwd: fixture.path,

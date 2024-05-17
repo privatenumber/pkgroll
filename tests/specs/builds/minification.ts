@@ -1,14 +1,16 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('minification', ({ test }) => {
 		test('minification', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/target.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/target.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(['--minify', '--target', 'esnext'], {

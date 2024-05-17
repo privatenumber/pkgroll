@@ -1,14 +1,16 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs', ({ test }) => {
 		test('{ type: commonjs, field: main, srcExt: js, distExt: js }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/index.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/index.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -24,10 +26,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ type: commonjs, field: main, srcExt: mts, distExt: js }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/mts.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/mts.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -43,10 +46,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ type: commonjs, field: main, srcExt: cts, distExt: js }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/cts.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/cts.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -62,10 +66,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ type: commonjs, field: main, srcExt: cts, distExt: cjs }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/cts.cjs',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/cts.cjs',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -81,11 +86,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ type: module, field: main, srcExt: js, distExt: cjs }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				type: 'module',
-				main: './dist/index.cjs',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					type: 'module',
+					main: './dist/index.cjs',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -101,10 +107,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ type: commonjs, field: main, srcExt: mjs, distExt: cjs }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/mjs.cjs',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/mjs.cjs',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -120,10 +127,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('nested directory', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/nested/index.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/nested/index.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {

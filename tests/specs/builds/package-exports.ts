@@ -1,14 +1,16 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
 		test('string', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				exports: './dist/index.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: './dist/index.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -24,11 +26,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('type module - string', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				type: 'module',
-				exports: './dist/index.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					type: 'module',
+					exports: './dist/index.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -44,13 +47,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('type module - object - string', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				type: 'module',
-				exports: {
-					'./something': './dist/index.js',
-				},
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					type: 'module',
+					exports: {
+						'./something': './dist/index.js',
+					},
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -74,16 +78,17 @@ export default testSuite(({ describe }, nodePath: string) => {
 		 * we can consider deleting or intercepting file emission.
 		 */
 		test('conditions', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				exports: {
-					node: {
-						import: './dist/utils.mjs',
-						require: './dist/utils.cjs',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: {
+						node: {
+							import: './dist/utils.mjs',
+							require: './dist/utils.cjs',
+						},
+						default: './dist/index.js',
 					},
-					default: './dist/index.js',
-				},
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -105,15 +110,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('conditions - import should allow cjs', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				exports: {
-					node: {
-						import: './dist/utils.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: {
+						node: {
+							import: './dist/utils.js',
+						},
+						default: './dist/index.js',
 					},
-					default: './dist/index.js',
-				},
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {

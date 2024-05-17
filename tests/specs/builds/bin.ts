@@ -2,15 +2,17 @@ import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('bin', ({ test }) => {
 		test('supports single path', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				bin: './dist/index.mjs',
-				exports: './dist/index.mjs',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					bin: './dist/index.mjs',
+					exports: './dist/index.mjs',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {
@@ -36,13 +38,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('supports object', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				bin: {
-					a: './dist/index.mjs',
-					b: './dist/index.js',
-				},
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					bin: {
+						a: './dist/index.mjs',
+						b: './dist/index.js',
+					},
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {

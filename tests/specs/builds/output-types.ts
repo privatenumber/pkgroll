@@ -2,24 +2,26 @@ import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll, installTypeScript } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('types', ({ test }) => {
 		test('emits', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					types: './dist/utils.d.ts',
+				}),
+				'tsconfig.json': JSON.stringify({
+					compilerOptions: {
+						typeRoots: [
+							path.resolve('node_modules/@types'),
+						],
+					},
+				}),
+			});
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				types: './dist/utils.d.ts',
-			});
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -34,13 +36,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ srcExt: mts, distExt: d.ts }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					types: './dist/mts.d.ts',
+				}),
+			});
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				types: './dist/mts.d.ts',
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -55,13 +58,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ srcExt: .mts, distExt: d.cts }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					types: './dist/mts.d.cts',
+				}),
+			});
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				types: './dist/mts.d.cts',
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -76,13 +80,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('{ srcExt: .mts, distExt: d.mts }', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					types: './dist/mts.d.mts',
+				}),
+			});
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				types: './dist/mts.d.mts',
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -97,28 +102,28 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('emits multiple', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: {
+						'./utils.js': {
+							types: './dist/utils.d.ts',
+						},
+						'./nested': {
+							types: './dist/nested/index.d.ts',
+						},
+					},
+				}),
+				'tsconfig.json': JSON.stringify({
+					compilerOptions: {
+						typeRoots: [
+							path.resolve('node_modules/@types'),
+						],
+					},
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				exports: {
-					'./utils.js': {
-						types: './dist/utils.d.ts',
-					},
-					'./nested': {
-						types: './dist/nested/index.d.ts',
-					},
-				},
-			});
-
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -136,28 +141,28 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('emits multiple - same name', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: {
+						'./a': {
+							types: './dist/utils.d.ts',
+						},
+						'./b': {
+							types: './dist/nested/utils.d.ts',
+						},
+					},
+				}),
+				'tsconfig.json': JSON.stringify({
+					compilerOptions: {
+						typeRoots: [
+							path.resolve('node_modules/@types'),
+						],
+					},
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				exports: {
-					'./a': {
-						types: './dist/utils.d.ts',
-					},
-					'./b': {
-						types: './dist/nested/utils.d.ts',
-					},
-				},
-			});
-
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -175,30 +180,30 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('emits multiple - different extension', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: {
+						require: {
+							types: './dist/utils.d.cts',
+							default: './dist/utils.cjs',
+						},
+						import: {
+							types: './dist/utils.d.mts',
+							default: './dist/utils.mjs',
+						},
+					},
+				}),
+				'tsconfig.json': JSON.stringify({
+					compilerOptions: {
+						typeRoots: [
+							path.resolve('node_modules/@types'),
+						],
+					},
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				exports: {
-					require: {
-						types: './dist/utils.d.cts',
-						default: './dist/utils.cjs',
-					},
-					import: {
-						types: './dist/utils.d.mts',
-						default: './dist/utils.mjs',
-					},
-				},
-			});
-
-			await fixture.writeJson('tsconfig.json', {
-				compilerOptions: {
-					typeRoots: [
-						path.resolve('node_modules/@types'),
-					],
-				},
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -216,13 +221,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('bundles .d.ts', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					types: './dist/dts.d.ts',
+				}),
+			});
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				types: './dist/dts.d.ts',
-			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,

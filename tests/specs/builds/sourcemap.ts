@@ -1,15 +1,17 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('generate sourcemap', ({ test }) => {
 		test('separate files', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/index.js',
-				module: './dist/index.mjs',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/index.js',
+					module: './dist/index.mjs',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(
@@ -28,11 +30,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('inline sourcemap', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				type: 'module',
-				main: './dist/index.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					type: 'module',
+					main: './dist/index.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(

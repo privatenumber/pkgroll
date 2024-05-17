@@ -1,11 +1,12 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../utils.js';
+import { packageFixture } from '../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('Error handling', ({ test }) => {
 		test('no package.json', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture(packageFixture);
 
 			const pkgrollProcess = await pkgroll(
 				[],
@@ -21,9 +22,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('invalid package.json', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': '{ name: pkg }',
+			});
 
-			await fixture.writeFile('package.json', '{ name: pkg }');
 			const pkgrollProcess = await pkgroll(
 				[],
 				{
@@ -38,10 +41,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('no entry in package.json', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				name: 'pkg',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					name: 'pkg',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(
@@ -58,12 +62,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('conflicting entry in package.json', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				name: 'pkg',
-				main: 'dist/index.js',
-				module: 'dist/index.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					name: 'pkg',
+					main: 'dist/index.js',
+					module: 'dist/index.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(
@@ -80,11 +85,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('ignore and warn on path entry outside of dist directory', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				name: 'pkg',
-				main: '/dist/main.js',
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					name: 'pkg',
+					main: '/dist/main.js',
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(

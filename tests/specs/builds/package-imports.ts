@@ -1,22 +1,25 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import outdent from 'outdent';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package imports', ({ test }) => {
 		test('imports', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				main: './dist/entry.js',
-				imports: {
-					'~': './src/nested',
-				},
-			});
-			await fixture.writeFile('src/entry.ts', `
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/entry.js',
+					imports: {
+						'~': './src/nested',
+					},
+				}),
+				'src/entry.ts': outdent`
 				import { sayGoodbye } from '~/utils.js';
 				console.log(sayGoodbye);
-			`);
+				`,
+			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,

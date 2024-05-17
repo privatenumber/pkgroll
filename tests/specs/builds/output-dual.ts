@@ -3,17 +3,19 @@ import path from 'path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs & module', ({ test }) => {
 		test('dual', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
-
-			await fixture.writeJson('package.json', {
-				exports: {
-					'./a': './dist/mjs.cjs',
-					'./b': './dist/value.mjs',
-				},
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					exports: {
+						'./a': './dist/mjs.cjs',
+						'./b': './dist/value.mjs',
+					},
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll([], {

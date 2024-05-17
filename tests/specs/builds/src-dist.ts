@@ -3,19 +3,21 @@ import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll, installTypeScript } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('change src', ({ test }) => {
 		test('nested directory - relative path', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/nested/index.js',
+					module: './dist/nested/index.mjs',
+					types: './dist/nested/index.d.ts',
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				main: './dist/nested/index.js',
-				module: './dist/nested/index.mjs',
-				types: './dist/nested/index.d.ts',
-			});
 
 			const srcPath = 'custom-src/nested/src/';
 			const newSourceDirectoryPath = path.join(fixture.path, srcPath);
@@ -44,15 +46,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('nested directory - absolute path', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/nested/index.js',
+					module: './dist/nested/index.mjs',
+					types: './dist/nested/index.d.ts',
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				main: './dist/nested/index.js',
-				module: './dist/nested/index.mjs',
-				types: './dist/nested/index.d.ts',
-			});
 
 			const newSourceDirectoryPath = path.join(fixture.path, 'custom-src/nested/src/');
 			await fs.mkdir(path.dirname(newSourceDirectoryPath), {
@@ -83,15 +86,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 	describe('change dist', ({ test }) => {
 		test('nested directory', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './nested/index.js',
+					module: './nested/index.mjs',
+					types: './nested/index.d.ts',
+				}),
+			});
 
 			await installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				main: './nested/index.js',
-				module: './nested/index.mjs',
-				types: './nested/index.d.ts',
-			});
 
 			const pkgrollProcess = await pkgroll(['--dist', '.'], {
 				cwd: fixture.path,

@@ -3,19 +3,21 @@ import fs from 'fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll, installTypeScript } from '../../utils.js';
+import { packageFixture } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('clean dist', ({ test }) => {
 		test('no flag', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/nested/index.js',
+					module: './dist/nested/index.mjs',
+					types: './dist/nested/index.d.ts',
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				main: './dist/nested/index.js',
-				module: './dist/nested/index.mjs',
-				types: './dist/nested/index.d.ts',
-			});
 
 			await pkgroll(
 				[],
@@ -54,15 +56,16 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('with flag', async () => {
-			await using fixture = await createFixture('./tests/fixture-package');
+			await using fixture = await createFixture({
+				...packageFixture,
+				'package.json': JSON.stringify({
+					main: './dist/nested/index.js',
+					module: './dist/nested/index.mjs',
+					types: './dist/nested/index.d.ts',
+				}),
+			});
 
 			installTypeScript(fixture.path);
-
-			await fixture.writeJson('package.json', {
-				main: './dist/nested/index.js',
-				module: './dist/nested/index.mjs',
-				types: './dist/nested/index.d.ts',
-			});
 
 			await pkgroll(
 				[],

@@ -4,9 +4,8 @@ import { pkgroll } from '../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('Error handling', ({ test }) => {
-		test('no package.json', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('no package.json', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			const pkgrollProcess = await pkgroll(
 				[],
@@ -21,9 +20,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toMatch('package.json not found');
 		});
 
-		test('invalid package.json', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('invalid package.json', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeFile('package.json', '{ name: pkg }');
 			const pkgrollProcess = await pkgroll(
@@ -39,9 +37,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toMatch('Cannot parse package.json');
 		});
 
-		test('no entry in package.json', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('no entry in package.json', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				name: 'pkg',
@@ -60,9 +57,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
 		});
 
-		test('conflicting entry in package.json', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('conflicting entry in package.json', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				name: 'pkg',
@@ -83,9 +79,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toMatch('Error: Conflicting export types "commonjs" & "module" found for ./dist/index.js');
 		});
 
-		test('ignore and warn on path entry outside of dist directory', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('ignore and warn on path entry outside of dist directory', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				name: 'pkg',

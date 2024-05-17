@@ -4,9 +4,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('env', ({ test }) => {
-		test('dead code elimination via env', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('dead code elimination via env', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/conditional-require.js',

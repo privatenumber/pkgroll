@@ -4,9 +4,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('generate sourcemap', ({ test }) => {
-		test('separate files', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('separate files', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/index.js',
@@ -28,9 +27,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/index.mjs.map')).toBe(true);
 		});
 
-		test('inline sourcemap', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('inline sourcemap', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				type: 'module',

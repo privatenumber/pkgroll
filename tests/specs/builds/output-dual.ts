@@ -6,9 +6,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs & module', ({ test }) => {
-		test('dual', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('dual', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				exports: {

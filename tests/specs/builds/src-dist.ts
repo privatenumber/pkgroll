@@ -6,9 +6,8 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('change src', ({ test }) => {
-		test('nested directory - relative path', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('nested directory - relative path', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 
@@ -44,9 +43,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/nested/index.d.ts')).toBe(true);
 		});
 
-		test('nested directory - absolute path', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('nested directory - absolute path', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 
@@ -84,9 +82,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 	});
 
 	describe('change dist', ({ test }) => {
-		test('nested directory', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('nested directory', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);
 

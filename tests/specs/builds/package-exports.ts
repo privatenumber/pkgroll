@@ -4,9 +4,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
-		test('string', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('string', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				exports: './dist/index.js',
@@ -24,9 +23,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('module.exports =');
 		});
 
-		test('type module - string', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('type module - string', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -45,9 +43,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export {');
 		});
 
-		test('type module - object - string', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('type module - object - string', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -76,9 +73,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 		 * instead of two just to remove one file. If this is problematic,
 		 * we can consider deleting or intercepting file emission.
 		 */
-		test('conditions', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('conditions', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				exports: {
@@ -108,9 +104,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(utilsCjs).toMatch('exports.sayHello =');
 		});
 
-		test('conditions - import should allow cjs', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('conditions - import should allow cjs', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				exports: {

@@ -4,9 +4,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('minification', ({ test }) => {
-		test('minification', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('minification', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/target.js',

@@ -4,8 +4,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('TypeScript', ({ test }) => {
-		test('resolves .jsx -> .tsx', async ({ onTestFinish }) => {
-			const fixture = await createFixture({
+		test('resolves .jsx -> .tsx', async () => {
+			await using fixture = await createFixture({
 				src: {
 					'index.ts': 'import "./file.jsx"',
 					'file.tsx': 'console.log(1)',
@@ -15,7 +15,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 					type: 'module',
 				}),
 			});
-			onTestFinish(async () => await fixture.rm());
 
 			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
 				cwd: fixture.path,
@@ -29,8 +28,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toBe('console.log(1);\n');
 		});
 
-		test('resolves .jsx from .js', async ({ onTestFinish }) => {
-			const fixture = await createFixture({
+		test('resolves .jsx from .js', async () => {
+			await using fixture = await createFixture({
 				src: {
 					'index.js': 'import "./file.jsx"',
 					'file.jsx': 'console.log(1)',
@@ -40,7 +39,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 					type: 'module',
 				}),
 			});
-			onTestFinish(async () => await fixture.rm());
 
 			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
 				cwd: fixture.path,

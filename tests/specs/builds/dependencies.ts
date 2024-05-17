@@ -4,9 +4,8 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('dependencies', ({ test }) => {
-		test('externalize dependencies', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('externalize dependencies', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-external.js',
@@ -27,8 +26,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('require(\'@org/name/path\')');
 		});
 
-		test('externalize types', async ({ onTestFinish }) => {
-			const fixture = await createFixture({
+		test('externalize types', async () => {
+			await using fixture = await createFixture({
 				'package.json': JSON.stringify({
 					types: 'dist/index.d.ts',
 					dependencies: {
@@ -47,7 +46,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 				export const b: typeB;
 				`,
 			});
-			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -63,8 +61,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('from \'@square-icons/react\'');
 		});
 
-		test('bundle in types if only in devDependency', async ({ onTestFinish }) => {
-			const fixture = await createFixture({
+		test('bundle in types if only in devDependency', async () => {
+			await using fixture = await createFixture({
 				'package.json': JSON.stringify({
 					types: 'dist/index.d.ts',
 					devDependencies: {
@@ -76,7 +74,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 				'src/index.d.ts': 'export { A } from "react"',
 			});
-			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -91,8 +88,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toBe('declare const A: { b: number };\n\nexport { A };\n');
 		});
 
-		test('externalize dependency & type despite devDependency type', async ({ onTestFinish }) => {
-			const fixture = await createFixture({
+		test('externalize dependency & type despite devDependency type', async () => {
+			await using fixture = await createFixture({
 				'package.json': JSON.stringify({
 					main: 'dist/index.js',
 					types: 'dist/index.d.ts',
@@ -113,7 +110,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 				'src/index.ts': 'export { A } from "react"',
 			});
-			onTestFinish(async () => await fixture.rm());
 
 			installTypeScript(fixture.path);
 
@@ -134,9 +130,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(contentTypes).toBe('export { A } from \'react\';\n');
 		});
 
-		test('dual package - require', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('dual package - require', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-exports-require.js',
@@ -154,9 +149,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('cjs');
 		});
 
-		test('dual package - import', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('dual package - import', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-exports-import.js',
@@ -174,9 +168,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('esm');
 		});
 
-		test('imports map - default', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('imports map - default', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-imports-map.js',
@@ -194,9 +187,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('default');
 		});
 
-		test('imports map - node', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('imports map - node', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/dependency-imports-map.js',

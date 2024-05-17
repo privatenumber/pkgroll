@@ -5,9 +5,8 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('types', ({ test }) => {
-		test('emits', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('emits', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);
 
@@ -34,9 +33,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare function');
 		});
 
-		test('{ srcExt: mts, distExt: d.ts }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ srcExt: mts, distExt: d.ts }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);
 
@@ -56,9 +54,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare function');
 		});
 
-		test('{ srcExt: .mts, distExt: d.cts }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ srcExt: .mts, distExt: d.cts }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);
 
@@ -78,9 +75,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare function');
 		});
 
-		test('{ srcExt: .mts, distExt: d.mts }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ srcExt: .mts, distExt: d.mts }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);
 
@@ -100,9 +96,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare function');
 		});
 
-		test('emits multiple', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('emits multiple', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 
@@ -140,9 +135,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(nestedDts).toMatch('declare function sayHello');
 		});
 
-		test('emits multiple - same name', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('emits multiple - same name', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 
@@ -180,9 +174,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(nestedDts).toMatch('declare function sayGoodbye');
 		});
 
-		test('emits multiple - different extension', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('emits multiple - different extension', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 
@@ -222,9 +215,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(utilsDCts).toMatch('declare function sayHello');
 		});
 
-		test('bundles .d.ts', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('bundles .d.ts', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await installTypeScript(fixture.path);
 
@@ -244,8 +236,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare const');
 		});
 
-		test('composite monorepos', async ({ onTestFinish }) => {
-			const fixture = await createFixture({
+		test('composite monorepos', async () => {
+			await using fixture = await createFixture({
 				packages: {
 					one: {
 						'package.json': JSON.stringify({
@@ -300,7 +292,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 					workspaces: ['packages/*'],
 				}),
 			});
-			onTestFinish(async () => await fixture.rm());
 
 			await installTypeScript(fixture.path);
 

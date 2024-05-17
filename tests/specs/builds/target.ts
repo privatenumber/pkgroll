@@ -5,9 +5,8 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('target', ({ describe, test }) => {
-		test('transformation', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('transformation', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/target.js',
@@ -26,9 +25,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		describe('node protocol', () => {
-			test('strips node protocol', async ({ onTestFinish }) => {
-				const fixture = await createFixture('./tests/fixture-package');
-				onTestFinish(async () => await fixture.rm());
+			test('strips node protocol', async () => {
+				await using fixture = await createFixture('./tests/fixture-package');
 
 				await installTypeScript(fixture.path);
 
@@ -62,9 +60,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(content).not.toMatch('node:');
 			});
 
-			test('keeps node protocol', async ({ onTestFinish }) => {
-				const fixture = await createFixture('./tests/fixture-package');
-				onTestFinish(async () => await fixture.rm());
+			test('keeps node protocol', async () => {
+				await using fixture = await createFixture('./tests/fixture-package');
 
 				installTypeScript(fixture.path);
 

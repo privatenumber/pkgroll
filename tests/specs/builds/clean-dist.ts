@@ -6,9 +6,8 @@ import { pkgroll, installTypeScript } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('clean dist', ({ test }) => {
-		test('no flag', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('no flag', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 
@@ -54,9 +53,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/nested2/index.d.ts')).toBe(true);
 		});
 
-		test('with flag', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('with flag', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			installTypeScript(fixture.path);
 

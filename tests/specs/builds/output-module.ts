@@ -4,9 +4,8 @@ import { pkgroll } from '../../utils.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: module', ({ test }) => {
-		test('{ type: module, field: main, srcExt: js, distExt: js }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: module, field: main, srcExt: js, distExt: js }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -25,9 +24,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { index as default }');
 		});
 
-		test('{ type: commonjs, field: main, srcExt: js, distExt: mjs }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: commonjs, field: main, srcExt: js, distExt: mjs }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/index.mjs',
@@ -45,9 +43,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { index as default }');
 		});
 
-		test('{ type: commonjs, field: module, srcExt: js, distExt: js }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: commonjs, field: module, srcExt: js, distExt: js }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				module: './dist/index.js',
@@ -65,9 +62,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { index as default }');
 		});
 
-		test('{ type: commonjs, field: main, srcExt: cjs, distExt: mjs }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: commonjs, field: main, srcExt: cjs, distExt: mjs }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/cjs.mjs',
@@ -85,9 +81,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { cjs$1 as default }');
 		});
 
-		test('{ type: commonjs, field: main, srcExt: mts, distExt: mjs }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: commonjs, field: main, srcExt: mts, distExt: mjs }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/mts.mjs',
@@ -105,9 +100,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { foo, sayGoodbye, sayHello, sayHello$1 as sayHello2 }');
 		});
 
-		test('{ type: commonjs, field: main, srcExt: cts, distExt: mjs }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: commonjs, field: main, srcExt: cts, distExt: mjs }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/cts.mjs',
@@ -125,9 +119,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { sayHello }');
 		});
 
-		test('{ type: module, field: main, srcExt: cts, distExt: js }', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('{ type: module, field: main, srcExt: cts, distExt: js }', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				type: 'module',
@@ -146,9 +139,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { sayHello }');
 		});
 
-		test('require() works in esm', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('require() works in esm', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/require.js',
@@ -170,9 +162,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(mjs).toMatch('createRequire');
 		});
 
-		test('conditional require() no side-effects', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('conditional require() no side-effects', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/conditional-require.mjs',
@@ -190,9 +181,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('\tconsole.log(\'side effect\');');
 		});
 
-		test('require() & createRequire gets completely removed on conditional', async ({ onTestFinish }) => {
-			const fixture = await createFixture('./tests/fixture-package');
-			onTestFinish(async () => await fixture.rm());
+		test('require() & createRequire gets completely removed on conditional', async () => {
+			await using fixture = await createFixture('./tests/fixture-package');
 
 			await fixture.writeJson('package.json', {
 				main: './dist/conditional-require.mjs',

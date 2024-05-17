@@ -18,7 +18,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				types: './dist/nested/index.d.ts',
 			});
 
-			const _pkgrollProcess = await pkgroll(
+			await pkgroll(
 				[],
 				{
 					cwd: fixture.path,
@@ -66,7 +66,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				types: './dist/nested/index.d.ts',
 			});
 
-			const _pkgrollProcess = await pkgroll(
+			await pkgroll(
 				[],
 				{
 					cwd: fixture.path,

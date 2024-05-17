@@ -116,10 +116,6 @@ if (tsconfigTarget) {
 }
 
 (async () => {
-	if (argv.flags.cleanDist) {
-		await cleanDist(distPath);
-	}
-
 	const packageJson = await readPackageJson(cwd);
 
 	let exportEntries = getExportEntries(packageJson);
@@ -158,6 +154,15 @@ if (tsconfigTarget) {
 		getAliases(packageJson, cwd),
 		packageJson,
 	);
+
+	if (argv.flags.cleanDist) {
+		/**
+		 * Typically, something like this would be implemented as a plugin, so it only
+		 * deletes what it needs to but pkgroll runs multiple builds (e.g. d.ts, mjs, etc)
+		 * so as a plugin, it won't be aware of the files emitted by other builds
+		 */
+		await cleanDist(distPath);
+	}
 
 	if (argv.flags.watch) {
 		log('Watch initialized');

@@ -4,7 +4,7 @@
 <h1 align="center">
 	<sup>pkgroll</sup>
 	<br>
-	<a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/v/pkgroll"></a> <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/dm/pkgroll"></a>	
+	<a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/v/pkgroll"></a> <a href="https://npm.im/pkgroll"><img src="https://badgen.net/npm/dm/pkgroll"></a>
 </h1>
 
 _pkgroll_ is a JavaScript package bundler powered by Rollup that automatically builds your package from entry-points defined in `package.json`. No config necessary!
@@ -38,7 +38,7 @@ npm install --save-dev pkgroll
 2. Define package entry-files in `package.json`.
 
     [These configurations](https://nodejs.org/api/packages.html#package-entry-points) are for Node.js to determine how to import the package.
-    
+
     Pkgroll leverages the same configuration to determine how to build the package.
 
 	```json5
@@ -235,6 +235,12 @@ pkgroll --minify
 Run the bundler in watch mode during development:
 ```sh
 pkgroll --watch
+```
+
+### Clean dist
+Clean dist directory before bundling:
+```sh
+pkgroll --clean-dist
 ```
 
 ## FAQ

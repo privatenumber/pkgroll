@@ -10,6 +10,7 @@ import { getSourcePath } from './utils/get-source-path.js';
 import { getRollupConfigs } from './utils/get-rollup-configs.js';
 import { tsconfig } from './utils/tsconfig.js';
 import { log } from './utils/log.js';
+import { cleanDist } from './utils/clean-dist.js';
 
 const { stringify } = JSON;
 
@@ -77,6 +78,11 @@ const argv = cli({
 				throw new Error(`Invalid sourcemap option ${stringify(flagValue)}`);
 			},
 			description: 'Sourcemap generation. Provide `inline` option for inline sourcemap (eg. --sourcemap, --sourcemap=inline)',
+		},
+		cleanDist: {
+			type: Boolean,
+			description: 'Clean dist before bundling',
+			default: false,
 		},
 	},
 
@@ -148,6 +154,15 @@ if (tsconfigTarget) {
 		getAliases(packageJson, cwd),
 		packageJson,
 	);
+
+	if (argv.flags.cleanDist) {
+		/**
+		 * Typically, something like this would be implemented as a plugin, so it only
+		 * deletes what it needs to but pkgroll runs multiple builds (e.g. d.ts, mjs, etc)
+		 * so as a plugin, it won't be aware of the files emitted by other builds
+		 */
+		await cleanDist(distPath);
+	}
 
 	if (argv.flags.watch) {
 		log('Watch initialized');

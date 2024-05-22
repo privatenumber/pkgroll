@@ -28,6 +28,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			// Name should be minified
 			expect(content).not.toMatch('exports.foo=foo');
+
+			// Minification should preserve name
+			expect(
+				// eslint-disable-next-line n/global-require, @typescript-eslint/no-var-requires
+				require(fixture.getPath('dist/target.js')).functionName,
+			).toBe('preservesName');
 		});
 	});
 });

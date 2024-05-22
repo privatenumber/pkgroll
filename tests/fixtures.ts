@@ -126,7 +126,8 @@ export const fixtureFiles = {
 	`,
 
 	'target.ts': outdent`
-	console.log(2 ** 3);
+	function preservesName() { return 2 ** 3; }
+	export const functionName = preservesName.name;
 
 	/**
 	 * Expect minification to apply ?. optional chaining.

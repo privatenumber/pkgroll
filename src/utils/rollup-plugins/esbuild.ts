@@ -66,6 +66,8 @@ export const esbuildMinify = (
 			format: getEsbuildFormat(rollupOptions.format),
 
 			minify: true,
+
+			keepNames: true,
 		});
 
 		return {

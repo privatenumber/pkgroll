@@ -63,7 +63,10 @@ const getConfig = {
 					 * One concern here is that this overwrites the compilerOptions. According to
 					 * the rollup-plugin-dts docs, it reads from baseUrl and paths.
 					 */
-					compilerOptions: { composite: false },
+					compilerOptions: {
+						composite: false,
+						preserveSymlinks: false,
+					},
 				}) as Plugin,
 			],
 			output: [] as unknown as Output,

@@ -243,12 +243,15 @@ Clean dist directory before bundling:
 pkgroll --clean-dist
 ```
 
-### Create Sourcemap
-Pass in the `--sourcemap` flag to add sourcemap
+### Source maps
+Pass in the `--sourcemap` flag to emit a source map file:
+
 ```sh
-# as external map file 
 pkgroll --sourcemap
-# or inline map
+```
+
+Or to inline them in the distribution files:
+```sh
 pkgroll --sourcemap=inline
 ```
 

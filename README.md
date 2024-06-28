@@ -243,6 +243,18 @@ Clean dist directory before bundling:
 pkgroll --clean-dist
 ```
 
+### Source maps
+Pass in the `--sourcemap` flag to emit a source map file:
+
+```sh
+pkgroll --sourcemap
+```
+
+Or to inline them in the distribution files:
+```sh
+pkgroll --sourcemap=inline
+```
+
 ## FAQ
 
 ### Why bundle with Rollup?

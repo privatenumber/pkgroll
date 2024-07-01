@@ -55,7 +55,8 @@
 		"@rollup/pluginutils": "^5.1.0",
 		"esbuild": "^0.20.1",
 		"magic-string": "^0.30.10",
-		"rollup": "^4.17.2"
+		"rollup": "^4.17.2",
+		"rollup-plugin-natives": "^0.7.8"
 	},
 	"devDependencies": {
 		"@types/node": "^20.12.12",

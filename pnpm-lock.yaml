@@ -38,6 +38,9 @@ importers:
       rollup:
         specifier: ^4.17.2
         version: 4.17.2
+      rollup-plugin-natives:
+        specifier: ^0.7.8
+        version: 0.7.8(rollup@4.17.2)
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -1476,6 +1479,10 @@ packages:
     resolution: {integrity: sha512-yDYSgNMraqvnxiEXO4hi88+YZxaHC6QKzb5N84iRCTDeRO7ZALpir/lVmf/uXUhnwUr2O4HU8s/n6x+yNjQkHw==}
     engines: {node: '>= 14.17'}
 
+  fs-extra@11.2.0:
+    resolution: {integrity: sha512-PmDi3uwK5nFuXh7XDTlVnS17xJS7vW36is2+w3xcv8SVxiB4NyATf4ctkVY5bkSjX0Y4nbvZCq1/EjtEyr9ktw==}
+    engines: {node: '>=14.14'}
+
   fs-fixture@2.4.0:
     resolution: {integrity: sha512-aFoTWGj288IEOdXBeesdcbdMvRtExbqpOp1SCjE3nRdlT7vBBCD6bf76C9FCq8/6pIPSo56P7+HeT9zT/n8rMA==}
     engines: {node: '>=18.0.0'}
@@ -1939,6 +1946,9 @@ packages:
   jsonc-eslint-parser@2.4.0:
     resolution: {integrity: sha512-WYDyuc/uFcGp6YtM2H0uKmUwieOuzeE/5YocFJLnLfclZ4inf3mRn8ZVy1s7Hxji7Jxm6Ss8gqpexD/GlKoGgg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  jsonfile@6.1.0:
+    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
@@ -2407,6 +2417,11 @@ packages:
       rollup: ^3.29.4 || ^4
       typescript: ^4.5 || ^5.0
 
+  rollup-plugin-natives@0.7.8:
+    resolution: {integrity: sha512-lsbwS9hL9fWzfyqQNBXRyasT37RNJxn2Dwn7VdDfLzV22DObu0cMv99JSBc5Y7sn3zSn4rvrBdivPgJzy1cl0A==}
+    peerDependencies:
+      rollup: '>=0.56.0'
+
   rollup@4.17.2:
     resolution: {integrity: sha512-/9ClTJPByC0U4zNLowV1tMBe8yMEAxewtR3cUNX5BoEpGH3dQEWpJLr6CLp0fPdYRF/fzVOgvDb1zXuakwF5kQ==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -2702,6 +2717,10 @@ packages:
 
   unist-util-stringify-position@2.0.3:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
+
+  universalify@2.0.1:
+    resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
+    engines: {node: '>= 10.0.0'}
 
   update-browserslist-db@1.0.13:
     resolution: {integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==}
@@ -4366,6 +4385,12 @@ snapshots:
 
   form-data-encoder@2.1.4: {}
 
+  fs-extra@11.2.0:
+    dependencies:
+      graceful-fs: 4.2.11
+      jsonfile: 6.1.0
+      universalify: 2.0.1
+
   fs-fixture@2.4.0: {}
 
   fs.realpath@1.0.0: {}
@@ -4854,6 +4879,12 @@ snapshots:
       eslint-visitor-keys: 3.4.3
       espree: 9.6.1
       semver: 7.5.4
+
+  jsonfile@6.1.0:
+    dependencies:
+      universalify: 2.0.1
+    optionalDependencies:
+      graceful-fs: 4.2.11
 
   jsx-ast-utils@3.3.5:
     dependencies:
@@ -5378,6 +5409,12 @@ snapshots:
     optionalDependencies:
       '@babel/code-frame': 7.24.2
 
+  rollup-plugin-natives@0.7.8(rollup@4.17.2):
+    dependencies:
+      fs-extra: 11.2.0
+      magic-string: 0.30.10
+      rollup: 4.17.2
+
   rollup@4.17.2:
     dependencies:
       '@types/estree': 1.0.5
@@ -5745,6 +5782,8 @@ snapshots:
   unist-util-stringify-position@2.0.3:
     dependencies:
       '@types/unist': 2.0.10
+
+  universalify@2.0.1: {}
 
   update-browserslist-db@1.0.13(browserslist@4.23.0):
     dependencies:

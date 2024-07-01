@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import type { OutputOptions, RollupOptions, Plugin } from 'rollup';
+// @ts-ignore
+import nativePlugin from 'rollup-plugin-natives';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -93,6 +95,11 @@ const getConfig = {
 				nodeResolve({
 					extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 					exportConditions: options.exportCondition,
+				}),
+				nativePlugin({
+					copyTo: 'dist/nativeLibs',
+					destDir: './nativeLibs',
+					targetEsm: true,
 				}),
 				...(
 					Object.keys(env).length > 0

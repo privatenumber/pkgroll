@@ -8,7 +8,7 @@
 		"strict": true,
 		"outDir": "dist",
 		"esModuleInterop": true,
-		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 	},
 	"include": [

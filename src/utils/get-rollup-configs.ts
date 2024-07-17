@@ -7,14 +7,17 @@ import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import type { PackageJson } from 'type-fest';
+import type { TsConfigResult } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types.js';
 import { isFormatEsm, createRequire } from './rollup-plugins/create-require.js';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
 import { patchBinary } from './rollup-plugins/patch-binary.js';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { resolveTypescriptPaths } from './rollup-plugins/resolve-typescript-paths.js';
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
+/** @todo resolve lint warning max import statements */
 
 type Options = {
 	minify: boolean;
@@ -76,9 +79,11 @@ const getConfig = {
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
+		tsconfig: TsConfigResult,
 	) => {
 		const esbuildConfig = {
 			target: options.target,
+			tsconfigRaw: tsconfig.config,
 		};
 
 		return {
@@ -87,6 +92,7 @@ const getConfig = {
 			plugins: [
 				externalizeNodeBuiltins(options),
 				resolveTypescriptMjsCts(),
+				resolveTypescriptPaths(tsconfig, env),
 				alias({
 					entries: aliases,
 				}),
@@ -144,6 +150,7 @@ export const getRollupConfigs = async (
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
+	tsconfig: TsConfigResult,
 ) => {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)
@@ -204,6 +211,7 @@ export const getRollupConfigs = async (
 				aliases,
 				env,
 				executablePaths,
+				tsconfig,
 			);
 			config.external = externalDependencies;
 			configs.app = config;

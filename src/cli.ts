@@ -153,6 +153,7 @@ if (tsconfigTarget) {
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,
+		tsconfig,
 	);
 
 	if (argv.flags.cleanDist) {

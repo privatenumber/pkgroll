@@ -38,6 +38,36 @@ interface SourcePath {
 	distExtension: string;
 }
 
+export const getSourcePathFromDistPath = (
+	distPath: string,
+	source: string,
+	dist: string,
+	checker: (sourcePath: string)=>boolean = fsExists
+): Omit<SourcePath, "exportEntry"> => {
+	const sourcePathUnresolved = source + distPath.slice(dist.length);
+
+	for (const distExtension of distExtensions) {
+		if (distPath.endsWith(distExtension)) {
+			const sourcePath = tryExtensions(
+				sourcePathUnresolved.slice(0, -distExtension.length),
+				extensionMap[distExtension],
+				checker
+			);
+
+			if (sourcePath) {
+				return {
+					input: sourcePath.path,
+					srcExtension: sourcePath.extension,
+					distExtension,
+				};
+			}
+		}
+	}
+
+	throw new Error(`Could not find matching source file for export path ${stringify(distPath)}`);
+};
+
+
 export const getSourcePath = (
 	exportEntry: ExportEntry,
 	sourcePath: string,
@@ -71,36 +101,6 @@ export const getSourcePath = (
 		...getSourcePathFromDistPath(exportEntry.outputPath, sourcePath, distPath, fsExists)
 	}]
 }
-
-
-export const getSourcePathFromDistPath = (
-	distPath: string,
-	source: string,
-	dist: string,
-	checker: (sourcePath: string)=>boolean = fsExists
-): Omit<SourcePath, "exportEntry"> => {
-	const sourcePathUnresolved = source + distPath.slice(dist.length);
-
-	for (const distExtension of distExtensions) {
-		if (distPath.endsWith(distExtension)) {
-			const sourcePath = tryExtensions(
-				sourcePathUnresolved.slice(0, -distExtension.length),
-				extensionMap[distExtension],
-				checker
-			);
-
-			if (sourcePath) {
-				return {
-					input: sourcePath.path,
-					srcExtension: sourcePath.extension,
-					distExtension,
-				};
-			}
-		}
-	}
-
-	throw new Error(`Could not find matching source file for export path ${stringify(distPath)}`);
-};
 
 export const distToSourcePath = (path: string, sourcePath: string, distPath: string) => {
 	return sourcePath + path.slice(distPath.length);

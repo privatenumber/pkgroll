@@ -2,7 +2,7 @@ import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
 import { packageFixture, createPackageJson } from '../../fixtures.js';
-import { readdirSync } from 'fs';
+
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
@@ -160,11 +160,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
-
-			// for debugging
-			// console.log(await readdirSync(fixture.path, {
-			// 	recursive: true
-			// }));
 
 			const indexCjs = await fixture.readFile('dist/pages/a.cjs', 'utf8');
 			expect(indexCjs).toMatch('exports.render');

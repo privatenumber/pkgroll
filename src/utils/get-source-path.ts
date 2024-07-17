@@ -32,15 +32,15 @@ const extensionMap = {
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
 export const getSourcePath = (
-	distPath: string,
+	exportEntry: ExportEntry,
 	source: string,
 	dist: string,
 	checker: (sourcePath: string)=>boolean = fsExists
 ): Omit<SourcePath, "exportEntry"> => {
-	const sourcePathUnresolved = source + distPath.slice(dist.length);
+	const sourcePathUnresolved = source + exportEntry.outputPath.slice(dist.length);
 
 	for (const distExtension of distExtensions) {
-		if (distPath.endsWith(distExtension)) {
+		if (exportEntry.outputPath.endsWith(distExtension)) {
 			const sourcePath = tryExtensions(
 				sourcePathUnresolved.slice(0, -distExtension.length),
 				extensionMap[distExtension],
@@ -57,7 +57,7 @@ export const getSourcePath = (
 		}
 	}
 
-	throw new Error(`Could not find matching source file for export path ${stringify(distPath)}`);
+	throw new Error(`Could not find matching source file for export path ${stringify(exportEntry.outputPath)}`);
 };
 
 interface SourcePath {
@@ -73,12 +73,11 @@ export const getSourcePaths = (
 	distPath: string,
 	cwd: string
 ): SourcePath[] =>{
-	const outputPath = exportEntry.outputPath;
 	if(exportEntry.outputPath.includes('*')){
 
 		// use glob to resolve matches from the packageJsonRoot directory
 		const matchSet = new Set<string>();
-		const sourceMatch = getSourcePath(outputPath, sourcePath, distPath, (path)=>{
+		const sourceMatch = getSourcePath(exportEntry, sourcePath, distPath, (path)=>{
 			const matches = globSync(path, { cwd });
 			for(const match of matches) matchSet.add(match);
 			return matches.length > 0; // always return false to prevent early exit
@@ -98,6 +97,6 @@ export const getSourcePaths = (
 
 	return [{
 		exportEntry,
-		...getSourcePath(exportEntry.outputPath, sourcePath, distPath, fsExists)
+		...getSourcePath(exportEntry, sourcePath, distPath, fsExists)
 	}]
 }

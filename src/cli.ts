@@ -6,7 +6,7 @@ import { readPackageJson } from './utils/read-package-json.js';
 import { getExportEntries } from './utils/parse-package-json/get-export-entries.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
-import { getSourcePath } from './utils/get-source-path.js';
+import { getSourcePaths } from './utils/get-source-path.js';
 import { getRollupConfigs } from './utils/get-rollup-configs.js';
 import { tsconfig } from './utils/tsconfig.js';
 import { log } from './utils/log.js';
@@ -134,7 +134,7 @@ if (tsconfigTarget) {
 		throw new Error('No export entries found in package.json');
 	}
 
-	const sourcePaths = exportEntries.flatMap(exportEntry => getSourcePath(exportEntry, sourcePath, distPath, cwd));
+	const sourcePaths = exportEntries.flatMap(exportEntry => getSourcePaths(exportEntry, sourcePath, distPath, cwd));
 
 	const rollupConfigs = await getRollupConfigs(
 

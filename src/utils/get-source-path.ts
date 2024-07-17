@@ -31,7 +31,7 @@ const extensionMap = {
 
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
-export const getSourcePathFromDistPath = (
+export const getSourcePath = (
 	distPath: string,
 	source: string,
 	dist: string,
@@ -67,7 +67,7 @@ interface SourcePath {
 	distExtension: string;
 }
 
-export const getSourcePath = (
+export const getSourcePaths = (
 	exportEntry: ExportEntry,
 	sourcePath: string,
 	distPath: string,
@@ -78,7 +78,7 @@ export const getSourcePath = (
 
 		// use glob to resolve matches from the packageJsonRoot directory
 		const matchSet = new Set<string>();
-		const sourceMatch = getSourcePathFromDistPath(outputPath, sourcePath, distPath, (path)=>{
+		const sourceMatch = getSourcePath(outputPath, sourcePath, distPath, (path)=>{
 			const matches = globSync(path, { cwd });
 			for(const match of matches) matchSet.add(match);
 			return matches.length > 0; // always return false to prevent early exit
@@ -98,14 +98,6 @@ export const getSourcePath = (
 
 	return [{
 		exportEntry,
-		...getSourcePathFromDistPath(exportEntry.outputPath, sourcePath, distPath, fsExists)
+		...getSourcePath(exportEntry.outputPath, sourcePath, distPath, fsExists)
 	}]
-}
-
-export const distToSourcePath = (path: string, sourcePath: string, distPath: string) => {
-	return sourcePath + path.slice(distPath.length);
-}
-
-export const sourceToDistPath = (path: string, sourcePath: string, distPath: string) => {
-	return distPath + path.slice(sourcePath.length);
 }

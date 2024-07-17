@@ -32,34 +32,10 @@ const parseExportsMap = (
 	exportMap: PackageJson['exports'],
 	params: ExportsContext
 ): ExportEntry[] => {
-	console.log("parseExportsMap!");
-	console.log(exportMap, params);
 	const {type, path, cwd, platform} = params;
 	if (exportMap) {
 		if (typeof exportMap === 'string') {
 			if(isPath(exportMap)){
-				// if(exportMap.includes('*')){
-
-				// 	// use glob to resolve matches from the packageJsonRoot directory
-				// 	const matchSet = new Set<string>();
-				// 	const sourcePath = getSourcePathFromDistPath(exportMap, params.sourcePath, params.distPath, (path)=>{
-				// 		const matches = globSync(path, { cwd });
-				// 		for(const match of matches) matchSet.add(match);
-				// 		return false;
-				// 	});
-
-				// 	const matchedPaths = Array.from(matchSet);
-				// 	console.log("matchedPaths", matchedPaths);
-
-				// 	return matchedPaths.map(
-				// 		(match) => ({
-				// 			outputPath: sourceToDistPath(match, params.sourcePath, params.distPath),
-				// 			type: getFileType(exportPath) || type,
-				// 			from: path,
-				// 		})
-				// 	);
-
-				// }
 
 				return [{
 					outputPath: exportMap,
@@ -75,21 +51,7 @@ const parseExportsMap = (
 			return exportMap.flatMap(
 				(exportPath, index) => {
 					const from = `${path}[${index}]`;
-
 					return parseExportsMap(exportPath, {...params, path: from });
-					// return (
-					// 	typeof exportPath === 'string'
-					// 		? (
-					// 			isPath(exportPath)
-					// 				? {
-					// 					outputPath: exportPath,
-					// 					type: getFileType(exportPath) || type,
-					// 					from,
-					// 				}
-					// 				: []
-					// 		)
-					// 		: parseExportsMap(exportPath, {type, cwd, path: from })
-					// );
 				},
 			);
 		}
@@ -137,11 +99,13 @@ const parseExportsMap = (
 					});
 				}
 
-				// key is a relative path
 				if(isPath(key)){
+					// key is a relative path
+					// format the path a little more nicely
 					return parseExportsMap(value, {...params, path: `${path}["${key}"]`});
 				}
 
+				// non-standard export condition, probably
 				return parseExportsMap(value, {...params, path: `${path}.${key}`});
 			});
 		}

@@ -67,7 +67,6 @@ export const getSourcePathFromDistPath = (
 	throw new Error(`Could not find matching source file for export path ${stringify(distPath)}`);
 };
 
-
 export const getSourcePath = (
 	exportEntry: ExportEntry,
 	sourcePath: string,
@@ -96,6 +95,7 @@ export const getSourcePath = (
 
 		return allMatches
 	}
+
 	return [{
 		exportEntry,
 		...getSourcePathFromDistPath(exportEntry.outputPath, sourcePath, distPath, fsExists)

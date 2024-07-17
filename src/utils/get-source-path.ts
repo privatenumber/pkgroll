@@ -31,13 +31,6 @@ const extensionMap = {
 
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
-interface SourcePath {
-	exportEntry: ExportEntry,
-	input: string;
-	srcExtension: string;
-	distExtension: string;
-}
-
 export const getSourcePathFromDistPath = (
 	distPath: string,
 	source: string,
@@ -66,6 +59,13 @@ export const getSourcePathFromDistPath = (
 
 	throw new Error(`Could not find matching source file for export path ${stringify(distPath)}`);
 };
+
+interface SourcePath {
+	exportEntry: ExportEntry,
+	input: string;
+	srcExtension: string;
+	distExtension: string;
+}
 
 export const getSourcePath = (
 	exportEntry: ExportEntry,

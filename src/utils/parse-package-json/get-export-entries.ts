@@ -24,12 +24,11 @@ interface ParseExportsContext {
 	sourcePath: string;
 }
 
-
 const parseExportsMap = (
 	exportMap: PackageJson['exports'],
 	params: ParseExportsContext
 ): ExportEntry[] => {
-	const {type, path, cwd, platform} = params;
+	const {type, path} = params;
 	if (exportMap) {
 		if (typeof exportMap === 'string') {
 			if(isPath(exportMap)){
@@ -47,8 +46,7 @@ const parseExportsMap = (
 		if (Array.isArray(exportMap)) {
 			return exportMap.flatMap(
 				(exportPath, index) => {
-					const from = `${path}[${index}]`;
-					return parseExportsMap(exportPath, {...params, path: from });
+					return parseExportsMap(exportPath, {...params, path: `${path}[${index}]` });
 				},
 			);
 		}

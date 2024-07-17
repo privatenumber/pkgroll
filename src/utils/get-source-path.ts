@@ -1,8 +1,6 @@
 import { globSync } from "glob";
-import {join} from "path";
 import type { ExportEntry } from '../types.js';
 import { fsExists } from './fs-exists.js';
-import { getFileType } from "./parse-package-json/get-export-entries.js";
 
 const { stringify } = JSON;
 
@@ -47,37 +45,27 @@ export const getSourcePath = (
 	cwd: string
 ): SourcePath[] =>{
 	const outputPath = exportEntry.outputPath;
-		if(exportEntry.outputPath.includes('*')){
+	if(exportEntry.outputPath.includes('*')){
 
-					// use glob to resolve matches from the packageJsonRoot directory
-					const matchSet = new Set<string>();
-					const sourceMatch = getSourcePathFromDistPath(outputPath, sourcePath, distPath, (path)=>{
-						const matches = globSync(path, { cwd });
-						for(const match of matches) matchSet.add(match);
-						return matches.length > 0; // always return false to prevent early exit
-					});
+		// use glob to resolve matches from the packageJsonRoot directory
+		const matchSet = new Set<string>();
+		const sourceMatch = getSourcePathFromDistPath(outputPath, sourcePath, distPath, (path)=>{
+			const matches = globSync(path, { cwd });
+			for(const match of matches) matchSet.add(match);
+			return matches.length > 0; // always return false to prevent early exit
+		});
 
-					const matchedPaths = Array.from(matchSet);
-					console.log("matchedPaths", matchedPaths);
+		const matchedPaths = Array.from(matchSet);
 
-					const allMatches = matchedPaths.map(match => ({
-						exportEntry,
-						input: match,
-						srcExtension: sourceMatch.srcExtension,
-						distExtension: sourceMatch.distExtension
-					}))
-					console.log("allMatches", allMatches);
-					return allMatches
+		const allMatches = matchedPaths.map(match => ({
+			exportEntry,
+			input: match,
+			srcExtension: sourceMatch.srcExtension,
+			distExtension: sourceMatch.distExtension
+		}))
 
-					// return matchedPaths.map(
-					// 	(match) => ({
-					// 		outputPath: sourceToDistPath(match, params.sourcePath, params.distPath),
-					// 		type: getFileType(outputPath) || type,
-					// 		from: path,
-					// 	})
-					// );
-
-				}
+		return allMatches
+	}
 	return [{
 		exportEntry,
 		...getSourcePathFromDistPath(exportEntry.outputPath, sourcePath, distPath, fsExists)

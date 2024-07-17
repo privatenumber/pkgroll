@@ -1,9 +1,6 @@
 import type { PackageJson } from 'type-fest';
-import { globSync } from "glob";
 import type { PackageType, ExportEntry } from '../../types.js';
 import { normalizePath } from '../normalize-path.js';
-import { getSourcePathFromDistPath, sourceToDistPath } from '../get-source-path.js';
-import { parse } from 'path';
 
 const getFileType = (
 	filePath: string,

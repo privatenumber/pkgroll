@@ -54,6 +54,7 @@
 		"@rollup/plugin-replace": "^5.0.5",
 		"@rollup/pluginutils": "^5.1.0",
 		"esbuild": "^0.20.1",
+		"glob": "^11.0.0",
 		"magic-string": "^0.30.10",
 		"rollup": "^4.17.2"
 	},

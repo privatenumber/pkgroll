@@ -2,7 +2,7 @@ import fs from 'fs';
 
 export const fsExists = (
 	path: string,
-) => fs.promises.access(path).then(
-	() => true,
-	() => false,
-);
+) => {
+	console.log("check existence of ", path);
+	return fs.existsSync(path);
+}

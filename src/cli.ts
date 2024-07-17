@@ -118,7 +118,7 @@ if (tsconfigTarget) {
 (async () => {
 	const packageJson = await readPackageJson(cwd);
 
-	let exportEntries = getExportEntries(packageJson);
+	let exportEntries = getExportEntries(packageJson, {cwd,  sourcePath, distPath });
 
 	exportEntries = exportEntries.filter((entry) => {
 		const validPath = entry.outputPath.startsWith(distPath);
@@ -134,10 +134,7 @@ if (tsconfigTarget) {
 		throw new Error('No export entries found in package.json');
 	}
 
-	const sourcePaths = await Promise.all(exportEntries.map(async exportEntry => ({
-		...(await getSourcePath(exportEntry, sourcePath, distPath)),
-		exportEntry,
-	})));
+	const sourcePaths = exportEntries.flatMap(exportEntry => getSourcePath(exportEntry, sourcePath, distPath, cwd));
 
 	const rollupConfigs = await getRollupConfigs(
 

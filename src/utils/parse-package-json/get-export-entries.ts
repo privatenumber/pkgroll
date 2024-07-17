@@ -1,6 +1,9 @@
 import type { PackageJson } from 'type-fest';
+import { globSync } from "glob";
 import type { PackageType, ExportEntry } from '../../types.js';
 import { normalizePath } from '../normalize-path.js';
+import { getSourcePathFromDistPath, sourceToDistPath } from '../get-source-path.js';
+import { parse } from 'path';
 
 const getFileType = (
 	filePath: string,
@@ -15,18 +18,53 @@ const getFileType = (
 
 const isPath = (filePath: string) => filePath.startsWith('.');
 
+interface ExportsContext {
+	type: PackageType | 'types';
+	cwd: string;
+	platform?: 'node'
+	path: string;
+	distPath: string;
+	sourcePath: string;
+}
+
+
 const parseExportsMap = (
 	exportMap: PackageJson['exports'],
-	packageType: PackageType,
-	packagePath = 'exports',
+	params: ExportsContext
 ): ExportEntry[] => {
+	console.log("parseExportsMap!");
+	console.log(exportMap, params);
+	const {type, path, cwd, platform} = params;
 	if (exportMap) {
 		if (typeof exportMap === 'string') {
-			if (isPath(exportMap)) {
+			if(isPath(exportMap)){
+				// if(exportMap.includes('*')){
+
+				// 	// use glob to resolve matches from the packageJsonRoot directory
+				// 	const matchSet = new Set<string>();
+				// 	const sourcePath = getSourcePathFromDistPath(exportMap, params.sourcePath, params.distPath, (path)=>{
+				// 		const matches = globSync(path, { cwd });
+				// 		for(const match of matches) matchSet.add(match);
+				// 		return false;
+				// 	});
+
+				// 	const matchedPaths = Array.from(matchSet);
+				// 	console.log("matchedPaths", matchedPaths);
+
+				// 	return matchedPaths.map(
+				// 		(match) => ({
+				// 			outputPath: sourceToDistPath(match, params.sourcePath, params.distPath),
+				// 			type: getFileType(exportPath) || type,
+				// 			from: path,
+				// 		})
+				// 	);
+
+				// }
+
 				return [{
 					outputPath: exportMap,
-					type: getFileType(exportMap) || packageType,
-					from: packagePath,
+					type: getFileType(exportMap) || type,
+					from: path,
 				}];
 			}
 
@@ -36,71 +74,75 @@ const parseExportsMap = (
 		if (Array.isArray(exportMap)) {
 			return exportMap.flatMap(
 				(exportPath, index) => {
-					const from = `${packagePath}[${index}]`;
+					const from = `${path}[${index}]`;
 
-					return (
-						typeof exportPath === 'string'
-							? (
-								isPath(exportPath)
-									? {
-										outputPath: exportPath,
-										type: getFileType(exportPath) || packageType,
-										from,
-									}
-									: []
-							)
-							: parseExportsMap(exportPath, packageType, from)
-					);
+					return parseExportsMap(exportPath, {...params, path: from });
+					// return (
+					// 	typeof exportPath === 'string'
+					// 		? (
+					// 			isPath(exportPath)
+					// 				? {
+					// 					outputPath: exportPath,
+					// 					type: getFileType(exportPath) || type,
+					// 					from,
+					// 				}
+					// 				: []
+					// 		)
+					// 		: parseExportsMap(exportPath, {type, cwd, path: from })
+					// );
 				},
 			);
 		}
 
 		if (typeof exportMap === 'object') {
 			return Object.entries(exportMap).flatMap(([key, value]) => {
-				if (typeof value === 'string') {
-					const baseEntry = {
-						outputPath: value,
-						from: `${packagePath}.${key}`,
-					};
 
-					if (key === 'require') {
-						return {
-							...baseEntry,
-							type: 'commonjs',
-						};
-					}
+				const baseParams = {
+					...params,
+					path: `${path}.${key}`
+				};
 
-					if (key === 'import') {
-						return {
-							...baseEntry,
-							type: getFileType(value) || packageType,
-						};
-					}
-
-					if (key === 'types') {
-						return {
-							...baseEntry,
-							type: 'types',
-						};
-					}
-
-					if (key === 'node') {
-						return {
-							...baseEntry,
-							type: getFileType(value) || packageType,
-							platform: 'node',
-						};
-					}
-
-					if (key === 'default') {
-						return {
-							...baseEntry,
-							type: getFileType(value) || packageType,
-						};
-					}
+				// otherwise, key is an export condition
+				if (key === 'require') {
+					return parseExportsMap(value, {
+						...baseParams,
+						type: 'commonjs',
+					})
 				}
 
-				return parseExportsMap(value, packageType, `${packagePath}.${key}`);
+				if (key === 'import') {
+					return parseExportsMap(value, {
+						...baseParams,
+						type: 'module',
+					})
+				}
+
+				if (key === 'types') {
+					return parseExportsMap(value, {
+						...baseParams,
+						type: 'types' as PackageType,
+					})
+				}
+
+				if (key === 'node') {
+					return parseExportsMap(value, {
+						...baseParams,
+						platform: 'node',
+					});
+				}
+
+				if (key === 'default') {
+					return parseExportsMap(value, {
+						...baseParams,
+					});
+				}
+
+				// key is a relative path
+				if(isPath(key)){
+					return parseExportsMap(value, {...params, path: `${path}["${key}"]`});
+				}
+
+				return parseExportsMap(value, {...params, path: `${path}.${key}`});
 			});
 		}
 	}
@@ -132,15 +174,20 @@ const addExportPath = (
 	}
 };
 
-export const getExportEntries = (packageJson: PackageJson) => {
+interface GetExportEntriesContext {
+	cwd: string;
+	distPath: string;
+	sourcePath: string;
+}
+export const getExportEntries = (packageJson: PackageJson, ctx: GetExportEntriesContext) => {
 	const exportEntriesMap: Record<string, ExportEntry> = {};
-	const packageType = packageJson.type ?? 'commonjs';
+	const type = packageJson.type ?? 'commonjs';
 
 	if (packageJson.main) {
 		const mainPath = packageJson.main;
 		addExportPath(exportEntriesMap, {
 			outputPath: mainPath,
-			type: getFileType(mainPath) ?? packageType,
+			type: getFileType(mainPath) ?? type,
 			from: 'main',
 		});
 	}
@@ -170,7 +217,7 @@ export const getExportEntries = (packageJson: PackageJson) => {
 		if (typeof bin === 'string') {
 			addExportPath(exportEntriesMap, {
 				outputPath: bin,
-				type: getFileType(bin) ?? packageType,
+				type: getFileType(bin) ?? type,
 				isExecutable: true,
 				from: 'bin',
 			});
@@ -178,7 +225,7 @@ export const getExportEntries = (packageJson: PackageJson) => {
 			for (const [binName, binPath] of Object.entries(bin)) {
 				addExportPath(exportEntriesMap, {
 					outputPath: binPath!,
-					type: getFileType(binPath!) ?? packageType,
+					type: getFileType(binPath!) ?? type,
 					isExecutable: true,
 					from: `bin.${binName}`,
 				});
@@ -187,7 +234,13 @@ export const getExportEntries = (packageJson: PackageJson) => {
 	}
 
 	if (packageJson.exports) {
-		const exportMap = parseExportsMap(packageJson.exports, packageType);
+		const exportMap = parseExportsMap(packageJson.exports, {
+			type,
+			cwd: ctx.cwd,
+			path: 'exports',
+			distPath: ctx.distPath,
+			sourcePath: ctx.sourcePath
+		});
 		for (const exportEntry of exportMap) {
 			addExportPath(exportEntriesMap, exportEntry);
 		}

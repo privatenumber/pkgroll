@@ -17,11 +17,8 @@ const isPath = (filePath: string) => filePath.startsWith('.');
 
 interface ParseExportsContext {
 	type: PackageType | 'types';
-	cwd: string;
 	platform?: 'node'
 	path: string;
-	distPath: string;
-	sourcePath: string;
 }
 
 const parseExportsMap = (
@@ -133,12 +130,7 @@ const addExportPath = (
 	}
 };
 
-interface GetExportEntriesContext {
-	cwd: string;
-	distPath: string;
-	sourcePath: string;
-}
-export const getExportEntries = (packageJson: PackageJson, ctx: GetExportEntriesContext) => {
+export const getExportEntries = (packageJson: PackageJson) => {
 	const exportEntriesMap: Record<string, ExportEntry> = {};
 	const type = packageJson.type ?? 'commonjs';
 
@@ -195,10 +187,7 @@ export const getExportEntries = (packageJson: PackageJson, ctx: GetExportEntries
 	if (packageJson.exports) {
 		const exportMap = parseExportsMap(packageJson.exports, {
 			type,
-			cwd: ctx.cwd,
 			path: 'exports',
-			distPath: ctx.distPath,
-			sourcePath: ctx.sourcePath
 		});
 		for (const exportEntry of exportMap) {
 			addExportPath(exportEntriesMap, exportEntry);

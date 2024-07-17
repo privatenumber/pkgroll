@@ -118,7 +118,7 @@ if (tsconfigTarget) {
 (async () => {
 	const packageJson = await readPackageJson(cwd);
 
-	let exportEntries = getExportEntries(packageJson, {cwd,  sourcePath, distPath });
+	let exportEntries = getExportEntries(packageJson);
 
 	exportEntries = exportEntries.filter((entry) => {
 		const validPath = entry.outputPath.startsWith(distPath);

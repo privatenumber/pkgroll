@@ -15,7 +15,7 @@ const getFileType = (
 
 const isPath = (filePath: string) => filePath.startsWith('.');
 
-interface ExportsContext {
+interface ParseExportsContext {
 	type: PackageType | 'types';
 	cwd: string;
 	platform?: 'node'
@@ -27,7 +27,7 @@ interface ExportsContext {
 
 const parseExportsMap = (
 	exportMap: PackageJson['exports'],
-	params: ExportsContext
+	params: ParseExportsContext
 ): ExportEntry[] => {
 	const {type, path, cwd, platform} = params;
 	if (exportMap) {

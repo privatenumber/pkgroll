@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import type { OutputOptions, RollupOptions, Plugin } from 'rollup';
+import type { TransformOptions } from 'esbuild';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import type { PackageJson } from 'type-fest';
+import type { TsConfigJsonResolved } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types.js';
 import { isFormatEsm, createRequire } from './rollup-plugins/create-require.js';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
@@ -76,9 +78,11 @@ const getConfig = {
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
+		tsconfigRaw: TsConfigJsonResolved,
 	) => {
 		const esbuildConfig = {
 			target: options.target,
+			tsconfigRaw: tsconfigRaw as TransformOptions['tsconfigRaw'],
 		};
 
 		return {
@@ -144,6 +148,7 @@ export const getRollupConfigs = async (
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
+	tsconfigRaw: TsConfigJsonResolved,
 ) => {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)
@@ -204,6 +209,7 @@ export const getRollupConfigs = async (
 				aliases,
 				env,
 				executablePaths,
+				tsconfigRaw
 			);
 			config.external = externalDependencies;
 			configs.app = config;

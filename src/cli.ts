@@ -8,7 +8,7 @@ import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
 import { getSourcePath } from './utils/get-source-path.js';
 import { getRollupConfigs } from './utils/get-rollup-configs.js';
-import { tsconfig } from './utils/tsconfig.js';
+import { parseTsconfig } from 'get-tsconfig';
 import { log } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
 
@@ -41,6 +41,12 @@ const argv = cli({
 			default: [`node${process.versions.node}`],
 			description: 'Environments to support. `target` in tsconfig.json is automatically added. Defaults to the current Node.js version.',
 			alias: 't',
+		},
+		tsconfig: {
+			type: String,
+			description: 'Use a given tsconfig file',
+			alias: 'c',
+			default: 'tsconfig.json',
 		},
 		watch: {
 			type: Boolean,
@@ -109,8 +115,9 @@ const cwd = process.cwd();
  */
 const sourcePath = normalizePath(argv.flags.src, true);
 const distPath = normalizePath(argv.flags.dist, true);
+const tsconfig = parseTsconfig(argv.flags.tsconfig);
 
-const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
+const tsconfigTarget = tsconfig?.compilerOptions?.target;
 if (tsconfigTarget) {
 	argv.flags.target.push(tsconfigTarget);
 }
@@ -153,6 +160,7 @@ if (tsconfigTarget) {
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,
+		tsconfig
 	);
 
 	if (argv.flags.cleanDist) {

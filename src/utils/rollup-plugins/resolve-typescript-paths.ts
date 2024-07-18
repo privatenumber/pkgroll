@@ -1,5 +1,5 @@
 import { dirname, resolve } from 'path';
-// import { createPathsMatcher } from 'get-tsconfig';
+import { createPathsMatcher } from 'get-tsconfig';
 import type { Plugin } from 'rollup';
 import type { TsConfigResult } from 'get-tsconfig';
 
@@ -36,7 +36,7 @@ export const resolveTypescriptPaths = (
 	const isTest = env['process.env.NODE_ENV'] === '"development"';
 
 	const { baseUrl, paths } = tsconfig.config.compilerOptions;
-	// const matcher = createPathsMatcher(tsconfig);
+	const mapper = createPathsMatcher(tsconfig);
 
 	return {
 		name: 'resolve-typescript-paths',
@@ -57,7 +57,7 @@ export const resolveTypescriptPaths = (
 				const resolved = await this.resolve(
 					importee,
 					importer,
-					Object.assign({ skipSelf: true, isEntry: false }, options),
+					Object.assign({ skipSelf: true }, options),
 				);
 
 				if (isTest) {
@@ -71,8 +71,31 @@ export const resolveTypescriptPaths = (
 				return resolved;
 			}
 
-			if (paths && isMapped(paths, id)) {
-				/** @todo */
+			if (paths && mapper && isMapped(paths, id)) {
+				if (isTest) {
+					console.log();
+					console.log('id - ', id);
+					console.log('importer - ', importer);
+				}
+
+				const resolved = await Promise.all(
+					mapper(id)
+					.map(importee => this.resolve(
+						importee,
+						importer,
+						Object.assign({ skipSelf: true }, options),
+					))
+				);
+
+				for (const result of resolved) {
+					if (isTest) {
+						console.log()
+						console.log(result)
+					}
+
+					if (result) return result;
+				}
+
 				return null;
 			}
 

@@ -24,7 +24,6 @@ const isMapped = (paths: Record<string, string[]>, id: string) => Object
 
 export const resolveTypescriptPaths = (
 	tsconfig: TsConfigResult,
-	env: Record<string, string>,
 ): Plugin => {
 	if (!tsconfig.config.compilerOptions) {
 		return {
@@ -32,8 +31,6 @@ export const resolveTypescriptPaths = (
 			resolveId: () => null
 		}
 	}
-
-	const isTest = env['process.env.NODE_ENV'] === '"development"';
 
 	const { baseUrl, paths } = tsconfig.config.compilerOptions;
 	const mapper = createPathsMatcher(tsconfig);
@@ -60,24 +57,10 @@ export const resolveTypescriptPaths = (
 					Object.assign({ skipSelf: true }, options),
 				);
 
-				if (isTest) {
-					console.log();
-					console.log('id - ', id);
-					console.log('importer - ', importer);
-					console.log('importee - ', importee);
-					console.log(resolved);
-				}
-
 				return resolved;
 			}
 
 			if (paths && mapper && isMapped(paths, id)) {
-				if (isTest) {
-					console.log();
-					console.log('id - ', id);
-					console.log('importer - ', importer);
-				}
-
 				const resolved = await Promise.all(
 					mapper(id)
 					.map(importee => this.resolve(
@@ -88,11 +71,6 @@ export const resolveTypescriptPaths = (
 				);
 
 				for (const result of resolved) {
-					if (isTest) {
-						console.log()
-						console.log(result)
-					}
-
 					if (result) return result;
 				}
 

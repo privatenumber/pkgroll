@@ -92,7 +92,7 @@ const getConfig = {
 			plugins: [
 				externalizeNodeBuiltins(options),
 				resolveTypescriptMjsCts(),
-				resolveTypescriptPaths(tsconfig, env),
+				resolveTypescriptPaths(tsconfig),
 				alias({
 					entries: aliases,
 				}),

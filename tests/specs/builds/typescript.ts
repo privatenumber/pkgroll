@@ -1,7 +1,7 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { createPackageJson } from '../../fixtures.js';
+import { createPackageJson, createTsconfigJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('TypeScript', ({ test }) => {
@@ -53,4 +53,77 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toBe('console.log(1);\n');
 		});
 	});
+
+	describe('cli option \'tsconfig\'', ({ test }) => {
+		test('respects defined compiler options', async () => {
+			await using fixture = await createFixture({
+				src: {
+					'index.ts': 'export default () => "foo";',
+				},
+				'package.json': createPackageJson({
+					main: './dist/index.js',
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						target: 'ES6',
+					},
+				}),
+				'tsconfig.build.json': createTsconfigJson({
+					compilerOptions: {
+						target: 'ES5',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([
+				'--env.NODE_ENV=test',
+				'--tsconfig=tsconfig.build.json'
+			], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.js', 'utf8');
+			expect(content.includes('function')).toBe(true);
+		});
+
+		test('parses default "tsconfig.json" as a fallback', async () => {
+			await using fixture = await createFixture({
+				src: {
+					'index.ts': 'export default () => "foo";',
+				},
+				'package.json': createPackageJson({
+					main: './dist/index.js',
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						target: 'ES6',
+					},
+				}),
+				'tsconfig.build.json': createTsconfigJson({
+					compilerOptions: {
+						target: 'ES5',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([
+				'--env.NODE_ENV=test',
+				'--tsconfig=tsconfig.invalid.json'
+			], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.js', 'utf8');
+			expect(content.includes('function')).toBe(false);
+		});
+
+	})
 });

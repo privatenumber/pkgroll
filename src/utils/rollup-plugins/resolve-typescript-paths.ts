@@ -36,7 +36,7 @@ export const resolveTypescriptPaths = (
 	const mapper = createPathsMatcher(tsconfig);
 
 	return {
-		name: 'resolve-typescript-paths',
+		name,
 		async resolveId(id, importer, options) {
 
 			if (!importer) return null;

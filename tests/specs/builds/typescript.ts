@@ -75,7 +75,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 							import { foo } from 'importee.js';
 							import { bar } from 'nested/importee.js';
 							import { baz } from 'nested/deep/importee.js';
-							export const quux = foo() + bar() + baz();`
+							export const quux = foo() + bar() + baz();`,
 						},
 					},
 				},
@@ -91,7 +91,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					compilerOptions: {
 						baseUrl: './src',
 					},
-				})
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
@@ -147,9 +147,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 							'@foo/*': ['./src/foo/*'],
 							'$bar/*': ['./src/bar/*'],
 							'~baz': ['./src/baz/baz.ts'],
-						}
+						},
 					},
-				})
+				}),
 			});
 
 			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {

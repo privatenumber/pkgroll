@@ -18,6 +18,7 @@ import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs
 import { resolveTypescriptPaths } from './rollup-plugins/resolve-typescript-paths.js';
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
+
 /** @todo resolve lint warning max import statements */
 
 type Options = {

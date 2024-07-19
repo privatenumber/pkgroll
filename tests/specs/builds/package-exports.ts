@@ -3,7 +3,6 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
 import { packageFixture, createPackageJson } from '../../fixtures.js';
 
-
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
 		test('string', async () => {

@@ -17,19 +17,18 @@ const isPath = (filePath: string) => filePath.startsWith('.');
 
 interface ParseExportsContext {
 	type: PackageType | 'types';
-	platform?: 'node'
+	platform?: 'node';
 	path: string;
 }
 
 const parseExportsMap = (
 	exportMap: PackageJson['exports'],
-	params: ParseExportsContext
+	parameters: ParseExportsContext,
 ): ExportEntry[] => {
-	const {type, path} = params;
+	const { type, path } = parameters;
 	if (exportMap) {
 		if (typeof exportMap === 'string') {
-			if(isPath(exportMap)){
-
+			if (isPath(exportMap)) {
 				return [{
 					outputPath: exportMap,
 					type: getFileType(exportMap) || type,
@@ -42,63 +41,69 @@ const parseExportsMap = (
 
 		if (Array.isArray(exportMap)) {
 			return exportMap.flatMap(
-				(exportPath, index) => {
-					return parseExportsMap(exportPath, {...params, path: `${path}[${index}]` });
-				},
+				(exportPath, index) => parseExportsMap(exportPath, {
+					...parameters,
+					path: `${path}[${index}]`,
+				}),
 			);
 		}
 
 		if (typeof exportMap === 'object') {
 			return Object.entries(exportMap).flatMap(([key, value]) => {
-
-				const baseParams = {
-					...params,
-					path: `${path}.${key}`
+				const baseParameters = {
+					...parameters,
+					path: `${path}.${key}`,
 				};
 
 				// otherwise, key is an export condition
 				if (key === 'require') {
 					return parseExportsMap(value, {
-						...baseParams,
+						...baseParameters,
 						type: 'commonjs',
-					})
+					});
 				}
 
 				if (key === 'import') {
 					return parseExportsMap(value, {
-						...baseParams,
+						...baseParameters,
 						type: 'module',
-					})
+					});
 				}
 
 				if (key === 'types') {
 					return parseExportsMap(value, {
-						...baseParams,
+						...baseParameters,
 						type: 'types' as PackageType,
-					})
+					});
 				}
 
 				if (key === 'node') {
 					return parseExportsMap(value, {
-						...baseParams,
+						...baseParameters,
 						platform: 'node',
 					});
 				}
 
 				if (key === 'default') {
 					return parseExportsMap(value, {
-						...baseParams,
+						...baseParameters,
 					});
 				}
 
-				if(isPath(key)){
+				if (isPath(key)) {
 					// key is a relative path
 					// format the path a little more nicely
-					return parseExportsMap(value, {...params, path: `${path}["${key}"]`});
+					return parseExportsMap(value, {
+						...parameters,
+						path: `${path}["${key}"]`,
+					});
 				}
 
 				// non-standard export condition, probably
-				return parseExportsMap(value, {...params, path: `${path}.${key}`});
+				return parseExportsMap(value, {
+					...parameters,
+					path: `${path}.${key}`,
+				});
 			});
 		}
 	}

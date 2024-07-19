@@ -1,4 +1,4 @@
-import { globSync } from "glob";
+import { globSync } from 'glob';
 import type { ExportEntry } from '../types.js';
 import { fsExists } from './fs-exists.js';
 
@@ -7,7 +7,7 @@ const { stringify } = JSON;
 const tryExtensions = (
 	pathWithoutExtension: string,
 	extensions: readonly string[],
-	checker: (sourcePath: string)=>boolean
+	checker: (sourcePath: string)=>boolean,
 ) => {
 	for (const extension of extensions) {
 		const pathWithExtension = pathWithoutExtension + extension;
@@ -35,8 +35,8 @@ export const getSourcePath = (
 	exportEntry: ExportEntry,
 	source: string,
 	dist: string,
-	checker: (sourcePath: string)=>boolean = fsExists
-): Omit<SourcePath, "exportEntry"> => {
+	checker: (sourcePath: string)=>boolean = fsExists,
+): Omit<SourcePath, 'exportEntry'> => {
 	const sourcePathUnresolved = source + exportEntry.outputPath.slice(dist.length);
 
 	for (const distExtension of distExtensions) {
@@ -44,7 +44,7 @@ export const getSourcePath = (
 			const sourcePath = tryExtensions(
 				sourcePathUnresolved.slice(0, -distExtension.length),
 				extensionMap[distExtension],
-				checker
+				checker,
 			);
 
 			if (sourcePath) {
@@ -61,7 +61,7 @@ export const getSourcePath = (
 };
 
 interface SourcePath {
-	exportEntry: ExportEntry,
+	exportEntry: ExportEntry;
 	input: string;
 	srcExtension: string;
 	distExtension: string;
@@ -71,15 +71,14 @@ export const getSourcePaths = (
 	exportEntry: ExportEntry,
 	sourcePath: string,
 	distPath: string,
-	cwd: string
-): SourcePath[] =>{
-	if(exportEntry.outputPath.includes('*')){
-
+	cwd: string,
+): SourcePath[] => {
+	if (exportEntry.outputPath.includes('*')) {
 		// use glob to resolve matches from the packageJsonRoot directory
 		const matchSet = new Set<string>();
-		const sourceMatch = getSourcePath(exportEntry, sourcePath, distPath, (path)=>{
+		const sourceMatch = getSourcePath(exportEntry, sourcePath, distPath, (path) => {
 			const matches = globSync(path, { cwd });
-			for(const match of matches) matchSet.add(match);
+			for (const match of matches) { matchSet.add(match); }
 			return matches.length > 0; // always return false to prevent early exit
 		});
 
@@ -89,14 +88,14 @@ export const getSourcePaths = (
 			exportEntry,
 			input: match,
 			srcExtension: sourceMatch.srcExtension,
-			distExtension: sourceMatch.distExtension
-		}))
+			distExtension: sourceMatch.distExtension,
+		}));
 
-		return allMatches
+		return allMatches;
 	}
 
 	return [{
 		exportEntry,
-		...getSourcePath(exportEntry, sourcePath, distPath, fsExists)
-	}]
-}
+		...getSourcePath(exportEntry, sourcePath, distPath, fsExists),
+	}];
+};

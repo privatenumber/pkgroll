@@ -43,8 +43,10 @@ const getConfig = {
 		options: Options,
 		tsconfig: TsConfigResult | null,
 	) => {
-		const dts = await import('rollup-plugin-dts');
-		const ts = await import('typescript');
+		const [dts, ts] = await Promise.all([
+			import('rollup-plugin-dts'),
+			import('typescript'),
+		]);
 		return {
 			input: [] as string[],
 			preserveEntrySignatures: 'strict' as const,

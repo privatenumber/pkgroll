@@ -23,9 +23,9 @@ const isMapped = (paths: Record<string, string[]>, id: string) => Object
 	);
 
 export const resolveTypescriptPaths = (
-	tsconfig: TsConfigResult,
+	tsconfig: TsConfigResult | null,
 ): Plugin => {
-	if (!tsconfig.config.compilerOptions) {
+	if (!tsconfig?.config.compilerOptions) {
 		return {
 			name,
 			resolveId: () => null

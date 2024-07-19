@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { OutputOptions, RollupOptions, Plugin } from 'rollup';
+import type { TransformOptions } from 'esbuild';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -79,11 +80,11 @@ const getConfig = {
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
-		tsconfig: TsConfigResult,
+		tsconfig: TsConfigResult | null,
 	) => {
-		const esbuildConfig = {
+		const esbuildConfig: TransformOptions = {
 			target: options.target,
-			tsconfigRaw: tsconfig.config,
+			tsconfigRaw: tsconfig?.config,
 		};
 
 		return {
@@ -150,7 +151,7 @@ export const getRollupConfigs = async (
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
-	tsconfig: TsConfigResult,
+	tsconfig: TsConfigResult | null,
 ) => {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)

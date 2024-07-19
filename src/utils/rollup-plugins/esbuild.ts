@@ -1,7 +1,6 @@
 import type { Plugin, InternalModuleFormat } from 'rollup';
 import { createFilter } from '@rollup/pluginutils';
 import { transform, type TransformOptions, type Format } from 'esbuild';
-import { tsconfig } from '../tsconfig.js';
 
 export const esbuildTransform = (
 	options?: TransformOptions,
@@ -24,8 +23,6 @@ export const esbuildTransform = (
 
 				// https://github.com/evanw/esbuild/issues/1932#issuecomment-1013380565
 				sourcefile: id.replace(/\.[cm]ts/, '.ts'),
-
-				tsconfigRaw: tsconfig?.config as TransformOptions['tsconfigRaw'],
 			});
 
 			return {

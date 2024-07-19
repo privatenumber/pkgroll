@@ -4,12 +4,7 @@ export const getTsconfig = (
 	cwd: string,
 	tscFile?: string,
 ) => (
-	(
-		tscFile
-			? _getTsconfig(cwd, tscFile)
-			: _getTsconfig()
-	) ?? {
-		path: cwd,
-		config: {},
-	}
+	tscFile
+		? _getTsconfig(cwd, tscFile)
+		: _getTsconfig()
 );

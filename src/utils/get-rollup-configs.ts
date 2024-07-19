@@ -78,11 +78,11 @@ const getConfig = {
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
-		tsconfig: TsConfigResult,
+		tsconfig: TsConfigResult | null,
 	) => {
 		const esbuildConfig: TransformOptions = {
 			target: options.target,
-			tsconfigRaw: tsconfig.config,
+			tsconfigRaw: tsconfig?.config,
 		};
 
 		return {
@@ -148,7 +148,7 @@ export const getRollupConfigs = async (
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
-	tsconfig: TsConfigResult,
+	tsconfig: TsConfigResult | null,
 ) => {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)

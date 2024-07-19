@@ -15,7 +15,7 @@ import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
 import { patchBinary } from './rollup-plugins/patch-binary.js';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
-import { resolveTypescriptPaths } from './rollup-plugins/resolve-typescript-paths.js';
+import { resolveTsconfigPaths } from './rollup-plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
@@ -50,7 +50,11 @@ const getConfig = {
 			plugins: [
 				externalizeNodeBuiltins(options),
 				// TODO: Is this necessary?
-				// resolveTypescriptPaths(tsconfig),
+				// ...(
+				// 	tsconfig
+				// 		? [resolveTypescriptPaths(tsconfig)]
+				// 		: []
+				// ),
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
@@ -93,7 +97,11 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
-				resolveTypescriptPaths(tsconfig),
+				...(
+					tsconfig
+						? [resolveTsconfigPaths(tsconfig)]
+						: []
+				),
 				resolveTypescriptMjsCts(),
 				alias({
 					entries: aliases,

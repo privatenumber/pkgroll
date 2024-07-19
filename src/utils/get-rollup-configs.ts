@@ -19,8 +19,6 @@ import { resolveTypescriptPaths } from './rollup-plugins/resolve-typescript-path
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
-/** @todo resolve lint warning max import statements */
-
 type Options = {
 	minify: boolean;
 	target: string[];
@@ -51,6 +49,8 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
+				// TODO: Is this necessary?
+				// resolveTypescriptPaths(tsconfig),
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
@@ -93,8 +93,8 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
-				resolveTypescriptMjsCts(),
 				resolveTypescriptPaths(tsconfig),
+				resolveTypescriptMjsCts(),
 				alias({
 					entries: aliases,
 				}),

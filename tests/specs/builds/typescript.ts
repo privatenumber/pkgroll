@@ -54,38 +54,33 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toBe('console.log(1);\n');
 		});
 
-		test('resolves bare module paths ', async () => {
+		test('resolves baseUrl', async () => {
 			await using fixture = await createFixture({
 				src: {
 					'index.ts': outdent`
-					import { qux } from 'nested/exportee.js';
-					import { quux } from 'nested/deep/exportee.js';
+					import { qux } from 'dir/exportee.js';
+					import { quux } from 'dir/deep/exportee.js';
 					console.log(qux, quux);
-					export { qux, quux };`,
-					'importee.ts': outdent`export const foo = () => 'foo';`,
-					nested: {
-						'importee.ts': outdent`export const bar = () => 'bar';`,
+					`,
+					'importee.ts': `export const foo = 'foo'`,
+					dir: {
+						'importee.ts': `export const bar = 'bar'`,
 						'exportee.ts': outdent`
 						import { foo } from 'importee.js';
-						import { baz } from 'nested/deep/importee.js';
-						export const qux = foo() + baz();`,
+						import { baz } from 'dir/deep/importee.js';
+						export const qux = foo + baz;`,
 						deep: {
-							'importee.ts': outdent`export const baz = () => 'baz';`,
+							'importee.ts': `export const baz = 'baz'`,
 							'exportee.ts': outdent`
 							import { foo } from 'importee.js';
-							import { bar } from 'nested/importee.js';
-							import { baz } from 'nested/deep/importee.js';
-							export const quux = foo() + bar() + baz();`,
+							import { bar } from 'dir/importee.js';
+							import { baz } from 'dir/deep/importee.js';
+							export const quux = foo + bar + baz;`,
 						},
 					},
 				},
 				'package.json': createPackageJson({
-					type: 'module',
-					exports: {
-						'.': './dist/index.js',
-						'./nested': './dist/nested/exportee.js',
-						'./deep': './dist/nested/deep/exportee.js',
-					},
+					exports: './dist/index.mjs',
 				}),
 				'tsconfig.json': createTsconfigJson({
 					compilerOptions: {
@@ -94,7 +89,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				}),
 			});
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
+			const pkgrollProcess = await pkgroll(['--minify'], {
 				cwd: fixture.path,
 				nodePath,
 			});
@@ -102,57 +97,39 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			/** @todo expect */
-			// const contents = await Promise.all([
-			// 	'./dist/index.js',
-			// 	'./dist/nested/exportee.js',
-			// 	'./dist/nested/deep/exportee.js',
-			// ].map(file => fixture.readFile(file, 'utf-8')));
-
-			// contents.forEach(content => console.log(content.split('\n'), '\n'))
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('"foo"');
+			expect(content).toMatch('"bar"');
+			expect(content).toMatch('"baz"');
 		});
 
-		test('resolves mapped module paths ', async () => {
+		test('resolves paths', async () => {
 			await using fixture = await createFixture({
 				src: {
 					'index.ts': outdent`
 					import * as foo from '@foo/index.js';
-					import { bar } from '$bar/bar.js';
-					import { baz } from '~baz';
-					export { foo, bar, baz };`,
+					import { bar } from '~bar';
+					export { foo, bar };`,
 					foo: {
-						'index.ts': outdent`
-						export { a } from '@foo/a.js';
-						export { b } from '@foo/b.js';`,
-						'a.ts': `export const a = () => 'a';`,
-						'b.ts': `export const b = () => 'b';`,
+						'index.ts': `export { a } from '@foo/a.js';`,
+						'a.ts': `export const a = 'a';`,
 					},
-					bar: {
-						'bar.ts': `export const bar = () => 'bar';`,
-					},
-					baz: {
-						'baz.ts': `export const baz = () => 'baz';`,
-					},
+					'bar/index.ts': `export const bar = 'bar';`,
 				},
 				'package.json': createPackageJson({
-					type: 'module',
-					exports: {
-						'.': './dist/index.js',
-						'./foo': './dist/foo/index.js',
-					},
+					exports: './dist/index.mjs',
 				}),
 				'tsconfig.json': createTsconfigJson({
 					compilerOptions: {
 						paths: {
 							'@foo/*': ['./src/foo/*'],
-							'$bar/*': ['./src/bar/*'],
-							'~baz': ['./src/baz/baz.ts'],
+							'~bar': ['./src/bar/index.ts'],
 						},
 					},
 				}),
 			});
 
-			const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
+			const pkgrollProcess = await pkgroll(['--minify'], {
 				cwd: fixture.path,
 				nodePath,
 			});
@@ -160,13 +137,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			/** @todo expect */
-			// const contents = await Promise.all([
-			// 	'./dist/index.js',
-			// 	'./dist/foo/index.js',
-			// ].map(file => fixture.readFile(file, 'utf-8')));
-
-			// contents.forEach(content => console.log(content.split('\n'), '\n'))
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('"a"');
+			expect(content).toMatch('"bar"');
 		});
 	});
 

@@ -44,8 +44,8 @@ const argv = cli({
 		},
 		tsconfig: {
 			type: String,
-			description: 'Use a given tsconfig file',
-			alias: 'c',
+			description: 'Custom tsconfig.json file path',
+			alias: 'p',
 		},
 		watch: {
 			type: Boolean,

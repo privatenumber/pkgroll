@@ -44,7 +44,7 @@ const getConfig = {
 		tsconfig: TsConfigResult | null,
 	) => {
 		const dts = await import('rollup-plugin-dts');
-
+		const ts = await import('typescript');
 		return {
 			input: [] as string[],
 			preserveEntrySignatures: 'strict' as const,
@@ -75,6 +75,7 @@ const getConfig = {
 					compilerOptions: {
 						composite: false,
 						preserveSymlinks: false,
+						moduleResolution: ts.default.ModuleResolutionKind.Bundler,
 					},
 				}) as Plugin,
 			],

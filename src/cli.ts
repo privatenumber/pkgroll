@@ -115,7 +115,7 @@ const cwd = process.cwd();
 const sourcePath = normalizePath(argv.flags.src, true);
 const distPath = normalizePath(argv.flags.dist, true);
 
-const tsconfig = getTsconfig(cwd, argv.flags.tsconfig);
+const tsconfig = getTsconfig(argv.flags.tsconfig);
 const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
 if (tsconfigTarget) {
 	argv.flags.target.push(tsconfigTarget);

@@ -1,10 +1,17 @@
-import { getTsconfig as _getTsconfig } from 'get-tsconfig';
+import path from 'path';
+import { getTsconfig as _getTsconfig, parseTsconfig } from 'get-tsconfig';
 
 export const getTsconfig = (
-	cwd: string,
 	tscFile?: string,
-) => (
-	tscFile
-		? _getTsconfig(cwd, tscFile)
-		: _getTsconfig()
-);
+) => {
+	if (!tscFile) {
+		return _getTsconfig();
+	}
+
+	const resolvedTscFile = path.resolve(tscFile);
+	const config = parseTsconfig(resolvedTscFile);
+	return {
+		path: resolvedTscFile,
+		config,
+	};
+};

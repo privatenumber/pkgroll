@@ -54,8 +54,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 	});
 
-	describe('cli option \'tsconfig\'', ({ test }) => {
-		test('respects defined compiler options', async () => {
+	describe('custom tsconfig.json path', ({ test }) => {
+		test('respects compile target', async () => {
 			await using fixture = await createFixture({
 				src: {
 					'index.ts': 'export default () => "foo";',
@@ -90,8 +90,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content.includes('function')).toBe(true);
 		});
 
-		test('parses default "tsconfig.json" as a fallback', async () => {
-			await using fixture = await createFixture({
+		test('error on invalid tsconfig.json path', async () => {
+			const fixture = await createFixture({
 				src: {
 					'index.ts': 'export default () => "foo";',
 				},
@@ -116,13 +116,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 			], {
 				cwd: fixture.path,
 				nodePath,
+				reject: false,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
-
-			const content = await fixture.readFile('dist/index.js', 'utf8');
-			expect(content.includes('function')).toBe(false);
+			expect(pkgrollProcess.exitCode).toBe(1);
+			// expect(pkgrollProcess.stderr).toMatch('Cannot resolve tsconfig at path:');
 		});
 	});
 });

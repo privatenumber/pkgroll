@@ -62,15 +62,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 					import { quux } from 'dir/deep/exportee.js';
 					console.log(qux, quux);
 					`,
-					'importee.ts': `export const foo = 'foo'`,
+					'importee.ts': 'export const foo = \'foo\'',
 					dir: {
-						'importee.ts': `export const bar = 'bar'`,
+						'importee.ts': 'export const bar = \'bar\'',
 						'exportee.ts': outdent`
 						import { foo } from 'importee.js';
 						import { baz } from 'dir/deep/importee.js';
 						export const qux = foo + baz;`,
 						deep: {
-							'importee.ts': `export const baz = 'baz'`,
+							'importee.ts': 'export const baz = \'baz\'',
 							'exportee.ts': outdent`
 							import { foo } from 'importee.js';
 							import { bar } from 'dir/importee.js';
@@ -112,10 +112,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 					import { bar } from '~bar';
 					export { foo, bar };`,
 					foo: {
-						'index.ts': `export { a } from '@foo/a.js';`,
-						'a.ts': `export const a = 'a';`,
+						'index.ts': 'export { a } from \'@foo/a.js\';',
+						'a.ts': 'export const a = \'a\';',
 					},
-					'bar/index.ts': `export const bar = 'bar';`,
+					'bar/index.ts': 'export const bar = \'bar\';',
 				},
 				'package.json': createPackageJson({
 					exports: {

@@ -2,7 +2,7 @@ import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { outdent } from 'outdent';
 import { pkgroll } from '../../utils.js';
-import { createPackageJson, createTsconfigJson } from '../../fixtures.js';
+import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('TypeScript', ({ test }) => {
@@ -105,6 +105,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('resolves paths', async () => {
 			await using fixture = await createFixture({
+				...installTypeScript,
 				src: {
 					'index.ts': outdent`
 					import * as foo from '@foo/index.js';
@@ -117,7 +118,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'bar/index.ts': `export const bar = 'bar';`,
 				},
 				'package.json': createPackageJson({
-					exports: './dist/index.mjs',
+					exports: {
+						types: './dist/index.d.mts',
+						default: './dist/index.mjs',
+					},
 				}),
 				'tsconfig.json': createTsconfigJson({
 					compilerOptions: {

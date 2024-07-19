@@ -41,6 +41,7 @@ type Output = OutputOptions[] & Record<string, OutputOptions>;
 const getConfig = {
 	type: async (
 		options: Options,
+		tsconfig: TsConfigResult | null,
 	) => {
 		const dts = await import('rollup-plugin-dts');
 
@@ -49,12 +50,11 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
-				// TODO: Is this necessary?
-				// ...(
-				// 	tsconfig
-				// 		? [resolveTypescriptPaths(tsconfig)]
-				// 		: []
-				// ),
+				...(
+					tsconfig
+						? [resolveTsconfigPaths(tsconfig)]
+						: []
+				),
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
@@ -182,7 +182,7 @@ export const getRollupConfigs = async (
 			let config = configs.type;
 
 			if (!config) {
-				config = await getConfig.type(flags);
+				config = await getConfig.type(flags, tsconfig);
 				config.external = externalTypeDependencies;
 				configs.type = config;
 			}

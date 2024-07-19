@@ -47,15 +47,15 @@
 	},
 	"dependencies": {
 		"@rollup/plugin-alias": "^5.1.0",
-		"@rollup/plugin-commonjs": "^25.0.7",
+		"@rollup/plugin-commonjs": "^26.0.1",
 		"@rollup/plugin-inject": "^5.0.5",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^15.2.3",
-		"@rollup/plugin-replace": "^5.0.5",
+		"@rollup/plugin-replace": "^5.0.7",
 		"@rollup/pluginutils": "^5.1.0",
-		"esbuild": "^0.20.1",
+		"esbuild": "^0.23.0",
 		"magic-string": "^0.30.10",
-		"rollup": "^4.17.2"
+		"rollup": "^4.18.1"
 	},
 	"devDependencies": {
 		"@types/node": "^20.14.11",

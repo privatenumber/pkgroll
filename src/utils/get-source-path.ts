@@ -4,14 +4,14 @@ import { fsExists } from './fs-exists.js';
 
 const { stringify } = JSON;
 
-const tryExtensions = (
+const tryExtensions = async (
 	pathWithoutExtension: string,
 	extensions: readonly string[],
-	checker: (sourcePath: string)=>boolean,
+	checker: (sourcePath: string)=>Promise<boolean>,
 ) => {
 	for (const extension of extensions) {
 		const pathWithExtension = pathWithoutExtension + extension;
-		if (checker(pathWithExtension)) {
+		if (await checker(pathWithExtension)) {
 			return {
 				extension,
 				path: pathWithExtension,
@@ -31,17 +31,17 @@ const extensionMap = {
 
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
-export const getSourcePath = (
+export const getSourcePath = async (
 	exportEntry: ExportEntry,
 	source: string,
 	dist: string,
-	checker: (sourcePath: string)=>boolean = fsExists,
-): Omit<SourcePath, 'exportEntry'> => {
+	checker: (sourcePath: string)=>Promise<boolean> = fsExists,
+): Promise<Omit<SourcePath, 'exportEntry'>> => {
 	const sourcePathUnresolved = source + exportEntry.outputPath.slice(dist.length);
 
 	for (const distExtension of distExtensions) {
 		if (exportEntry.outputPath.endsWith(distExtension)) {
-			const sourcePath = tryExtensions(
+			const sourcePath = await tryExtensions(
 				sourcePathUnresolved.slice(0, -distExtension.length),
 				extensionMap[distExtension],
 				checker,
@@ -67,16 +67,16 @@ interface SourcePath {
 	distExtension: string;
 }
 
-export const getSourcePaths = (
+export const getSourcePaths = async (
 	exportEntry: ExportEntry,
 	sourcePath: string,
 	distPath: string,
 	cwd: string,
-): SourcePath[] => {
+): Promise<SourcePath[]> => {
 	if (exportEntry.outputPath.includes('*')) {
 		// use glob to resolve matches from the packageJsonRoot directory
 		const matchSet = new Set<string>();
-		const sourceMatch = getSourcePath(exportEntry, sourcePath, distPath, (path) => {
+		const sourceMatch = await getSourcePath(exportEntry, sourcePath, distPath, async (path) => {
 			const matches = globSync(path, { cwd });
 			for (const match of matches) { matchSet.add(match); }
 			return matches.length > 0; // always return false to prevent early exit
@@ -96,6 +96,6 @@ export const getSourcePaths = (
 
 	return [{
 		exportEntry,
-		...getSourcePath(exportEntry, sourcePath, distPath, fsExists),
+		...await getSourcePath(exportEntry, sourcePath, distPath, fsExists),
 	}];
 };

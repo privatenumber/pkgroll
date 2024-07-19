@@ -6,7 +6,7 @@ import { fsExists } from './fs-exists.js';
 export const readPackageJson = async (directoryPath: string): Promise<PackageJson> => {
 	const packageJsonPath = path.join(directoryPath, 'package.json');
 
-	const exists = fsExists(packageJsonPath);
+	const exists = await fsExists(packageJsonPath);
 
 	if (!exists) {
 		throw new Error(`package.json not found at: ${packageJsonPath}`);

@@ -140,7 +140,8 @@ if (tsconfigTarget) {
 		throw new Error('No export entries found in package.json');
 	}
 
-	const sourcePaths = exportEntries.flatMap(exportEntry => getSourcePaths(exportEntry, sourcePath, distPath, cwd));
+	const sourcePaths = (await Promise.all(exportEntries.map(exportEntry => getSourcePaths(exportEntry, sourcePath, distPath, cwd))));
+	const flatSourcePaths = sourcePaths.flat();
 
 	const rollupConfigs = await getRollupConfigs(
 
@@ -152,7 +153,7 @@ if (tsconfigTarget) {
 		 */
 		normalizePath(fs.realpathSync.native(sourcePath), true),
 		distPath,
-		sourcePaths,
+		flatSourcePaths,
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,

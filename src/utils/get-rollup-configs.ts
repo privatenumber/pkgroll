@@ -15,6 +15,7 @@ import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
 import { patchBinary } from './rollup-plugins/patch-binary.js';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { resolveTsconfigPaths } from './rollup-plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
@@ -40,6 +41,7 @@ type Output = OutputOptions[] & Record<string, OutputOptions>;
 const getConfig = {
 	type: async (
 		options: Options,
+		tsconfig: TsConfigResult | null,
 	) => {
 		const dts = await import('rollup-plugin-dts');
 
@@ -48,6 +50,11 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
+				...(
+					tsconfig
+						? [resolveTsconfigPaths(tsconfig)]
+						: []
+				),
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
@@ -90,6 +97,11 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
+				...(
+					tsconfig
+						? [resolveTsconfigPaths(tsconfig)]
+						: []
+				),
 				resolveTypescriptMjsCts(),
 				alias({
 					entries: aliases,
@@ -170,7 +182,7 @@ export const getRollupConfigs = async (
 			let config = configs.type;
 
 			if (!config) {
-				config = await getConfig.type(flags);
+				config = await getConfig.type(flags, tsconfig);
 				config.external = externalTypeDependencies;
 				configs.type = config;
 			}

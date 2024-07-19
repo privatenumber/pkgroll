@@ -309,5 +309,45 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const contentTwo = await fixture.readFile('packages/two/dist/index.mjs', 'utf8');
 			expect(contentTwo).toMatch('export { sayHello };');
 		});
+
+		test('symlinks', async () => {
+			await using fixture = await createFixture({
+				...installTypeScript,
+				'package.json': createPackageJson({
+					types: './dist/index.d.ts',
+					peerDependencies: {
+						'dep-a': '*',
+					},
+				}),
+				'src/index.ts': `
+				import { fn } from 'dep-a';
+				export default fn({ value: 1 });
+				`,
+				node_modules: {
+					'dep-a/index.d.ts': ({ symlink }) => symlink('../../store/dep-a/index.d.ts'),
+				},
+				store: {
+					'dep-a': {
+						'node_modules/dep-b/index.d.ts': `
+						type data = {
+							value: number;
+						};
+						export declare function fn(a: data): data;
+						`,
+						'index.d.ts': 'export * from \'dep-b\';',
+					},
+				},
+			});
+
+			const pkgrollOne = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+			expect(pkgrollOne.stderr).toBe('');
+
+			const types = await fixture.readFile('dist/index.d.ts', 'utf8');
+			expect(types).toMatch('\'dep-a\'');
+			expect(types).toMatch('.data');
+		});
 	});
 });

@@ -1,18 +1,21 @@
 import fs from 'fs';
 import path from 'path';
 import type { OutputOptions, RollupOptions, Plugin } from 'rollup';
+import type { TransformOptions } from 'esbuild';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
 import type { PackageJson } from 'type-fest';
+import type { TsConfigResult } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types.js';
 import { isFormatEsm, createRequire } from './rollup-plugins/create-require.js';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
 import { patchBinary } from './rollup-plugins/patch-binary.js';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { resolveTsconfigPaths } from './rollup-plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
@@ -38,14 +41,22 @@ type Output = OutputOptions[] & Record<string, OutputOptions>;
 const getConfig = {
 	type: async (
 		options: Options,
+		tsconfig: TsConfigResult | null,
 	) => {
-		const dts = await import('rollup-plugin-dts');
-
+		const [dts, ts] = await Promise.all([
+			import('rollup-plugin-dts'),
+			import('typescript'),
+		]);
 		return {
 			input: [] as string[],
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
+				...(
+					tsconfig
+						? [resolveTsconfigPaths(tsconfig)]
+						: []
+				),
 				resolveTypescriptMjsCts(),
 				dts.default({
 					respectExternal: true,
@@ -63,7 +74,11 @@ const getConfig = {
 					 * One concern here is that this overwrites the compilerOptions. According to
 					 * the rollup-plugin-dts docs, it reads from baseUrl and paths.
 					 */
-					compilerOptions: { composite: false },
+					compilerOptions: {
+						composite: false,
+						preserveSymlinks: false,
+						moduleResolution: ts.default.ModuleResolutionKind.Bundler,
+					},
 				}) as Plugin,
 			],
 			output: [] as unknown as Output,
@@ -76,9 +91,11 @@ const getConfig = {
 		aliases: AliasMap,
 		env: EnvObject,
 		executablePaths: string[],
+		tsconfig: TsConfigResult | null,
 	) => {
-		const esbuildConfig = {
+		const esbuildConfig: TransformOptions = {
 			target: options.target,
+			tsconfigRaw: tsconfig?.config,
 		};
 
 		return {
@@ -86,6 +103,11 @@ const getConfig = {
 			preserveEntrySignatures: 'strict' as const,
 			plugins: [
 				externalizeNodeBuiltins(options),
+				...(
+					tsconfig
+						? [resolveTsconfigPaths(tsconfig)]
+						: []
+				),
 				resolveTypescriptMjsCts(),
 				alias({
 					entries: aliases,
@@ -144,6 +166,7 @@ export const getRollupConfigs = async (
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
+	tsconfig: TsConfigResult | null,
 ) => {
 	const executablePaths = inputs
 		.filter(({ exportEntry }) => exportEntry.isExecutable)
@@ -165,7 +188,7 @@ export const getRollupConfigs = async (
 			let config = configs.type;
 
 			if (!config) {
-				config = await getConfig.type(flags);
+				config = await getConfig.type(flags, tsconfig);
 				config.external = externalTypeDependencies;
 				configs.type = config;
 			}
@@ -204,6 +227,7 @@ export const getRollupConfigs = async (
 				aliases,
 				env,
 				executablePaths,
+				tsconfig,
 			);
 			config.external = externalDependencies;
 			configs.app = config;

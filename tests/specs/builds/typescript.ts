@@ -77,7 +77,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll([
 				'--env.NODE_ENV=test',
-				'--tsconfig=tsconfig.build.json'
+				'--tsconfig=tsconfig.build.json',
 			], {
 				cwd: fixture.path,
 				nodePath,
@@ -112,7 +112,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const pkgrollProcess = await pkgroll([
 				'--env.NODE_ENV=test',
-				'--tsconfig=tsconfig.invalid.json'
+				'--tsconfig=tsconfig.invalid.json',
 			], {
 				cwd: fixture.path,
 				nodePath,
@@ -124,6 +124,5 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.js', 'utf8');
 			expect(content.includes('function')).toBe(false);
 		});
-
-	})
+	});
 });

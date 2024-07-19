@@ -194,9 +194,9 @@ Pass in a Node.js target that that doesn't support it to strip the `node:` proto
 pkgroll --target=node12.19
 ```
 
-### Alternative tsconfig.json
+### Custom `tsconfig.json` path
 
-By default, _Pkgroll_ looks for `tsconfig.json` configuration file. You can alter this behavior and use your custom filename with the `--tsconfig` flag:
+By default, _Pkgroll_ looks for `tsconfig.json` configuration file in the current working directory. You can pass in a custom `tsconfig.json` path with the `--tsconfig` flag:
 
 ```sh
 pkgroll --tsconfig=tsconfig.build.json

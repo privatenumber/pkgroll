@@ -43,8 +43,10 @@ const getConfig = {
 		options: Options,
 		tsconfig: TsConfigResult | null,
 	) => {
-		const dts = await import('rollup-plugin-dts');
-
+		const [dts, ts] = await Promise.all([
+			import('rollup-plugin-dts'),
+			import('typescript'),
+		]);
 		return {
 			input: [] as string[],
 			preserveEntrySignatures: 'strict' as const,
@@ -72,7 +74,11 @@ const getConfig = {
 					 * One concern here is that this overwrites the compilerOptions. According to
 					 * the rollup-plugin-dts docs, it reads from baseUrl and paths.
 					 */
-					compilerOptions: { composite: false },
+					compilerOptions: {
+						composite: false,
+						preserveSymlinks: false,
+						moduleResolution: ts.default.ModuleResolutionKind.Bundler,
+					},
 				}) as Plugin,
 			],
 			output: [] as unknown as Output,

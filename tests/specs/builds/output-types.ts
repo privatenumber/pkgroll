@@ -19,6 +19,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 				}),
 				'tsconfig.json': createTsconfigJson({
 					compilerOptions: {
+						// Check that it handles different module types
+						module: 'NodeNext',
 						typeRoots: [
 							path.resolve('node_modules/@types'),
 						],

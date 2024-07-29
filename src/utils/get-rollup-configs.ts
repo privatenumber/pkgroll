@@ -77,6 +77,7 @@ const getConfig = {
 					compilerOptions: {
 						composite: false,
 						preserveSymlinks: false,
+						module: ts.default.ModuleKind.Preserve,
 						moduleResolution: ts.default.ModuleResolutionKind.Bundler,
 					},
 				}) as Plugin,

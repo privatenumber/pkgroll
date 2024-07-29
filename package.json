@@ -27,6 +27,7 @@
 	"imports": {
 		"typescript": "./src/local-typescript-loader.ts"
 	},
+	"packageManager": "pnpm@9.4.0",
 	"scripts": {
 		"build": "tsx src/cli.ts --minify --target node18",
 		"test": "pnpm build && tsx tests/index.ts",

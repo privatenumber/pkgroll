@@ -35,6 +35,19 @@ export const fixtureFiles = {
 		`,
 	},
 
+	pages: {
+		'a.ts': outdent`
+		export function render() {
+			console.log('Page A');
+		}
+		`,
+		'b.ts': outdent`
+		export function render() {
+			console.log('Page B');
+		}
+		`,
+	},
+
 	'cjs.cjs': outdent`
 	#! /usr/bin/env node
 
@@ -184,7 +197,7 @@ export const fixtureDependencyExportsMap = (
 
 		'dependency-exports-import.js': outdent`
 		import esm from 'dependency-exports-dual';
-	
+
 		console.log(esm);
 		`,
 	},

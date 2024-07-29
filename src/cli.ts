@@ -6,7 +6,7 @@ import { readPackageJson } from './utils/read-package-json.js';
 import { getExportEntries } from './utils/parse-package-json/get-export-entries.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
-import { getSourcePath } from './utils/get-source-path.js';
+import { getSourcePaths } from './utils/get-source-path.js';
 import { getRollupConfigs } from './utils/get-rollup-configs.js';
 import { getTsconfig } from './utils/get-tsconfig';
 import { log } from './utils/log.js';
@@ -140,10 +140,8 @@ if (tsconfigTarget) {
 		throw new Error('No export entries found in package.json');
 	}
 
-	const sourcePaths = await Promise.all(exportEntries.map(async exportEntry => ({
-		...(await getSourcePath(exportEntry, sourcePath, distPath)),
-		exportEntry,
-	})));
+	const sourcePaths = (await Promise.all(exportEntries.map(exportEntry => getSourcePaths(exportEntry, sourcePath, distPath, cwd))));
+	const flatSourcePaths = sourcePaths.flat();
 
 	const rollupConfigs = await getRollupConfigs(
 
@@ -155,7 +153,7 @@ if (tsconfigTarget) {
 		 */
 		normalizePath(fs.realpathSync.native(sourcePath), true),
 		distPath,
-		sourcePaths,
+		flatSourcePaths,
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,

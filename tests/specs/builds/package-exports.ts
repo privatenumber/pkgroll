@@ -136,5 +136,44 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const utilsMjs = await fixture.readFile('dist/utils.js', 'utf8');
 			expect(utilsMjs).toMatch('exports.sayHello =');
 		});
+
+		test('conditions - wildcard subpath exports', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({ installTypeScript: true }),
+				'package.json': createPackageJson({
+					exports: {
+						'./pages/*': {
+							import: './dist/pages/*.mjs',
+							require: './dist/pages/*.cjs',
+							types: './dist/pages/*.d.ts',
+						},
+						'.': './dist/index.js',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const indexCjs = await fixture.readFile('dist/pages/a.cjs', 'utf8');
+			expect(indexCjs).toMatch('exports.render');
+			const indexMjs = await fixture.readFile('dist/pages/a.mjs', 'utf8');
+			expect(indexMjs).toMatch('export { render }');
+			const utilsCjs = await fixture.readFile('dist/pages/b.cjs', 'utf8');
+			expect(utilsCjs).toMatch('exports.render');
+			const utilsMjs = await fixture.readFile('dist/pages/b.mjs', 'utf8');
+			expect(utilsMjs).toMatch('export { render }');
+
+			expect(await fixture.exists('dist/index.js')).toEqual(true);
+			expect(await fixture.exists('dist/pages/a.js')).toEqual(true);
+			expect(await fixture.exists('dist/pages/b.js')).toEqual(true);
+			expect(await fixture.exists('dist/pages/a.d.ts')).toEqual(true);
+			expect(await fixture.exists('dist/pages/b.d.ts')).toEqual(true);
+		});
 	});
 });

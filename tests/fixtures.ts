@@ -6,14 +6,20 @@ import type { PackageJson, TsConfigJson } from 'type-fest';
 export const createPackageJson = (packageJson: PackageJson) => JSON.stringify(packageJson);
 export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify(tsconfigJson);
 
-const typeScriptPath = path.resolve('node_modules/typescript');
+const nodeModules = (...paths:string[]) => path.resolve('node_modules', ...paths);
 
 export const installTypeScript: FileTree = {
-	'node_modules/typescript': ({ symlink }) => symlink(typeScriptPath, 'dir'),
+	'node_modules/typescript': ({ symlink }) => symlink(nodeModules('typescript'), 'dir'),
+};
+
+export const installReact: FileTree = {
+	'node_modules/react': ({ symlink }) => symlink(nodeModules('react'), 'dir'),
+	'node_modules/@types/react': ({ symlink }) => symlink(nodeModules('@types/react'), 'dir'),
 };
 
 type Options = {
 	installTypeScript?: boolean;
+	installReact?: boolean;
 };
 
 export const fixtureFiles = {
@@ -159,20 +165,13 @@ export const fixtureFiles = {
 	`,
 };
 
-export const packageFixture = (
-	options: Options = {},
-): FileTree => ({
+export const packageFixture = (options: Options = {}): FileTree => ({
 	src: fixtureFiles,
-	...(
-		options.installTypeScript
-			? installTypeScript
-			: {}
-	),
+	...(options.installTypeScript ? installTypeScript : {}),
+	...(options.installReact ? installReact : {}),
 });
 
-export const fixtureDependencyExportsMap = (
-	entryFile: string,
-): FileTree => ({
+export const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
 	'package.json': createPackageJson({
 		main: entryFile,
 	}),

@@ -184,7 +184,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('error on invalid tsconfig.json path', async () => {
-			const fixture = await createFixture({
+			await using fixture = await createFixture({
 				src: {
 					'index.ts': 'export default () => "foo";',
 				},

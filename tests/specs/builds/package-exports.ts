@@ -1,7 +1,7 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson, fixtureFiles } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('package exports', ({ test }) => {
@@ -139,28 +139,28 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('get basename with dot', async () => {
 			await using fixture = await createFixture({
-					...packageFixture({
-						installTypeScript: true,
-					}),
-					src: {
+				...packageFixture({
+					installTypeScript: true,
+				}),
+				src: {
+					'index.node.ts': 'export default () => "foo";',
+					nested: {
 						'index.node.ts': 'export default () => "foo";',
-						nested: {
-							'index.node.ts': 'export default () => "foo";',
-						}
 					},
-					'package.json': createPackageJson({
-						exports: {
-							'./': {
-								default: './dist/index.node.js',
-								types: './dist/index.node.d.ts'
-							},
-							'./nested': {
-								default: './dist/nested/index.node.js',
-								types: './dist/nested/index.node.d.ts'
-							}
-						}
-					}),
-				});
+				},
+				'package.json': createPackageJson({
+					exports: {
+						'./': {
+							default: './dist/index.node.js',
+							types: './dist/index.node.d.ts',
+						},
+						'./nested': {
+							default: './dist/nested/index.node.js',
+							types: './dist/nested/index.node.d.ts',
+						},
+					},
+				}),
+			});
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,

@@ -19,12 +19,12 @@ const tryExtensions = async (
 };
 
 const extensionMap = {
-	'.d.ts': ['.d.ts', '.d.mts', '.d.cts', '.ts', '.mts', '.cts'],
-	'.d.mts': ['.d.mts', '.d.ts', '.d.cts', '.ts', '.mts', '.cts'],
-	'.d.cts': ['.d.cts', '.d.ts', '.d.mts', '.ts', '.mts', '.cts'],
+	'.d.ts': ['.d.ts', '.d.mts', '.d.cts', '.ts', '.tsx', '.mts', '.cts'],
+	'.d.mts': ['.d.mts', '.d.ts', '.d.cts', '.ts', '.tsx', '.mts', '.cts'],
+	'.d.cts': ['.d.cts', '.d.ts', '.d.mts', '.ts', '.tsx', '.mts', '.cts'],
 	'.js': ['.js', '.ts', '.tsx', '.mts', '.cts'],
-	'.mjs': ['.mjs', '.js', '.cjs', '.mts', '.cts', '.ts'],
-	'.cjs': ['.cjs', '.js', '.mjs', '.mts', '.cts', '.ts'],
+	'.mjs': ['.mjs', '.js', '.cjs', '.mts', '.cts', '.ts', '.tsx'],
+	'.cjs': ['.cjs', '.js', '.mjs', '.mts', '.cts', '.ts', '.tsx'],
 } as const;
 
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];

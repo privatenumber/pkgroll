@@ -1,7 +1,7 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson } from '../../fixtures.js';
+import { packageFixture, createPackageJson, createTsconfigJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs', ({ test }) => {
@@ -124,6 +124,36 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/mjs.cjs', 'utf8');
 			expect(content).toMatch('exports.sayHello =');
+		});
+
+		test('{ type: commonjs, field: component, srcExt: mjs, distExt: cjs }', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({ installReact: true }),
+				'package.json': createPackageJson({
+					main: './dist/component.cjs',
+					peerDependencies: {
+						react: '*',
+					},
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						jsx: 'react-jsx',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/component.cjs', 'utf8');
+			expect(content).toMatch(`require('react/jsx-runtime')`);
+			expect(content).toMatch('const Component = () => /* @__PURE__ */ jsxRuntime.jsx("div", { children: "Hello World" })');
+			expect(content).toMatch('exports.Component = Component');
 		});
 
 		test('nested directory', async () => {

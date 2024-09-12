@@ -60,6 +60,105 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('declare function');
 		});
 
+		test('{ srcExt: tsx, distExt: d.ts }', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+					installReact: true,
+				}),
+				'package.json': createPackageJson({
+					types: './dist/component.d.ts',
+					peerDependencies: {
+						react: '*',
+					},
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						jsx: 'react-jsx',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/component.d.ts', 'utf8');
+			expect(content).toMatch(`import * as react_jsx_runtime from 'react/jsx-runtime'`);
+			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
+			expect(content).toMatch('export { Component }');
+		});
+
+		test('{ srcExt: tsx, distExt: d.mts }', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+					installReact: true,
+				}),
+				'package.json': createPackageJson({
+					types: './dist/component.d.mts',
+					peerDependencies: {
+						react: '*',
+					},
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						jsx: 'react-jsx',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/component.d.mts', 'utf8');
+			expect(content).toMatch(`import * as react_jsx_runtime from 'react/jsx-runtime'`);
+			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
+			expect(content).toMatch('export { Component }');
+		});
+
+		test('{ srcExt: tsx, distExt: d.cts }', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+					installReact: true,
+				}),
+				'package.json': createPackageJson({
+					types: './dist/component.d.cts',
+					peerDependencies: {
+						react: '*',
+					},
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						jsx: 'react-jsx',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/component.d.cts', 'utf8');
+			expect(content).toMatch(`import * as react_jsx_runtime from 'react/jsx-runtime'`);
+			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
+			expect(content).toMatch('export { Component }');
+		});
+
 		test('{ srcExt: .mts, distExt: d.cts }', async () => {
 			await using fixture = await createFixture({
 				...packageFixture({ installTypeScript: true }),

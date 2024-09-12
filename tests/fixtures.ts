@@ -6,15 +6,13 @@ import type { PackageJson, TsConfigJson } from 'type-fest';
 export const createPackageJson = (packageJson: PackageJson) => JSON.stringify(packageJson);
 export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify(tsconfigJson);
 
-const nodeModules = (...paths:string[]) => path.resolve('node_modules', ...paths);
-
 export const installTypeScript: FileTree = {
-	'node_modules/typescript': ({ symlink }) => symlink(nodeModules('typescript'), 'dir'),
+	'node_modules/typescript': ({ symlink }) => symlink(path.resolve('node_modules/typescript'), 'dir'),
 };
 
 export const installReact: FileTree = {
-	'node_modules/react': ({ symlink }) => symlink(nodeModules('react'), 'dir'),
-	'node_modules/@types/react': ({ symlink }) => symlink(nodeModules('@types/react'), 'dir'),
+	'node_modules/react': ({ symlink }) => symlink(path.resolve('node_modules/react'), 'dir'),
+	'node_modules/@types/react': ({ symlink }) => symlink(path.resolve('node_modules/@types/react'), 'dir'),
 };
 
 type Options = {

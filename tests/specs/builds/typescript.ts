@@ -215,5 +215,40 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(1);
 			// expect(pkgrollProcess.stderr).toMatch('Cannot resolve tsconfig at path:');
 		});
+
+		test('should pass custom tsconfig.json to dts module', async () => {
+			await using fixture = await createFixture({
+				...installTypeScript,
+				src: {
+					'index.ts': 'export default () => "foo";',
+				},
+				'package.json': createPackageJson({
+					main: './dist/index.js',
+					types: './dist/index.d.ts',
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						incremental: true,
+					},
+				}),
+				'tsconfig.build.json': createTsconfigJson({
+					compilerOptions: {
+						incremental: false,
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([
+				'--env.NODE_ENV=test',
+				'--tsconfig=tsconfig.build.json',
+			], {
+				cwd: fixture.path,
+				nodePath,
+				reject: false,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+		});
 	});
 });

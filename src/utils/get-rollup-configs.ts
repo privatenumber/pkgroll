@@ -80,6 +80,7 @@ const getConfig = {
 						module: ts.default.ModuleKind.Preserve,
 						moduleResolution: ts.default.ModuleResolutionKind.Bundler,
 					},
+					tsconfig: tsconfig?.path,
 				}) as Plugin,
 			],
 			output: [] as unknown as Output,

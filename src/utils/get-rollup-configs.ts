@@ -59,6 +59,7 @@ const getConfig = {
 				),
 				resolveTypescriptMjsCts(),
 				dts.default({
+					tsconfig: tsconfig?.path,
 					respectExternal: true,
 
 					/**

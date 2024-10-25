@@ -450,5 +450,37 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(types).toMatch('\'dep-a\'');
 			expect(types).toMatch('.data');
 		});
+
+		test('custom tsconfig.json path', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+					installReact: true,
+				}),
+				'package.json': createPackageJson({
+					types: './dist/component.d.ts',
+					peerDependencies: {
+						react: '*',
+					},
+				}),
+				'tsconfig.custom.json': createTsconfigJson({
+					compilerOptions: {
+						jsx: 'react-jsx',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll(['-p', 'tsconfig.custom.json'], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/component.d.ts', 'utf8');
+			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
+			expect(content).toMatch('export { Component }');
+		});
 	});
 });

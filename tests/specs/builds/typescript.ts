@@ -217,23 +217,27 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('should pass custom tsconfig.json to dts module', async () => {
-			await using fixture = await createFixture({
+			const fixture = await createFixture({
 				...installTypeScript,
 				src: {
-					'index.ts': 'export default () => "foo";',
+					'index.tsx': 'export default () => (<div>hi</div>);',
 				},
 				'package.json': createPackageJson({
 					main: './dist/index.js',
-					types: './dist/index.d.ts',
+					dependencies: {
+						working: '*',
+					},
 				}),
 				'tsconfig.json': createTsconfigJson({
 					compilerOptions: {
-						incremental: true,
+						jsx: 'react-jsx',
+						jsxImportSource: 'not-working',
 					},
 				}),
 				'tsconfig.build.json': createTsconfigJson({
 					compilerOptions: {
-						incremental: false,
+						jsx: 'react-jsx',
+						jsxImportSource: 'working',
 					},
 				}),
 			});
@@ -249,6 +253,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
+
+			const code = await fixture.readFile('dist/index.js', 'utf8');
+			expect(code).toMatch('working');
 		});
 	});
 });

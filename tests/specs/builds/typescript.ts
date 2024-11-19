@@ -231,7 +231,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				'tsconfig.json': createTsconfigJson({
 					compilerOptions: {
 						jsx: 'react-jsx',
-						jsxImportSource: 'not-working',
+						jsxImportSource: 'breaking',
 					},
 				}),
 				'tsconfig.build.json': createTsconfigJson({

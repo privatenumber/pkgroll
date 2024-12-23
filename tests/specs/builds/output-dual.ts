@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+import fs from 'node:fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';

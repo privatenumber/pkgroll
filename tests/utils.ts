@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { execa, type Options } from 'execa';
 
 const pkgrollBinPath = path.resolve('./dist/cli.js');

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';

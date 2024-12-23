@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
@@ -88,7 +88,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/component.d.ts', 'utf8');
-			expect(content).toMatch(`import * as react_jsx_runtime from 'react/jsx-runtime'`);
+			expect(content).toMatch('import * as react_jsx_runtime from \'react/jsx-runtime\'');
 			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
 			expect(content).toMatch('export { Component }');
 		});
@@ -121,7 +121,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/component.d.mts', 'utf8');
-			expect(content).toMatch(`import * as react_jsx_runtime from 'react/jsx-runtime'`);
+			expect(content).toMatch('import * as react_jsx_runtime from \'react/jsx-runtime\'');
 			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
 			expect(content).toMatch('export { Component }');
 		});
@@ -154,7 +154,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/component.d.cts', 'utf8');
-			expect(content).toMatch(`import * as react_jsx_runtime from 'react/jsx-runtime'`);
+			expect(content).toMatch('import * as react_jsx_runtime from \'react/jsx-runtime\'');
 			expect(content).toMatch('declare const Component: () => react_jsx_runtime.JSX.Element');
 			expect(content).toMatch('export { Component }');
 		});

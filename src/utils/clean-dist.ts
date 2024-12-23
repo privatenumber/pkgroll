@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { fsExists } from './fs-exists.js';
 
 export const cleanDist = async (directoryPath: string) => {

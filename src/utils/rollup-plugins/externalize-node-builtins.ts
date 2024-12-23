@@ -1,4 +1,4 @@
-import { builtinModules } from 'module';
+import { builtinModules } from 'node:module';
 import type { Plugin } from 'rollup';
 
 type Semver = [number, number, number];

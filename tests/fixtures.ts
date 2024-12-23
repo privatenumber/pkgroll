@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import outdent from 'outdent';
 import type { FileTree } from 'fs-fixture';
 import type { PackageJson, TsConfigJson } from 'type-fest';

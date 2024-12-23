@@ -151,7 +151,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/component.cjs', 'utf8');
-			expect(content).toMatch(`require('react/jsx-runtime')`);
+			expect(content).toMatch('require(\'react/jsx-runtime\')');
 			expect(content).toMatch('const Component = () => /* @__PURE__ */ jsxRuntime.jsx("div", { children: "Hello World" })');
 			expect(content).toMatch('exports.Component = Component');
 		});

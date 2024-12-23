@@ -83,7 +83,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cjs.mjs', 'utf8');
-			expect(content).toMatch('export { cjs$1 as default }');
+			expect(content).toMatch('export { cjs as default }');
 		});
 
 		test('{ type: commonjs, field: component, srcExt: tsx, distExt: mjs }', async () => {

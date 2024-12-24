@@ -1,7 +1,10 @@
+import fs from 'node:fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson, createTsconfigJson } from '../../fixtures.js';
+import {
+	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
+} from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: commonjs', ({ test }) => {
@@ -174,6 +177,32 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/nested/index.js', 'utf8');
 			expect(content).toMatch('nested entry point');
+		});
+
+		test('dynamic imports', async () => {
+			await using fixture = await createFixture({
+				...fixtureDynamicImports,
+				'package.json': createPackageJson({
+					exports: './dist/dynamic-imports.cjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
+			expect(content).toMatch('require(');
+
+			const files = await fs.readdir(fixture.getPath('dist'));
+			files.sort();
+			expect(files[0]).toMatch(/^aaa-/);
+			expect(files[1]).toMatch(/^bbb-/);
+			expect(files[2]).toMatch(/^ccc-/);
 		});
 	});
 });

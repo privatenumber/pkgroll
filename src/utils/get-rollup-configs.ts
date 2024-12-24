@@ -7,6 +7,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types.js';
@@ -137,6 +138,7 @@ const getConfig = {
 				json(),
 				esbuildTransform(esbuildConfig),
 				createRequire(),
+				dynamicImportVars(),
 				...(
 					options.minify
 						? [esbuildMinify(esbuildConfig)]

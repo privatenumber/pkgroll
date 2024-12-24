@@ -234,3 +234,26 @@ export const fixtureDependencyImportsMap: FileTree = {
 		}),
 	},
 };
+
+export const fixtureDynamicImports: FileTree = {
+	'package.json': createPackageJson({
+		main: './dist/dynamic-imports.js',
+	}),
+	src: {
+		'dynamic-imports.js': outdent`
+		const files = [
+			'aaa',
+			'bbb',
+			'ccc',
+		];
+		const randomFile = files[Math.floor(Math.random() * files.length)];
+		import(\`./files/\${randomFile}.js\`)
+		`,
+
+		files: {
+			'aaa.js': 'console.log(111)',
+			'bbb.js': 'console.log(222)',
+			'ccc.js': 'console.log(333)',
+		},
+	},
+};

@@ -32,7 +32,7 @@
 		"build": "tsx src/cli.ts --minify --target node18",
 		"test": "pnpm build && tsx tests/index.ts",
 		"lint": "lintroll --cache --node --ignore-pattern tests/fixture-package .",
-		"type-check": "tsc --noEmit",
+		"type-check": "tsc",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"engines": {

@@ -2,16 +2,12 @@
 	"compilerOptions": {
 		// Node 18
 		"target": "ES2022",
-		"module": "esnext",
-		"moduleResolution": "node",
+		"module": "Preserve",
 		"resolveJsonModule": true,
 		"strict": true,
-		"outDir": "dist",
+		"noEmit": true,
 		"esModuleInterop": true,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 	},
-	"include": [
-		"src"
-	]
 }

@@ -138,7 +138,9 @@ const getConfig = {
 				json(),
 				esbuildTransform(esbuildConfig),
 				createRequire(),
-				dynamicImportVars(),
+				dynamicImportVars({
+					warnOnError: true,
+				}),
 				...(
 					options.minify
 						? [esbuildMinify(esbuildConfig)]

@@ -4,6 +4,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
+	fixtureDynamicImportsError,
 } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
@@ -203,6 +204,27 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(files[0]).toMatch(/^aaa-/);
 			expect(files[1]).toMatch(/^bbb-/);
 			expect(files[2]).toMatch(/^ccc-/);
+		});
+
+		// https://github.com/privatenumber/pkgroll/issues/104
+		test('dynamic imports warning', async () => {
+			await using fixture = await createFixture({
+				...fixtureDynamicImportsError,
+				'package.json': createPackageJson({
+					exports: './dist/dynamic-imports.cjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toContain('[plugin rollup-plugin-dynamic-import-variables]');
+
+			const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
+			expect(content).toMatch('import(');
 		});
 	});
 });

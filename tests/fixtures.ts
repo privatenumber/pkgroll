@@ -259,19 +259,19 @@ export const fixtureDynamicImports: FileTree = {
 };
 
 // https://github.com/privatenumber/pkgroll/issues/104
-export const fixtureDynamicImportsError: FileTree = {
+export const fixtureDynamicImportUnresolvable: FileTree = {
 	'package.json': createPackageJson({
 		main: './dist/dynamic-imports.js',
 	}),
 	src: {
 		'dynamic-imports.js': outdent`
 		function importModule(path) {
-  			// who knows what will be imported here?
-  			return import(path);
+			// who knows what will be imported here?
+			return import(path);
 		}
 
-		importModule('./should-fail.js');
-	`,
-		'should-fail.js': 'console.log(123)',
+		importModule('./too-dynamic.js');
+		`,
+		'too-dynamic.js': 'console.log(123)',
 	},
 };

@@ -4,7 +4,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
-	fixtureDynamicImportsError,
+	fixtureDynamicImportUnresolvable,
 } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
@@ -275,9 +275,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		// https://github.com/privatenumber/pkgroll/issues/104
-		test('dynamic imports warning', async () => {
+		test('unresolvable dynamic import should not fail', async () => {
 			await using fixture = await createFixture({
-				...fixtureDynamicImportsError,
+				...fixtureDynamicImportUnresolvable,
 				'package.json': createPackageJson({
 					exports: './dist/dynamic-imports.mjs',
 				}),

@@ -293,6 +293,16 @@ pkgroll --sourcemap=inline
 
 - **Minification** strips dead-code, comments, white-space, and shortens variable names.
 
+### How does it compare to tsup?
+
+They are similar bundlers, but I think the main differences are:
+
+- _pkgroll_ is zero-config. It reads the entry-points declared in your `package.json` to determine how to bundle the package. _tsup_ requires manual configuration.
+
+- _pkgroll_ is a thin abstraction over Rollup (just smartly configures it). Similarly, _tsup_ is a thin abstraction over esbuild. _pkgroll_ also uses esbuild for transformations & minification as a Rollup plugin, but the bundling & tree-shaking is done by Rollup (which is [known to output best/cleanest code](#why-bundle-with-rollup)). However, when _tsup_ emits type declaration, it also uses Rollup which negates the performance benefits from using esbuild.
+
+- IIRC because _tsup_ uses esbuild, the ESM to CJS compilation wasn't great compared to Rollups. As a package maintainer who wants to support both ESM and CJS exports, this was one of the biggest limitations of using _tsup_ (which compelled me to develop _pkgroll_).
+
 ## Sponsors
 
 <p align="center">

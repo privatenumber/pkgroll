@@ -1,6 +1,7 @@
 import type { PackageJson } from 'type-fest';
 import type { PackageType, ExportEntry } from '../../types.js';
 import { normalizePath } from '../normalize-path.js';
+import { propertyNeedsQuotes } from '../property-needs-quotes.js';
 
 const getFileType = (
 	filePath: string,
@@ -58,9 +59,10 @@ const parseExportsMap = (
 		if (typeof exportMap === 'object') {
 			return Object.entries(exportMap).flatMap(([key, value]) => {
 				if (typeof value === 'string') {
+					const newProperty = propertyNeedsQuotes(key) ? `["${key}"]` : `.${key}`;
 					const baseEntry = {
 						outputPath: value,
-						from: `${packagePath}.${key}`,
+						from: `${packagePath}${newProperty}`,
 					};
 
 					if (key === 'require') {
@@ -100,7 +102,8 @@ const parseExportsMap = (
 					}
 				}
 
-				return parseExportsMap(value, packageType, `${packagePath}.${key}`);
+				const newProperty = propertyNeedsQuotes(key) ? `["${key}"]` : `.${key}`;
+				return parseExportsMap(value, packageType, `${packagePath}${newProperty}`);
 			});
 		}
 	}
@@ -176,11 +179,12 @@ export const getExportEntries = (packageJson: PackageJson) => {
 			});
 		} else {
 			for (const [binName, binPath] of Object.entries(bin)) {
+				const newProperty = propertyNeedsQuotes(binName) ? `["${binName}"]` : `.${binName}`;
 				addExportPath(exportEntriesMap, {
 					outputPath: binPath!,
 					type: getFileType(binPath!) ?? packageType,
 					isExecutable: true,
-					from: `bin.${binName}`,
+					from: `bin${newProperty}`,
 				});
 			}
 		}

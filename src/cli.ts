@@ -3,7 +3,7 @@ import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
 import { readPackageJson } from './utils/read-package-json.js';
-import { getExportEntries } from './utils/parse-package-json/get-export-entries.js';
+import { parseCliInputFlag, getExportEntries } from './utils/parse-package-json/get-export-entries.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
 import { getSourcePath } from './utils/get-source-path.js';
@@ -20,6 +20,11 @@ const argv = cli({
 	version,
 
 	flags: {
+		input: {
+			type: [parseCliInputFlag],
+			alias: 'i',
+			description: 'Dist paths for source files to bundle (Only use if you cannot use package.json entries)',
+		},
 		src: {
 			type: String,
 			description: 'Source directory',
@@ -125,6 +130,17 @@ if (tsconfigTarget) {
 	const packageJson = await readPackageJson(cwd);
 
 	let exportEntries = getExportEntries(packageJson);
+
+	const cliInputs = argv.flags.input;
+	if (cliInputs.length > 0) {
+		const packageType = packageJson.type ?? 'commonjs';
+		exportEntries.push(...cliInputs.map((input) => {
+			if (!input.type) {
+				input.type = packageType;
+			}
+			return input;
+		}));
+	}
 
 	exportEntries = exportEntries.filter((entry) => {
 		const validPath = entry.outputPath.startsWith(distPath);

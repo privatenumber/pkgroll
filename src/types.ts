@@ -2,9 +2,9 @@ export type PackageType = 'module' | 'commonjs';
 
 export type ExportEntry = {
 	outputPath: string;
-	type: PackageType | 'types';
+	type: PackageType | 'types' | undefined;
 	platform?: 'node';
-	isExecutable?: true;
+	isExecutable?: boolean;
 	from: string;
 };
 

@@ -199,3 +199,19 @@ export const getExportEntries = (packageJson: PackageJson) => {
 
 	return Object.values(exportEntriesMap);
 };
+
+export const parseCliInputFlag = (distPath: string): ExportEntry => {
+	let isExecutable = false;
+
+	if (distPath.includes('=')) {
+		const [type, filePath] = distPath.split('=');
+		distPath = filePath;
+		isExecutable = type === 'binary';
+	}
+	return {
+		outputPath: normalizePath(distPath),
+		type: getFileType(distPath),
+		isExecutable,
+		from: 'cli',
+	};
+};

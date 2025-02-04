@@ -141,27 +141,47 @@ When generating type declarations (`.d.ts` files), this also bundles and tree-sh
 ```
 
 ### Aliases
-Aliases can be configured in the [import map](https://nodejs.org/api/packages.html#imports), defined in `package.json#imports`.
 
-For native Node.js import mapping, all entries must be prefixed with `#` to indicate an internal [subpath import](https://nodejs.org/api/packages.html#subpath-imports). _Pkgroll_ takes advantage of this behavior to define entries that are _not prefixed_ with `#` as an alias.
+#### Import map
 
-Native Node.js import mapping supports conditional imports (eg. resolving different paths for Node.js and browser), but _Pkgroll_ does not.
+You can configure aliases using the [import map](https://nodejs.org/api/packages.html#imports) in `package.json#imports`.
 
-> ⚠️ Aliases are not supported in type declaration generation. If you need type support, do not use aliases.
+In Node.js, import mappings must start with `#` to indicate an internal [subpath import](https://nodejs.org/api/packages.html#subpath-imports). However, _Pkgroll_ allows defining aliases **without** the `#` prefix.
+
+> [!NOTE]
+> While Node.js supports conditional imports (e.g., different paths for Node.js vs. browsers), _Pkgroll_ does not.
+
+Example:
 
 ```json5
 {
-    // ...
-
     "imports": {
-        // Mapping '~utils' to './src/utils.js'
+        // Alias '~utils' points to './src/utils.js'
         "~utils": "./src/utils.js",
 
-        // Native Node.js import mapping (can't reference ./src)
-        "#internal-package": "./vendors/package/index.js",
+        // Native Node.js subpath import (must use '#', can't reference './src')
+        "#internal-package": "./vendors/package/index.js"
     }
 }
 ```
+
+#### Tsconfig paths
+
+You can also define aliases in `tsconfig.json` using `compilerOptions.paths`:
+
+```json5
+{
+    "compilerOptions": {
+        "paths": {
+            "@foo/*": ["./src/foo/*"],
+            "~bar": ["./src/bar/index.ts"]
+        }
+    }
+}
+```
+
+> [!TIP]
+> The community is shifting towards using import maps (`imports`) as the source of truth for aliases because of their wider support across tools like Node.js, TypeScript, Vite, Webpack, and esbuild.
 
 ### Target
 

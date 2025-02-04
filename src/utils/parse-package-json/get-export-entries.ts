@@ -206,7 +206,7 @@ export const parseCliInputFlag = (distPath: string): ExportEntry => {
 	if (distPath.includes('=')) {
 		const [type, filePath] = distPath.split('=');
 		distPath = filePath;
-		isExecutable = type === 'binary';
+		isExecutable = type === 'bin' || type === 'binary';
 	}
 	return {
 		outputPath: normalizePath(distPath),

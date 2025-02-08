@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
@@ -181,7 +182,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { sayHello }');
 		});
 
-		test('require() works in esm', async () => {
+		test('require() gets converted to import in esm', async () => {
 			await using fixture = await createFixture({
 				...packageFixture(),
 				'package.json': createPackageJson({
@@ -202,7 +203,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(js).not.toMatch('createRequire');
 
 			const mjs = await fixture.readFile('dist/require.mjs', 'utf8');
-			expect(mjs).toMatch('createRequire');
+			expect(mjs).not.toMatch('require(');
+			expect(mjs).toMatch(/import . from"fs"/);
 		});
 
 		test('conditional require() no side-effects', async () => {
@@ -243,9 +245,55 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
 			expect(content).not.toMatch('\tconsole.log(\'side effect\');');
+			expect(content).not.toMatch('require(');
+			expect(content).toMatch('"development"');
+		});
 
-			const [, createRequireMangledVariable] = content.toString().match(/createRequire as (\w+)/)!;
-			expect(content).not.toMatch(`${createRequireMangledVariable}(`);
+		describe('injects createRequire', ({ test }) => {
+			test('dynamic require should get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/dynamic-require.ts': 'require((() => \'fs\')());',
+					'package.json': createPackageJson({
+						main: './dist/dynamic-require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
+				expect(content).toMatch('createRequire');
+				expect(content).toMatch('(import.meta.url)');
+
+				// Shouldn't throw
+				await import(pathToFileURL(fixture.getPath('dist/dynamic-require.mjs')).toString());
+			});
+
+			test('defined require should not get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/dynamic-require.ts': 'const require = ()=>{}; require((() => \'fs\')());',
+					'package.json': createPackageJson({
+						main: './dist/dynamic-require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
+				expect(content).not.toMatch('createRequire');
+				expect(content).not.toMatch('(import.meta.url)');
+			});
 		});
 
 		test('dynamic imports', async () => {

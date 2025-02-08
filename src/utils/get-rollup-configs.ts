@@ -11,13 +11,13 @@ import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types.js';
-import { isFormatEsm, createRequire } from './rollup-plugins/create-require.js';
 import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
 import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
 import { patchBinary } from './rollup-plugins/patch-binary.js';
 import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
 import { resolveTsconfigPaths } from './rollup-plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
+import { esmInjectCreateRequire } from './rollup-plugins/esm-inject-create-require.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
 type Options = {
@@ -134,10 +134,13 @@ const getConfig = {
 						: []
 				),
 				stripHashbang(),
-				commonjs(),
 				json(),
 				esbuildTransform(esbuildConfig),
-				createRequire(),
+				commonjs({
+					ignoreDynamicRequires: true,
+					extensions: ['.js', '.ts', '.jsx', '.tsx'],
+					transformMixedEsModules: true,
+				}),
 				dynamicImportVars({
 					warnOnError: true,
 				}),
@@ -147,6 +150,7 @@ const getConfig = {
 						: []
 				),
 				patchBinary(executablePaths),
+				esmInjectCreateRequire(),
 			],
 			output: [] as unknown as Output,
 			external: [] as (string | RegExp)[],
@@ -253,9 +257,6 @@ export const getRollupConfigs = async (
 				format: exportEntry.type,
 				chunkFileNames: `[name]-[hash]${extension}`,
 				sourcemap: flags.sourcemap,
-				plugins: [
-					isFormatEsm(exportEntry.type === 'module'),
-				],
 
 				/**
 				 * Preserve source path in dist path

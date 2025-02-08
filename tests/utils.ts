@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { execa, type Options } from 'execa';
 
-const pkgrollBinPath = path.resolve('./dist/cli.js');
+const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
 export const pkgroll = async (
 	cliArguments: string[],

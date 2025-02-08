@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'node:url';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
@@ -30,10 +31,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).not.toMatch('exports.foo=foo');
 
 			// Minification should preserve name
-			expect(
-				// eslint-disable-next-line @typescript-eslint/no-require-imports
-				require(fixture.getPath('dist/target.js')).functionName,
-			).toBe('preservesName');
+			const { functionName } = await import(pathToFileURL(fixture.getPath('dist/target.js')).toString());
+			expect(functionName).toBe('preservesName');
 		});
 	});
 });

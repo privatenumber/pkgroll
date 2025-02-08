@@ -11,13 +11,13 @@ import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { ExportEntry, AliasMap } from '../types.js';
-import { esbuildTransform, esbuildMinify } from './rollup-plugins/esbuild.js';
-import { externalizeNodeBuiltins } from './rollup-plugins/externalize-node-builtins.js';
-import { patchBinary } from './rollup-plugins/patch-binary.js';
-import { resolveTypescriptMjsCts } from './rollup-plugins/resolve-typescript-mjs-cjs.js';
-import { resolveTsconfigPaths } from './rollup-plugins/resolve-tsconfig-paths.js';
-import { stripHashbang } from './rollup-plugins/strip-hashbang.js';
-import { esmInjectCreateRequire } from './rollup-plugins/esm-inject-create-require.js';
+import { esbuildTransform, esbuildMinify } from '../rollup-plugins/esbuild.js';
+import { externalizeNodeBuiltins } from '../rollup-plugins/externalize-node-builtins.js';
+import { patchBinary } from '../rollup-plugins/patch-binary.js';
+import { resolveTypescriptMjsCts } from '../rollup-plugins/resolve-typescript-mjs-cjs.js';
+import { resolveTsconfigPaths } from '../rollup-plugins/resolve-tsconfig-paths.js';
+import { stripHashbang } from '../rollup-plugins/strip-hashbang.js';
+import { esmInjectCreateRequire } from '../rollup-plugins/esm-inject-create-require.js';
 import { getExternalDependencies } from './parse-package-json/get-external-dependencies.js';
 
 type Options = {
@@ -46,7 +46,7 @@ const getConfig = {
 	) => {
 		const [dts, ts] = await Promise.all([
 			import('rollup-plugin-dts'),
-			import('typescript'),
+			import('./local-typescript-loader.js'),
 		]);
 		return {
 			input: [] as string[],

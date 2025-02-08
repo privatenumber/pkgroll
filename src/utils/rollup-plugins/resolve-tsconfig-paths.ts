@@ -5,7 +5,6 @@ const name = 'resolve-tsconfig-paths';
 
 const isRelative = (filePath: string) => filePath[0] === '.';
 const isAbsolute = (filePath: string) => filePath[0] === '/' || /^[\s\S]:/.test(filePath);
-const isImports = (filePath: string) => filePath[0] === '#';
 
 export const resolveTsconfigPaths = (
 	tsconfig: TsConfigResult,
@@ -24,7 +23,6 @@ export const resolveTsconfigPaths = (
 				!importer
 				|| isRelative(id)
 				|| isAbsolute(id)
-				|| isImports(id)
 				|| id.startsWith('\0')
 			) {
 				return null;

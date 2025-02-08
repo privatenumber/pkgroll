@@ -57,12 +57,12 @@ npm install --save-dev pkgroll
 	    "exports": {
 	        "require": {
 	            "types": "./dist/index.d.cts",
-	            "default": "./dist/index.cjs"
+	            "default": "./dist/index.cjs",
 	        },
 	        "import": {
 	            "types": "./dist/index.d.mts",
-	            "default": "./dist/index.mjs"
-	        }
+	            "default": "./dist/index.mjs",
+	        },
 	    },
 
 	    // bin files will be compiled to be executable with the Node.js hashbang
@@ -70,8 +70,8 @@ npm install --save-dev pkgroll
 
 	    // (Optional) Add a build script referencing `pkgroll`
 	    "scripts": {
-	        "build": "pkgroll"
-	    }
+	        "build": "pkgroll",
+	    },
 
 	    // ...
 	}
@@ -160,8 +160,8 @@ Example:
         "~utils": "./src/utils.js",
 
         // Native Node.js subpath import (must use '#', can't reference './src')
-        "#internal-package": "./vendors/package/index.js"
-    }
+        "#internal-package": "./vendors/package/index.js",
+    },
 }
 ```
 
@@ -173,10 +173,14 @@ You can also define aliases in `tsconfig.json` using `compilerOptions.paths`:
 {
     "compilerOptions": {
         "paths": {
-            "@foo/*": ["./src/foo/*"],
-            "~bar": ["./src/bar/index.ts"]
-        }
-    }
+            "@foo/*": [
+                "./src/foo/*",
+            ],
+            "~bar": [
+                "./src/bar/index.ts",
+            ],
+        },
+    },
 }
 ```
 

@@ -7,7 +7,7 @@ import { parseCliInputFlag, getExportEntries } from './utils/parse-package-json/
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
 import { getSourcePath } from './utils/get-source-path.js';
-import { getRollupConfigs } from './utils/get-rollup-configs.js';
+import { getRollupConfigs } from './rollup/get-rollup-configs.js';
 import { getTsconfig } from './utils/get-tsconfig';
 import { log } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
@@ -190,7 +190,7 @@ if (tsconfigTarget) {
 	if (argv.flags.watch) {
 		log('Watch initialized');
 
-		Object.values(rollupConfigs).map(async (rollupConfig) => {
+		rollupConfigs.map(async (rollupConfig) => {
 			const watcher = watch(rollupConfig);
 
 			watcher.on('event', async (event) => {
@@ -213,7 +213,7 @@ if (tsconfigTarget) {
 		});
 	} else {
 		await Promise.all(
-			Object.values(rollupConfigs).map(async (rollupConfig) => {
+			rollupConfigs.map(async (rollupConfig) => {
 				const bundle = await rollup(rollupConfig);
 
 				return Promise.all(rollupConfig.output.map(

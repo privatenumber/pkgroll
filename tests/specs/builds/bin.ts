@@ -59,5 +59,25 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/index.js')).toBe(true);
 		});
+
+		test('hashbang gets inserted at the top (despite other injections e.g. createRequire)', async () => {
+			await using fixture = await createFixture({
+				'src/dynamic-require.ts': 'require((() => \'fs\')());',
+				'package.json': createPackageJson({
+					bin: './dist/dynamic-require.mjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
+			expect(content.startsWith('#!/usr/bin/env node')).toBeTruthy();
+		});
 	});
 });

@@ -72,13 +72,13 @@ export const getPkgConfig = (
 			dynamicImportVars({
 				warnOnError: true,
 			}),
+			esmInjectCreateRequire(),
 			...(
 				options.minify
 					? [esbuildMinify(esbuildConfig)]
 					: []
 			),
 			patchBinary(executablePaths),
-			esmInjectCreateRequire(),
 		],
 		output: [] as unknown as Output,
 		external: [] as (string | RegExp)[],

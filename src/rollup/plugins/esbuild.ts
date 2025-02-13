@@ -6,7 +6,7 @@ export const esbuildTransform = (
 	options?: TransformOptions,
 ): Plugin => {
 	const filter = createFilter(
-		/\.([cm]?ts|[jt]sx)$/,
+		/\.([cm]?[jt]s|[jt]sx)$/,
 	);
 
 	return {

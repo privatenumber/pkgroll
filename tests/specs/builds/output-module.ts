@@ -224,7 +224,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
-			expect(content).toMatch('\tconsole.log(\'side effect\');');
+			expect(content).toMatch('\tconsole.log("side effect");');
 		});
 
 		test('require() & createRequire gets completely removed on conditional', async () => {

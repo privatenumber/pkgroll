@@ -43,7 +43,6 @@
 		"@rollup/plugin-inject": "^5.0.5",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.0",
-		"@rollup/plugin-replace": "^6.0.2",
 		"@rollup/pluginutils": "^5.1.4",
 		"esbuild": "^0.24.2",
 		"magic-string": "^0.30.17",

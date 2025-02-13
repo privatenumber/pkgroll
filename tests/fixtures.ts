@@ -54,7 +54,10 @@ export const fixtureFiles = {
 	`,
 
 	'conditional-require.js': outdent`
-	if (process.env.NODE_ENV === 'production') {
+	if (
+		process.env.NODE_ENV === 'production'
+		|| process.env['NODE_ENV'] === 'production'
+	) {
 		console.log('production');
 		require('./cjs.cjs');
 	} else {

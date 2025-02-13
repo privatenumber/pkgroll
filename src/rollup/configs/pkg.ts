@@ -4,7 +4,6 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
-import replace from '@rollup/plugin-replace';
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap } from '../../types.js';
@@ -27,6 +26,7 @@ export const getPkgConfig = (
 	const esbuildConfig: TransformOptions = {
 		target: options.target,
 		tsconfigRaw: tsconfig?.config,
+		define: env,
 	};
 
 	return {
@@ -47,20 +47,6 @@ export const getPkgConfig = (
 				extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 				exportConditions: options.exportCondition,
 			}),
-			...(
-				Object.keys(env).length > 0
-					? [replace({
-						preventAssignment: true,
-
-						/**
-                         * Seems this currently doesn't work:
-                         * https://github.com/rollup/plugins/pull/1084#discussion_r861447543
-                         */
-						objectGuards: true,
-						values: env,
-					})]
-					: []
-			),
 			stripHashbang(),
 			json(),
 			esbuildTransform(esbuildConfig),

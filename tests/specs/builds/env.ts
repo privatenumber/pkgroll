@@ -23,7 +23,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/conditional-require.js', 'utf8');
 			expect(content).toMatch('development');
-			expect(content).not.toMatch('2 ** 3');
+			expect(content).not.toMatch('production');
 		});
 	});
 });

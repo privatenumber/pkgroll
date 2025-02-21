@@ -5,12 +5,15 @@ import { propertyNeedsQuotes } from '../property-needs-quotes.js';
 
 const getFileType = (
 	filePath: string,
-): PackageType | undefined => {
+): PackageType | 'types' | undefined => {
 	if (filePath.endsWith('.mjs')) {
 		return 'module';
 	}
 	if (filePath.endsWith('.cjs')) {
 		return 'commonjs';
+	}
+	if (filePath.includes('.d.')) {
+		return 'types';
 	}
 };
 

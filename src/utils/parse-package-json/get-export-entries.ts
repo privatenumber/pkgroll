@@ -12,7 +12,11 @@ const getFileType = (
 	if (filePath.endsWith('.cjs')) {
 		return 'commonjs';
 	}
-	if (filePath.includes('.d.')) {
+	if (
+		filePath.endsWith('.d.ts')
+		|| filePath.endsWith('.d.cts')
+		|| filePath.endsWith('.d.mts')
+	) {
 		return 'types';
 	}
 };

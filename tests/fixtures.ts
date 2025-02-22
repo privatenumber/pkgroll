@@ -57,6 +57,7 @@ export const fixtureFiles = {
 	if (
 		process.env.NODE_ENV === 'production'
 		|| process.env['NODE_ENV'] === 'production'
+		|| process.env['PROD'] === 'true'
 	) {
 		console.log('production');
 		require('./cjs.cjs');

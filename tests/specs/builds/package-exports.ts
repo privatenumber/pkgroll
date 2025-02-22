@@ -109,6 +109,37 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(utilsCjs).toMatch('exports.sayHello =');
 		});
 
+		test('conditions - types', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+				}),
+				'package.json': createPackageJson({
+					type: 'module',
+					exports: {
+						types: {
+							default: './dist/mts.d.ts',
+						},
+						import: './dist/mts.js',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const indexMjs = await fixture.readFile('dist/mts.js', 'utf8');
+			expect(indexMjs).toMatch('function sayGoodbye(name) {');
+
+			const indexDts = await fixture.readFile('dist/mts.d.ts', 'utf8');
+			expect(indexDts).toMatch('declare function sayGoodbye(name: string): void;');
+		});
+
 		test('conditions - import should allow cjs', async () => {
 			await using fixture = await createFixture({
 				...packageFixture(),

@@ -124,7 +124,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 					},
 				}),
 			});
-			
+
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,

@@ -16,7 +16,7 @@ export const patchBinary = (
 		}
 
 		const entryFileNames = outputOptions.entryFileNames as (chunk: RenderedChunk) => string;
-		const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(chunk))}`;
+		const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(chunk).replaceAll('\\', '/'))}`;
 
 		if (executablePaths.includes(outputPath)) {
 			const transformed = new MagicString(code);

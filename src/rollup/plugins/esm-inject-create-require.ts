@@ -21,17 +21,26 @@ export const esmInjectCreateRequire = (): Plugin => {
 			let injectionNeeded = false;
 
 			walk(ast, {
-				enter(node) {
+				enter(node, parent) {
 					// Not all nodes have scopes
 					if (node.scope) {
 						currentScope = node.scope as AttachedScope;
 					}
+
+					if (node.type !== 'Identifier' || node.name !== 'require') {
+						return;
+					}
+
 					if (
-						node.type === 'Identifier'
-						&& node.name === 'require'
-						// If the current scope (or its parents) does not contain 'require'
-						&& !currentScope.contains('require')
+						parent?.type === 'Property'
+						&& parent.key === node
+						&& !parent.compute
 					) {
+						return;
+					}
+
+					// If the current scope (or its parents) does not contain 'require'
+					if (!currentScope.contains('require')) {
 						injectionNeeded = true;
 
 						// No need to continue if one instance is found

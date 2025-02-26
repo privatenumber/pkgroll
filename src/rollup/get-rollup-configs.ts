@@ -120,7 +120,7 @@ export const getRollupConfigs = async (
 				entryFileNames: (chunk) => {
 					const realPath = fs.realpathSync.native(stripQuery(chunk.facadeModuleId!));
 					const relativePath = realPath.slice(sourceDirectoryPath.length);
-					const filePath = path.join(path.dirname(relativePath), chunk.name);
+					const filePath = path.posix.join(path.dirname(relativePath), chunk.name);
 					return filePath + distExtension;
 				},
 			};

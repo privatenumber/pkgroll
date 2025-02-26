@@ -19,6 +19,17 @@ export const esbuildTransform = (
 			const result = await transform(code, {
 				...options,
 
+				supported: {
+					/**
+					 * esbuild is used for TS, syntax lowering, & define, but
+					 * we'll ignore import.meta as it injects a polyfill that
+					 * may break if the output is ESM
+					 *
+					 * https://esbuild.github.io/try/#dAAwLjI1LjAAe3RhcmdldDogWydlczIwMTcnXX0AY29uc29sZS5sb2coaW1wb3J0Lm1ldGEudXJsKQ
+					 */
+					'import-meta': true,
+				},
+
 				loader: 'default',
 
 				// https://github.com/evanw/esbuild/issues/1932#issuecomment-1013380565

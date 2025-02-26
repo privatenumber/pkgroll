@@ -364,5 +364,24 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dynamic-imports.mjs', 'utf8');
 			expect(content).toMatch('import(');
 		});
+
+		// https://github.com/privatenumber/pkgroll/issues/115
+		test('import.meta.url should be preserved', async () => {
+			await using fixture = await createFixture({
+				'src/index.js': 'console.log(import.meta.url)',
+				'package.json': createPackageJson({
+					exports: './dist/index.mjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll(['--target=es2017'], {
+				cwd: fixture.path,
+				nodePath,
+			});
+			expect(pkgrollProcess.exitCode).toBe(0);
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('import.meta.url');
+		});
 	});
 });

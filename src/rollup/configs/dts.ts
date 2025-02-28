@@ -9,9 +9,10 @@ export const getDtsConfig = async (
 	options: Options,
 	tsconfig: TsConfigResult | null,
 ) => {
-	const [dts, ts] = await Promise.all([
+	const [dts, ts, fixCtsTypes] = await Promise.all([
 		import('rollup-plugin-dts'),
 		import('../../utils/local-typescript-loader.js'),
+		import('fix-dts-default-cjs-exports/rollup'),
 	]);
 	return {
 		input: [] as string[],
@@ -48,6 +49,15 @@ export const getDtsConfig = async (
 				},
 				tsconfig: tsconfig?.path,
 			}) as Plugin,
+			fixCtsTypes.FixDtsDefaultCjsExportsPlugin({
+				matcher: (info) => (
+					info.type === 'chunk'
+					&& info.exports?.length > 0
+					&& info.exports.includes('default')
+					&& /\.d\.cts$/.test(info.fileName)
+					&& info.isEntry
+				)
+			}),
 		],
 		output: [] as unknown as Output,
 		external: [] as (string | RegExp)[],

@@ -143,6 +143,10 @@ const addExportPath = (
 };
 
 export const getExportEntries = (packageJson: PackageJson) => {
+	// Prefer publishConfig when defined
+	// https://pnpm.io/package_json#publishconfig
+	packageJson = Object.assign(packageJson, packageJson.publishConfig ?? {});
+	
 	const exportEntriesMap: Record<string, ExportEntry> = {};
 	const packageType = packageJson.type ?? 'commonjs';
 

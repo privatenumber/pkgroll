@@ -287,6 +287,17 @@ Or to inline them in the distribution files:
 pkgroll --sourcemap=inline
 ```
 
+## Dev vs Prod config
+
+In some cases, it makes sense to use different `package.json` field values for the published environment. You can achieve this by using the [`publishConfig`](https://pnpm.io/package_json#publishconfig) field (extended by pnpm). This allows you to override specific fields during publication with a clean separation of concerns.
+
+The following fields can be overridden using `publishConfig`:
+- `bin`
+- `main`
+- `exports`
+- `types`
+- `module`
+
 ## FAQ
 
 ### Why bundle with Rollup?

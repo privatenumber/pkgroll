@@ -207,5 +207,28 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fixture.exists('dist/nested/index.node.js');
 			await fixture.exists('dist/nested/index.node.d.ts');
 		});
+
+		test('publishConfig', async () => {
+			await using fixture = await createFixture({
+				...packageFixture(),
+				'package.json': createPackageJson({
+					exports: './dist/invalid.js',
+					publishConfig: {
+						exports: './dist/index.js',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.js', 'utf8');
+			expect(content).toMatch('module.exports =');
+		});
 	});
 });

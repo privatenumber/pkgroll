@@ -142,12 +142,35 @@ const addExportPath = (
 	}
 };
 
-export const getExportEntries = (packageJson: PackageJson) => {
+export const getExportEntries = (
+	_packageJson: Readonly<PackageJson>,
+) => {
+	const packageJson = { ..._packageJson };
+
+	// Prefer publishConfig when defined
+	// https://pnpm.io/package_json#publishconfig
+	const { publishConfig } = packageJson;
+	if (publishConfig) {
+		const fields = [
+			'bin',
+			'main',
+			'exports',
+			'types',
+			'module',
+		];
+
+		for (const field of fields) {
+			if (publishConfig[field]) {
+				packageJson[field] = publishConfig[field];
+			}
+		}
+	}
+
 	const exportEntriesMap: Record<string, ExportEntry> = {};
 	const packageType = packageJson.type ?? 'commonjs';
 
-	if (packageJson.main) {
-		const mainPath = packageJson.main;
+	const mainPath = packageJson.main;
+	if (mainPath) {
 		addExportPath(exportEntriesMap, {
 			outputPath: mainPath,
 			type: getFileType(mainPath) ?? packageType,
@@ -174,9 +197,8 @@ export const getExportEntries = (packageJson: PackageJson) => {
 		});
 	}
 
-	if (packageJson.bin) {
-		const { bin } = packageJson;
-
+	const { bin } = packageJson;
+	if (bin) {
 		if (typeof bin === 'string') {
 			addExportPath(exportEntriesMap, {
 				outputPath: bin,

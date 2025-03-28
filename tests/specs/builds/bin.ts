@@ -79,5 +79,27 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
 			expect(content.startsWith('#!/usr/bin/env node')).toBeTruthy();
 		});
+
+		test('publishConfig', async () => {
+			await using fixture = await createFixture({
+				...packageFixture(),
+				'package.json': createPackageJson({
+					bin: './dist/invalid.mjs',
+					publishConfig: {
+						bin: './dist/index.mjs',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			expect(await fixture.exists('dist/index.mjs')).toBe(true);
+		});
 	});
 });

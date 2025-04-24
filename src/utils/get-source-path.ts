@@ -30,28 +30,29 @@ const extensionMap = {
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
 export const getSourcePath = async (
-	exportEntry: ExportEntry,
+	{ outputPath }: ExportEntry,
 	source: string,
 	dist: string,
 ) => {
-	const sourcePathUnresolved = source + exportEntry.outputPath.slice(dist.length);
+	const sourcePathUnresolved = source + outputPath.slice(dist.length);
 
-	for (const distExtension of distExtensions) {
-		if (exportEntry.outputPath.endsWith(distExtension)) {
-			const sourcePath = await tryExtensions(
-				sourcePathUnresolved.slice(0, -distExtension.length),
-				extensionMap[distExtension],
-			);
+	const distExtension = distExtensions.find(extension => outputPath.endsWith(extension));
+	if (distExtension) {
+		const sourcePathWithoutExtension = sourcePathUnresolved.slice(0, -distExtension.length);
+		const sourcePath = await tryExtensions(
+			sourcePathWithoutExtension,
+			extensionMap[distExtension],
+		);
 
-			if (sourcePath) {
-				return {
-					input: sourcePath.path,
-					srcExtension: sourcePath.extension,
-					distExtension,
-				};
-			}
+		if (sourcePath) {
+			return {
+				input: sourcePath.path,
+				srcExtension: sourcePath.extension,
+				distExtension,
+			};
 		}
+		throw new Error(`Could not find matching source file for export path: ${stringify(outputPath)}; Expected: ${sourcePathWithoutExtension}[${extensionMap[distExtension].join('|')}]`);
 	}
 
-	throw new Error(`Could not find matching source file for export path ${stringify(exportEntry.outputPath)}`);
+	throw new Error(`Package.json output path contains invalid extension: ${stringify(outputPath)}; Expected: ${distExtensions.join(', ')}`);
 };

@@ -144,6 +144,38 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(contentTypes).toBe('export { A } from \'react\';\n');
 		});
 
+		test('no type recommendation when types are not compiled', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					bin: 'dist/index.js',
+					dependencies: {
+						react: '*',
+					},
+					devDependencies: {
+						'@types/react': '*',
+					},
+				}),
+				node_modules: {
+					'@types/react': {
+						'index.d.ts': 'declare const A: { b: number }; export { A }',
+					},
+					react: {
+						'index.js': 'export const A = {}',
+					},
+				},
+				'src/index.ts': 'export { A } from "react"',
+				...installTypeScript,
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+		});
+
 		test('dual package - require', async () => {
 			await using fixture = await createFixture(
 				fixtureDependencyExportsMap('./dist/dependency-exports-require.js'),

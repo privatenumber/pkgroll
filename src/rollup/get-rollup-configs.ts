@@ -40,9 +40,6 @@ export const getRollupConfigs = async (
 		flags.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
 	);
 
-	const externalDependencies = getExternalDependencies(packageJson, aliases);
-	const externalTypeDependencies = getExternalDependencies(packageJson, aliases, true);
-
 	for (const {
 		input, srcExtension, distExtension, exportEntry,
 	} of inputs) {
@@ -51,7 +48,7 @@ export const getRollupConfigs = async (
 
 			if (!config) {
 				config = await getDtsConfig(flags, tsconfig);
-				config.external = externalTypeDependencies;
+				config.external = getExternalDependencies(packageJson, aliases, true);
 				configs.dts = config;
 			}
 
@@ -91,7 +88,7 @@ export const getRollupConfigs = async (
 				executablePaths,
 				tsconfig,
 			);
-			config.external = externalDependencies;
+			config.external = getExternalDependencies(packageJson, aliases);
 			configs.pkg = config;
 		}
 

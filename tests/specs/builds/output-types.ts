@@ -440,11 +440,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			});
 
-			const pkgrollOne = await pkgroll([], {
+			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
-			expect(pkgrollOne.stderr).toBe('');
+			expect(pkgrollProcess.stderr).toBe('');
 
 			const types = await fixture.readFile('dist/index.d.ts', 'utf8');
 			expect(types).toMatch('\'dep-a\'');

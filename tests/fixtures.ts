@@ -165,6 +165,8 @@ export const fixtureFiles = {
 	#! /usr/bin/env node
 	export default 1234;
 	`,
+
+	'unsupported.css': '.unsupported { color: red; }',
 };
 
 export const packageFixture = (options: Options = {}): FileTree => ({

@@ -1,5 +1,5 @@
-import type { ExportEntry } from '../types.js';
-import { fsExists } from './fs-exists.js';
+import { fsExists } from '../fs-exists.js';
+import type { ExportEntry, EntryPoint } from './types.js';
 
 const { stringify } = JSON;
 
@@ -30,29 +30,32 @@ const extensionMap = {
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
 export const getSourcePath = async (
-	{ outputPath }: ExportEntry,
+	exportEntry: ExportEntry,
 	source: string,
 	dist: string,
-) => {
+): Promise<EntryPoint | void> => {
+	const { outputPath } = exportEntry;
 	const sourcePathUnresolved = source + outputPath.slice(dist.length);
 
 	const distExtension = distExtensions.find(extension => outputPath.endsWith(extension));
-	if (distExtension) {
-		const sourcePathWithoutExtension = sourcePathUnresolved.slice(0, -distExtension.length);
-		const sourcePath = await tryExtensions(
-			sourcePathWithoutExtension,
-			extensionMap[distExtension],
-		);
-
-		if (sourcePath) {
-			return {
-				input: sourcePath.path,
-				srcExtension: sourcePath.extension,
-				distExtension,
-			};
-		}
-		throw new Error(`Could not find matching source file for export path: ${stringify(outputPath)}; Expected: ${sourcePathWithoutExtension}[${extensionMap[distExtension].join('|')}]`);
+	if (!distExtension) {
+		console.warn(`Ignoring entry with unknown extension: ${stringify(outputPath)} (supported extensions: ${distExtensions.join(', ')})`);
+		return;
 	}
 
-	throw new Error(`Package.json output path contains invalid extension: ${stringify(outputPath)}; Expected: ${distExtensions.join(', ')}`);
+	const sourcePathWithoutExtension = sourcePathUnresolved.slice(0, -distExtension.length);
+	const sourcePath = await tryExtensions(
+		sourcePathWithoutExtension,
+		extensionMap[distExtension],
+	);
+
+	if (sourcePath) {
+		return {
+			exportEntry,
+			input: sourcePath.path,
+			srcExtension: sourcePath.extension,
+			distExtension,
+		};
+	}
+	throw new Error(`Could not find matching source file for export path: ${stringify(outputPath)}; Expected: ${sourcePathWithoutExtension}[${extensionMap[distExtension].join('|')}]`);
 };

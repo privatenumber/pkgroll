@@ -1,27 +1,8 @@
 import type { PackageJson } from 'type-fest';
-import type { PackageType, ExportEntry } from '../../types.js';
 import { normalizePath } from '../normalize-path.js';
 import { propertyNeedsQuotes } from '../property-needs-quotes.js';
-
-const getFileType = (
-	filePath: string,
-): PackageType | 'types' | undefined => {
-	if (filePath.endsWith('.mjs')) {
-		return 'module';
-	}
-	if (filePath.endsWith('.cjs')) {
-		return 'commonjs';
-	}
-	if (
-		filePath.endsWith('.d.ts')
-		|| filePath.endsWith('.d.cts')
-		|| filePath.endsWith('.d.mts')
-	) {
-		return 'types';
-	}
-};
-
-const isPath = (filePath: string) => filePath.startsWith('.');
+import type { PackageType, ExportEntry } from './types.js';
+import { getFileType, isPath } from './utils.js';
 
 const parseExportsMap = (
 	exportMap: PackageJson['exports'],
@@ -227,20 +208,4 @@ export const getExportEntries = (
 	}
 
 	return Object.values(exportEntriesMap);
-};
-
-export const parseCliInputFlag = (distPath: string): ExportEntry => {
-	let isExecutable = false;
-
-	if (distPath.includes('=')) {
-		const [type, filePath] = distPath.split('=');
-		distPath = filePath;
-		isExecutable = type === 'bin' || type === 'binary';
-	}
-	return {
-		outputPath: normalizePath(distPath),
-		type: getFileType(distPath),
-		isExecutable,
-		from: 'cli',
-	};
 };

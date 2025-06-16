@@ -58,7 +58,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
+			expect(pkgrollProcess.stderr).toMatch('No entry points found');
 		});
 
 		test('conflicting entry in package.json', async () => {
@@ -104,7 +104,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(pkgrollProcess.exitCode).toBe(1);
 			expect(pkgrollProcess.stderr).toMatch('Ignoring entry outside of ./dist/ directory: package.json#main="/dist/main.js"');
-			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
+			expect(pkgrollProcess.stderr).toMatch('No entry points found');
 		});
 
 		test('cannot find matching source file', async () => {
@@ -130,12 +130,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toMatch('Expected: ./src/missing[.js|.ts|.tsx|.mts|.cts]');
 		});
 
-		test('unexpected extension', async () => {
+		test('ignores unexpected extension', async () => {
 			await using fixture = await createFixture({
 				...packageFixture(),
 				'package.json': createPackageJson({
 					name: 'pkg',
-					main: 'dist/index.foo',
+					exports: {
+						'.': './dist/index.js',
+						'./styles': './dist/unsupported.css',
+					},
 				}),
 			});
 
@@ -147,9 +150,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 					reject: false,
 				},
 			);
-			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Error: Package.json output path contains invalid extension');
-			expect(pkgrollProcess.stderr).toMatch('Expected: .d.ts, .d.mts, .d.cts, .js, .mjs, .cjs');
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toMatch('Ignoring entry with unknown extension: ');
+			expect(pkgrollProcess.stderr).toMatch('(supported extensions: .d.ts, .d.mts, .d.cts, .js, .mjs, .cjs)');
 		});
 	});
 });

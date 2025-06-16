@@ -3,10 +3,10 @@ import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
 import { readPackageJson } from './utils/read-package-json.js';
-import { parseCliInputFlag, getExportEntries } from './utils/parse-package-json/get-export-entries.js';
+import { parseCliInputFlag } from './utils/get-entry-points/cli-input.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
-import { getSourcePath } from './utils/get-source-path.js';
+import { getEntryPoints } from './utils/get-entry-points/index.js';
 import { getRollupConfigs } from './rollup/get-rollup-configs.js';
 import { getTsconfig } from './utils/get-tsconfig';
 import { log } from './utils/log.js';
@@ -128,38 +128,10 @@ if (tsconfigTarget) {
 
 (async () => {
 	const packageJson = await readPackageJson(cwd);
-
-	let exportEntries = getExportEntries(packageJson);
-
-	const cliInputs = argv.flags.input;
-	if (cliInputs.length > 0) {
-		const packageType = packageJson.type ?? 'commonjs';
-		exportEntries.push(...cliInputs.map((input) => {
-			if (!input.type) {
-				input.type = packageType;
-			}
-			return input;
-		}));
+	const entryPoints = await getEntryPoints(sourcePath, distPath, packageJson, argv.flags.input);
+	if (entryPoints.length === 0) {
+		throw new Error('No entry points found');
 	}
-
-	exportEntries = exportEntries.filter((entry) => {
-		const validPath = entry.outputPath.startsWith(distPath);
-
-		if (!validPath) {
-			console.warn(`Ignoring entry outside of ${distPath} directory: package.json#${entry.from}=${stringify(entry.outputPath)}`);
-		}
-
-		return validPath;
-	});
-
-	if (exportEntries.length === 0) {
-		throw new Error('No export entries found in package.json');
-	}
-
-	const sourcePaths = await Promise.all(exportEntries.map(async exportEntry => ({
-		...(await getSourcePath(exportEntry, sourcePath, distPath)),
-		exportEntry,
-	})));
 
 	const rollupConfigs = await getRollupConfigs(
 
@@ -171,7 +143,7 @@ if (tsconfigTarget) {
 		 */
 		normalizePath(fs.realpathSync.native(sourcePath), true),
 		distPath,
-		sourcePaths,
+		entryPoints,
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,

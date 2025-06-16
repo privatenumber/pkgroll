@@ -3,7 +3,8 @@ import path from 'node:path';
 import type { OutputOptions } from 'rollup';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
-import type { ExportEntry, AliasMap } from '../types.js';
+import type { AliasMap } from '../types.js';
+import type { EntryPoint } from '../utils/get-entry-points/types.js';
 import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
 import type { EnvObject, Options } from './types.js';
 import { getPkgConfig } from './configs/pkg.js';
@@ -19,12 +20,7 @@ type RollupConfigs = {
 export const getRollupConfigs = async (
 	sourceDirectoryPath: string,
 	distributionDirectoryPath: string,
-	inputs: {
-		input: string;
-		srcExtension: string;
-		distExtension: string;
-		exportEntry: ExportEntry;
-	}[],
+	inputs: EntryPoint[],
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,

@@ -43,8 +43,8 @@ importers:
         version: 2.8.2
     devDependencies:
       '@types/node':
-        specifier: ^22.15.31
-        version: 22.15.31
+        specifier: ^22.15.32
+        version: 22.15.32
       '@types/react':
         specifier: ^18.3.23
         version: 18.3.23
@@ -61,8 +61,8 @@ importers:
         specifier: 9.3.0
         version: 9.3.0
       fs-fixture:
-        specifier: ^2.8.0
-        version: 2.8.0
+        specifier: ^2.8.1
+        version: 2.8.1
       get-node:
         specifier: ^15.0.4
         version: 15.0.4
@@ -638,8 +638,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@22.15.31':
-    resolution: {integrity: sha512-jnVe5ULKl6tijxUhvQeNbQG/84fHfg+yMak02cT8QVhBx/F05rAVxCGBYYTh2EKz22D6JF5ktXuNwdx7b9iEGw==}
+  '@types/node@22.15.32':
+    resolution: {integrity: sha512-3jigKqgSjsH6gYZv2nEsqdXfZqIFGAV36XYYjf9KGZ3PSG+IhLecqPnI310RvjutyMwifE2hhhNEklOUrvx/wA==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -1589,8 +1589,8 @@ packages:
     resolution: {integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww==}
     engines: {node: '>=0.4.x'}
 
-  fs-fixture@2.8.0:
-    resolution: {integrity: sha512-n0snQy+9fir+ce1tClHBj+03fglCcYap2/n6XWQ/Z6YmYy42tztpjccwRcp1MOqs0fegDZPEHnRXipNlryVU7w==}
+  fs-fixture@2.8.1:
+    resolution: {integrity: sha512-C0xA7XvqZBbbOgitWcMDstfih8GaOPEyXfvNefmV7+1573TCnFQ6hAJEUEzH2LVrscONLh73rvayNfa/m9PMgw==}
     engines: {node: '>=18.0.0'}
 
   fs.realpath@1.0.0:
@@ -3186,7 +3186,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.2
-      '@types/node': 22.15.31
+      '@types/node': 22.15.32
       '@types/yargs': 17.0.26
       chalk: 4.1.2
 
@@ -3400,7 +3400,7 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@22.15.31':
+  '@types/node@22.15.32':
     dependencies:
       undici-types: 6.21.0
 
@@ -4587,7 +4587,7 @@ snapshots:
 
   format@0.2.2: {}
 
-  fs-fixture@2.8.0: {}
+  fs-fixture@2.8.1: {}
 
   fs.realpath@1.0.0: {}
 
@@ -4988,7 +4988,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.15.31
+      '@types/node': 22.15.32
       chalk: 4.1.2
       ci-info: 3.8.0
       graceful-fs: 4.2.11

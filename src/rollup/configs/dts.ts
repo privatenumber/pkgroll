@@ -14,7 +14,14 @@ export const getDtsConfig = async (
 		import('../../utils/local-typescript-loader.js'),
 	]);
 	return {
-		input: [] as string[],
+
+		/**
+		 * Input is an object instead of array because rollup-plugin-dts has a bug
+		 * where it normalizes input paths but doesn't account for duplicate file names
+		 * across nested directories:
+		 * https://github.com/Swatinem/rollup-plugin-dts/blob/32ba006c6148778d90422095fdf1f4c5b8a91ef3/src/index.ts#L99-L107
+		 */
+		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
 			externalizeNodeBuiltins(options),

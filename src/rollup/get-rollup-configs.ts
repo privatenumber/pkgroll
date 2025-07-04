@@ -48,8 +48,8 @@ export const getRollupConfigs = async (
 				configs.dts = config;
 			}
 
-			if (!config.input.includes(input)) {
-				config.input.push(input);
+			if (!config.input[input]) {
+				config.input[input] = input;
 			}
 
 			config.output.push({

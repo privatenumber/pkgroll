@@ -147,7 +147,7 @@ export const fixtureFiles = {
 	}
 	`,
 
-	'types.ts': outdent`
+	'types/index.ts': outdent`
 	export type SomeType = string | number;
 	`,
 

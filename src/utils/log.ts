@@ -1,8 +1,8 @@
-import { gray } from 'kolorist';
+import { dim } from 'kolorist';
 
 const currentTime = () => (new Date()).toLocaleTimeString();
 
 export const log = (...messages: unknown[]) => console.log(
-	gray(currentTime()),
+	dim(currentTime()),
 	...messages,
 );

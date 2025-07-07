@@ -14,15 +14,18 @@ import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
-import type { Options, EnvObject, Output } from '../types.js';
+import type { Options, Output } from '../types.js';
 
 export const getPkgConfig = (
 	options: Options,
 	aliases: AliasMap,
-	env: EnvObject,
 	executablePaths: string[],
 	tsconfig: TsConfigResult | null,
 ) => {
+	const env = Object.fromEntries(
+		options.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
+	);
+
 	const esbuildConfig: TransformOptions = {
 		target: options.target,
 		tsconfigRaw: tsconfig?.config,

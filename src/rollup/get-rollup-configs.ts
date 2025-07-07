@@ -6,7 +6,7 @@ import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap } from '../types.js';
 import type { EntryPoint } from '../utils/get-entry-points/types.js';
 import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
-import type { EnvObject, Options } from './types.js';
+import type { Options } from './types.js';
 import { getPkgConfig } from './configs/pkg.js';
 import { getDtsConfig } from './configs/dts.js';
 
@@ -31,10 +31,6 @@ export const getRollupConfigs = async (
 		.map(({ exportEntry }) => exportEntry.outputPath);
 
 	const configs: RollupConfigs = Object.create(null);
-
-	const env: EnvObject = Object.fromEntries(
-		flags.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
-	);
 
 	for (const {
 		input, srcExtension, distExtension, exportEntry,
@@ -80,7 +76,6 @@ export const getRollupConfigs = async (
 			config = getPkgConfig(
 				flags,
 				aliases,
-				env,
 				executablePaths,
 				tsconfig,
 			);

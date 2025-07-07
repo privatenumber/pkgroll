@@ -11,8 +11,4 @@ export type Options = {
 	sourcemap?: true | 'inline';
 };
 
-export type EnvObject = {
-	[key: string]: string;
-};
-
 export type Output = OutputOptions[] & Record<string, OutputOptions>;

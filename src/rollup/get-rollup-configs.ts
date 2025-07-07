@@ -14,22 +14,46 @@ type RollupConfigs = {
 	pkg?: ReturnType<typeof getPkgConfig>;
 };
 
+const getCommonPath = (paths: string[]): string => {
+	if (paths.length === 0) { return ''; }
+
+	const splitPaths = paths.map(p => p.split('/'));
+	const first = splitPaths[0];
+	const minLength = Math.min(...splitPaths.map(p => p.length));
+
+	const commonParts: string[] = [];
+	for (let i = 0; i < minLength; i += 1) {
+		const segment = first[i];
+		if (splitPaths.every(p => p[i] === segment)) {
+			commonParts.push(segment);
+		} else {
+			break;
+		}
+	}
+
+	// Ensure leading slash
+	return commonParts.length === 0 ? '/' : commonParts.join('/') || '/';
+};
+
 export const getRollupConfigs = async (
-	srcdist: SrcDistPair,
+	srcdistPairs: SrcDistPair[],
 	entryPoints: EntryPointValid[],
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
 	tsconfig: TsConfigResult | null,
 ) => {
-	const distDirectory = normalizePath(srcdist.dist, true);
-	srcdist.distPrefix = srcdist.dist.slice(distDirectory.length);
+	const distDirectory = normalizePath(getCommonPath(srcdistPairs.map(({ dist }) => dist)), true);
+
+	for (const srcdistPair of srcdistPairs) {
+		srcdistPair.distPrefix = srcdistPair.dist.slice(distDirectory.length);
+	}
 
 	const configs: RollupConfigs = Object.create(null);
 
 	for (const entry of entryPoints) {
 		const {
-			sourcePath, srcExtension, distExtension, exportEntry,
+			sourcePath, srcdist, srcExtension, distExtension, exportEntry,
 		} = entry;
 
 		const inputName = (

@@ -89,7 +89,7 @@ npm install --save-dev pkgroll
 ### Entry-points
 _Pkgroll_ parses package entry-points from `package.json` by reading properties `main`, `module`, `types`, and `exports`.
 
-The paths in `./dist` are mapped to paths in `./src` (configurable with `--src` and `--dist` flags) to determine bundle entry-points.
+The paths in `./dist` are mapped to paths in `./src` (configurable with the `--srcdist` flag) to determine bundle entry-points.
 
 ### Output formats
 _Pkgroll_ detects the format for each entry-point based on the file extension or the `package.json` property it's placed in, using the [same lookup logic as Node.js](https://nodejs.org/api/packages.html#determining-module-system).

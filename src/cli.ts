@@ -29,13 +29,17 @@ const argv = cli({
 		},
 		src: {
 			type: String,
-			description: 'Source directory',
+			description: 'Source directory (Deprecated, use `srcdist` instead)',
 			default: './src',
 		},
 		dist: {
 			type: String,
-			description: 'Distribution directory',
+			description: 'Distribution directory (Deprecated, use `srcdist` instead)',
 			default: './dist',
+		},
+		srcdist: {
+			type: [String],
+			description: 'Source and distribution folder pairs (eg. default `src:dist`)',
 		},
 		minify: {
 			type: Boolean,
@@ -63,7 +67,7 @@ const argv = cli({
 		env: {
 			type: [
 				(flagValue: string) => {
-					const [key, value] = flagValue.split('=');
+					const [key, value] = flagValue.split('=', 2);
 					return {
 						key,
 						value,
@@ -114,11 +118,28 @@ const argv = cli({
 
 const cwd = process.cwd();
 
-const srcDist: SrcDistPair = {
-	src: normalizePath(argv.flags.src, true),
-	srcResolved: normalizePath(fs.realpathSync.native(argv.flags.src), true),
-	dist: normalizePath(argv.flags.dist, true),
-};
+const srcDistPairs: SrcDistPair[] = [];
+
+if (argv.flags.srcdist.length > 0) {
+	for (const srcDist of argv.flags.srcdist) {
+		const [src, dist] = srcDist.split(':', 2);
+		if (!src || !dist) {
+			throw new Error(`Invalid src:dist pair ${stringify(srcDist)}. Expected format: src:dist`);
+		}
+
+		srcDistPairs.push({
+			src: normalizePath(src, true),
+			srcResolved: normalizePath(fs.realpathSync.native(src), true),
+			dist: normalizePath(dist, true),
+		});
+	}
+} else {
+	srcDistPairs.push({
+		src: normalizePath(argv.flags.src, true),
+		srcResolved: normalizePath(fs.realpathSync.native(argv.flags.src), true),
+		dist: normalizePath(argv.flags.dist, true),
+	});
+}
 
 const tsconfig = getTsconfig(argv.flags.tsconfig);
 const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
@@ -128,11 +149,11 @@ if (tsconfigTarget) {
 
 (async () => {
 	const { packageJson } = await readPackageJson(cwd);
-	const entryPoints = await getEntryPoints(srcDist, packageJson, argv.flags.input);
+	const entryPoints = await getEntryPoints(srcDistPairs, packageJson, argv.flags.input);
 
 	for (const entryPoint of entryPoints) {
 		if ('error' in entryPoint) {
-			console.warn(entryPoint.error);
+			console.warn('Warning:', entryPoint.error);
 		}
 	}
 
@@ -142,7 +163,7 @@ if (tsconfigTarget) {
 	}
 
 	const rollupConfigs = await getRollupConfigs(
-		srcDist,
+		srcDistPairs,
 		validEntryPoints,
 		argv.flags,
 		getAliases(packageJson, cwd),
@@ -156,7 +177,9 @@ if (tsconfigTarget) {
 		 * deletes what it needs to but pkgroll runs multiple builds (e.g. d.ts, mjs, etc)
 		 * so as a plugin, it won't be aware of the files emitted by other builds
 		 */
-		await cleanDist(srcDist.dist);
+		await Promise.all(
+			srcDistPairs.map(({ dist }) => cleanDist(dist)),
+		);
 	}
 
 	if (argv.flags.watch) {

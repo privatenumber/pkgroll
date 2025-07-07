@@ -103,7 +103,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Ignoring entry outside of ./dist/ directory: package.json#main="/dist/main.js"');
+			expect(pkgrollProcess.stderr).toMatch('Ignoring file outside of dist directories');
 			expect(pkgrollProcess.stderr).toMatch('No entry points found');
 		});
 

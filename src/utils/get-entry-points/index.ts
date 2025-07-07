@@ -8,7 +8,7 @@ import type { BuildOutput, EntryPoint } from './types.js';
 import { getSourcePath } from './get-source-path.js';
 
 export const getEntryPoints = async (
-	srcdist: SrcDistPair,
+	srcdist: SrcDistPair[],
 	packageJson: PackageJson,
 	cliInputs: CliEntry[],
 ): Promise<EntryPoint[]> => {
@@ -27,15 +27,11 @@ export const getEntryPoints = async (
 	const mapByOutputPath = new Map<string, BuildOutput>();
 	return await Promise.all(
 		packageExports.map((exportEntry) => {
-			const findDistDirectory = exportEntry.outputPath.startsWith(srcdist.dist);
+			const findDistDirectory = srcdist.find(({ dist }) => exportEntry.outputPath.startsWith(dist));
 			if (!findDistDirectory) {
 				return {
 					exportEntry,
-					error: `Ignoring entry outside of ${srcdist.dist} directory: ${
-						exportEntry.source === 'cli'
-							? `cli input "${exportEntry.outputPath}"`
-							: `package.json#${exportEntry.source.path}=${JSON.stringify(exportEntry.outputPath)}`
-					}`,
+					error: 'Ignoring file outside of dist directories',
 				};
 			}
 
@@ -45,12 +41,12 @@ export const getEntryPoints = async (
 					throw new Error(`Conflicting export types "${existingEntry.format}" & "${exportEntry.format}" found for ${exportEntry.outputPath}`);
 				}
 
-				// TODO: Check platform
+				// TODO: Check platform!!
 			} else {
 				mapByOutputPath.set(exportEntry.outputPath, exportEntry);
 			}
 
-			return getSourcePath(exportEntry, srcdist);
+			return getSourcePath(exportEntry, findDistDirectory);
 		}),
 	);
 };

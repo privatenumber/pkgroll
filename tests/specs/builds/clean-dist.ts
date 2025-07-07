@@ -27,11 +27,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fs.mkdir(fixture.getPath('src', 'nested2'));
 			await fixture.writeFile('./src/nested2/index.ts', 'export function sayHello2(name: string) { return name; }');
 
-			await fixture.writeJson('package.json', {
+			await fixture.writeFile('package.json', createPackageJson({
 				main: './dist/nested2/index.js',
 				module: './dist/nested2/index.mjs',
 				types: './dist/nested2/index.d.ts',
-			});
+			}));
 
 			const pkgrollProcess = await pkgroll(
 				[],
@@ -73,11 +73,11 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await fs.mkdir(fixture.getPath('src', 'nested2'));
 			await fixture.writeFile('./src/nested2/index.ts', 'export function sayHello2(name: string) { return name; }');
 
-			await fixture.writeJson('package.json', {
+			await fixture.writeFile('package.json', createPackageJson({
 				main: './dist/nested2/index.js',
 				module: './dist/nested2/index.mjs',
 				types: './dist/nested2/index.d.ts',
-			});
+			}));
 
 			const pkgrollProcess = await pkgroll(
 				['--clean-dist'],

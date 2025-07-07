@@ -18,4 +18,4 @@ export const getFileType = (
 	}
 };
 
-export const isPath = (filePath: string) => filePath.startsWith('.');
+export const isPath = (filePath: string) => filePath[0] === '.';

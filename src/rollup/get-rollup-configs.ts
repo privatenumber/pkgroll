@@ -1,16 +1,13 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import type { OutputOptions } from 'rollup';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
-import type { AliasMap } from '../types.js';
-import type { EntryPoint } from '../utils/get-entry-points/types.js';
+import type { AliasMap, SrcDistPair } from '../types.js';
+import type { EntryPointValid } from '../utils/get-entry-points/types.js';
 import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
+import { normalizePath } from '../utils/normalize-path.js';
 import type { Options } from './types.js';
 import { getPkgConfig } from './configs/pkg.js';
 import { getDtsConfig } from './configs/dts.js';
-
-const stripQuery = (url: string) => url.split('?')[0];
 
 type RollupConfigs = {
 	dts?: Awaited<ReturnType<typeof getDtsConfig>>;
@@ -18,24 +15,29 @@ type RollupConfigs = {
 };
 
 export const getRollupConfigs = async (
-	sourceDirectoryPath: string,
-	distributionDirectoryPath: string,
-	inputs: EntryPoint[],
+	srcdist: SrcDistPair,
+	entryPoints: EntryPointValid[],
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
 	tsconfig: TsConfigResult | null,
 ) => {
-	const executablePaths = inputs
-		.filter(({ exportEntry }) => exportEntry.isExecutable)
-		.map(({ exportEntry }) => exportEntry.outputPath);
+	const distDirectory = normalizePath(srcdist.dist, true);
+	srcdist.distPrefix = srcdist.dist.slice(distDirectory.length);
 
 	const configs: RollupConfigs = Object.create(null);
 
-	for (const {
-		input, srcExtension, distExtension, exportEntry,
-	} of inputs) {
-		if (exportEntry.type === 'types') {
+	for (const entry of entryPoints) {
+		const {
+			sourcePath, srcExtension, distExtension, exportEntry,
+		} = entry;
+
+		const inputName = (
+			srcdist.distPrefix! + sourcePath.slice(srcdist.srcResolved.length, -srcExtension.length)
+		);
+		entry.inputName = inputName;
+
+		if (exportEntry.format === 'types') {
 			let config = configs.dts;
 
 			if (!config) {
@@ -44,26 +46,14 @@ export const getRollupConfigs = async (
 				configs.dts = config;
 			}
 
-			if (!config.input[input]) {
-				config.input[input] = input;
+			if (!config.input[inputName]) {
+				config.input[inputName] = sourcePath;
 			}
 
 			config.output.push({
-				dir: distributionDirectoryPath,
-
-				/**
-				 * Preserve source path in dist path
-				 * realpath used for few reasons:
-				 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
-				 * - input may be an absolute symlink path
-				 * - test tmpdir is a symlink: /var/ -> /private/var/
-				*/
-				entryFileNames: chunk => (
-					fs.realpathSync.native(stripQuery(chunk.facadeModuleId!))
-						.slice(sourceDirectoryPath.length, -srcExtension.length)
-					+ distExtension
-				),
-
+				dir: distDirectory,
+				entryFileNames: `[name]${distExtension}`,
+				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
 				exports: 'auto',
 				format: 'esm',
 			});
@@ -76,41 +66,29 @@ export const getRollupConfigs = async (
 			config = getPkgConfig(
 				flags,
 				aliases,
-				executablePaths,
+				entryPoints,
 				tsconfig,
 			);
 			config.external = getExternalDependencies(packageJson, aliases);
 			configs.pkg = config;
 		}
 
-		if (!config.input.includes(input)) {
-			config.input.push(input);
+		if (!config.input[inputName]) {
+			config.input[inputName] = sourcePath;
 		}
 
 		const outputs = config.output;
-		const extension = path.extname(exportEntry.outputPath);
-		const key = `${exportEntry.type}-${extension}`;
+
+		// Shouldnt this just be format and extension?
+		const key = `${exportEntry.type}-${distExtension}`;
 		if (!outputs[key]) {
 			const outputOptions: OutputOptions = {
-				dir: distributionDirectoryPath,
+				dir: distDirectory,
 				exports: 'auto',
-				format: exportEntry.type,
-				chunkFileNames: `[name]-[hash]${extension}`,
+				format: exportEntry.format,
 				sourcemap: flags.sourcemap,
-
-				/**
-				 * Preserve source path in dist path
-				 * realpath used for few reasons:
-				 * - dts plugin resolves paths to be absolute anyway, but doesn't resolve symlinks
-				 * - input may be an absolute symlink path
-				 * - test tmpdir is a symlink: /var/ -> /private/var/
-				 */
-				entryFileNames: (chunk) => {
-					const realPath = fs.realpathSync.native(stripQuery(chunk.facadeModuleId!));
-					const relativePath = realPath.slice(sourceDirectoryPath.length);
-					const filePath = path.posix.join(path.dirname(relativePath), chunk.name);
-					return filePath + distExtension;
-				},
+				entryFileNames: `[name]${distExtension}`,
+				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
 			};
 
 			outputs.push(outputOptions);

@@ -1,8 +1,13 @@
 import { normalizePath } from '../normalize-path.js';
-import { getFileType } from './utils.js';
-import type { ExportEntry } from './types.js';
 
-export const parseCliInputFlag = (distPath: string): ExportEntry => {
+export type CliEntry = {
+	type: 'legacy';
+	source: 'cli';
+	outputPath: string;
+	isExecutable: boolean;
+};
+
+export const parseCliInputFlag = (distPath: string): CliEntry => {
 	let isExecutable = false;
 
 	if (distPath.includes('=')) {
@@ -10,10 +15,11 @@ export const parseCliInputFlag = (distPath: string): ExportEntry => {
 		distPath = filePath;
 		isExecutable = type === 'bin' || type === 'binary';
 	}
+
 	return {
+		type: 'legacy',
+		source: 'cli',
 		outputPath: normalizePath(distPath),
-		type: getFileType(distPath),
 		isExecutable,
-		from: 'cli',
 	};
 };

@@ -64,6 +64,24 @@ const reservedWords = new Set([
 	'synchronized',
 ]);
 
-export const propertyNeedsQuotes = (
+const propertyNeedsQuotes = (
 	property: string,
 ) => !isValidIdentifier.test(property) || reservedWords.has(property);
+
+export const prettyPath = (pathSegments: (string | number)[]) => pathSegments
+	.map((segment, index) => {
+		if (typeof segment === 'number') {
+			return `[${segment}]`;
+		}
+
+		if (propertyNeedsQuotes(segment)) {
+			return `[${JSON.stringify(segment)}]`;
+		}
+
+		if (index > 0) {
+			return `.${segment}`;
+		}
+
+		return segment;
+	})
+	.join('');

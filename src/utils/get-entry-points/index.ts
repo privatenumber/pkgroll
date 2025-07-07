@@ -1,44 +1,56 @@
 import type { PackageJson } from 'type-fest';
-import { getExportEntries } from './get-export-entries.js';
-import type { ExportEntry, EntryPoint } from './types.js';
+import type { SrcDistPair } from '../../types.js';
+import { applyPublishConfig } from './apply-publish-config.js';
+import { getPackageExports } from './get-package-exports.js';
+import type { CliEntry } from './cli-input.js';
+import { getFileType } from './utils.js';
+import type { BuildOutput, EntryPoint } from './types.js';
 import { getSourcePath } from './get-source-path.js';
 
-const { stringify } = JSON;
-
 export const getEntryPoints = async (
-	sourcePath: string,
-	distPath: string,
+	srcdist: SrcDistPair,
 	packageJson: PackageJson,
-	cliInputs: ExportEntry[],
-) => {
-	let exportEntries = getExportEntries(packageJson);
+	cliInputs: CliEntry[],
+): Promise<EntryPoint[]> => {
+	applyPublishConfig(packageJson);
+
+	const packageType = packageJson.type ?? 'commonjs';
+	const packageExports = getPackageExports(packageJson, packageType);
 
 	if (cliInputs.length > 0) {
-		const packageType = packageJson.type ?? 'commonjs';
-		exportEntries.push(...cliInputs.map((input) => {
-			if (!input.type) {
-				input.type = packageType;
-			}
-			return input;
-		}));
+		packageExports.push(...cliInputs.map(input => ({
+			...input,
+			format: getFileType(input.outputPath) ?? packageType,
+		})));
 	}
 
-	exportEntries = exportEntries.filter((entry) => {
-		const validPath = entry.outputPath.startsWith(distPath);
+	const mapByOutputPath = new Map<string, BuildOutput>();
+	return await Promise.all(
+		packageExports.map((exportEntry) => {
+			const findDistDirectory = exportEntry.outputPath.startsWith(srcdist.dist);
+			if (!findDistDirectory) {
+				return {
+					exportEntry,
+					error: `Ignoring entry outside of ${srcdist.dist} directory: ${
+						exportEntry.source === 'cli'
+							? `cli input "${exportEntry.outputPath}"`
+							: `package.json#${exportEntry.source.path}=${JSON.stringify(exportEntry.outputPath)}`
+					}`,
+				};
+			}
 
-		if (!validPath) {
-			console.warn(`Ignoring entry outside of ${distPath} directory: package.json#${entry.from}=${stringify(entry.outputPath)}`);
-		}
+			const existingEntry = mapByOutputPath.get(exportEntry.outputPath);
+			if (existingEntry) {
+				if (existingEntry.format !== exportEntry.format) {
+					throw new Error(`Conflicting export types "${existingEntry.format}" & "${exportEntry.format}" found for ${exportEntry.outputPath}`);
+				}
 
-		return validPath;
-	});
+				// TODO: Check platform
+			} else {
+				mapByOutputPath.set(exportEntry.outputPath, exportEntry);
+			}
 
-	const entryPoints: EntryPoint[] = [];
-	await Promise.all(exportEntries.map(async (exportEntry) => {
-		const entryPoint = await getSourcePath(exportEntry, sourcePath, distPath);
-		if (entryPoint) {
-			entryPoints.push(entryPoint);
-		}
-	}));
-	return entryPoints;
+			return getSourcePath(exportEntry, srcdist);
+		}),
+	);
 };

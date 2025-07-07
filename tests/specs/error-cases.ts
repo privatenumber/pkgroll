@@ -37,7 +37,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Cannot parse package.json');
+			expect(pkgrollProcess.stderr).toMatch('Error: Failed to parse ./package.json:');
 		});
 
 		test('no entry in package.json', async () => {
@@ -126,8 +126,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Could not find matching source file for export path');
-			expect(pkgrollProcess.stderr).toMatch('Expected: ./src/missing[.js|.ts|.tsx|.mts|.cts]');
+			expect(pkgrollProcess.stderr).toMatch('Source file not found: src/missing(.js|.ts|.tsx|.mts|.cts)');
 		});
 
 		test('ignores unexpected extension', async () => {
@@ -151,8 +150,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				},
 			);
 			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toMatch('Ignoring entry with unknown extension: ');
-			expect(pkgrollProcess.stderr).toMatch('(supported extensions: .d.ts, .d.mts, .d.cts, .js, .mjs, .cjs)');
+			expect(pkgrollProcess.stderr).toMatch('Unsupported extension (must be .d.ts|.d.mts|.d.cts|.js|.mjs|.cjs)');
 		});
 	});
 });

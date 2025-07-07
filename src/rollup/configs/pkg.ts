@@ -15,11 +15,12 @@ import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
 import type { Options, Output } from '../types.js';
+import type { EntryPointValid } from '../../utils/get-entry-points/types.js';
 
 export const getPkgConfig = (
 	options: Options,
 	aliases: AliasMap,
-	executablePaths: string[],
+	entryPoints: EntryPointValid[],
 	tsconfig: TsConfigResult | null,
 ) => {
 	const env = Object.fromEntries(
@@ -33,7 +34,7 @@ export const getPkgConfig = (
 	};
 
 	return {
-		input: [] as string[],
+		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
 			externalizeNodeBuiltins(options),
@@ -67,7 +68,7 @@ export const getPkgConfig = (
 					? [esbuildMinify(esbuildConfig)]
 					: []
 			),
-			patchBinary(executablePaths),
+			patchBinary(entryPoints),
 		],
 		output: [] as unknown as Output,
 		external: [] as (string | RegExp)[],

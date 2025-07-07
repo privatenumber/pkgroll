@@ -9,8 +9,10 @@ import { normalizePath } from './utils/normalize-path.js';
 import { getEntryPoints } from './utils/get-entry-points/index.js';
 import { getRollupConfigs } from './rollup/get-rollup-configs.js';
 import { getTsconfig } from './utils/get-tsconfig';
-import { log } from './utils/log.js';
+import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
+import type { EntryPointValid } from './utils/get-entry-points/types.js';
+import type { SrcDistPair } from './types.js';
 
 const { stringify } = JSON;
 
@@ -112,13 +114,11 @@ const argv = cli({
 
 const cwd = process.cwd();
 
-/**
- * The sourcepath may be a symlink.
- * In the tests, the temp directory is a symlink:
- * /var/folders/hl/ -> /private/var/folders/hl/
- */
-const sourcePath = normalizePath(argv.flags.src, true);
-const distPath = normalizePath(argv.flags.dist, true);
+const srcDist: SrcDistPair = {
+	src: normalizePath(argv.flags.src, true),
+	srcResolved: normalizePath(fs.realpathSync.native(argv.flags.src), true),
+	dist: normalizePath(argv.flags.dist, true),
+};
 
 const tsconfig = getTsconfig(argv.flags.tsconfig);
 const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
@@ -127,23 +127,23 @@ if (tsconfigTarget) {
 }
 
 (async () => {
-	const packageJson = await readPackageJson(cwd);
-	const entryPoints = await getEntryPoints(sourcePath, distPath, packageJson, argv.flags.input);
-	if (entryPoints.length === 0) {
+	const { packageJson } = await readPackageJson(cwd);
+	const entryPoints = await getEntryPoints(srcDist, packageJson, argv.flags.input);
+
+	for (const entryPoint of entryPoints) {
+		if ('error' in entryPoint) {
+			console.warn(entryPoint.error);
+		}
+	}
+
+	const validEntryPoints = entryPoints.filter((entry): entry is EntryPointValid => !('error' in entry));
+	if (validEntryPoints.length === 0) {
 		throw new Error('No entry points found');
 	}
 
 	const rollupConfigs = await getRollupConfigs(
-
-		/**
-		 * Resolve symlink in source path.
-		 *
-		 * Tests since symlinks because tmpdir is a symlink:
-		 * /var/ -> /private/var/
-		 */
-		normalizePath(fs.realpathSync.native(sourcePath), true),
-		distPath,
-		entryPoints,
+		srcDist,
+		validEntryPoints,
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,
@@ -156,7 +156,7 @@ if (tsconfigTarget) {
 		 * deletes what it needs to but pkgroll runs multiple builds (e.g. d.ts, mjs, etc)
 		 * so as a plugin, it won't be aware of the files emitted by other builds
 		 */
-		await cleanDist(distPath);
+		await cleanDist(srcDist.dist);
 	}
 
 	if (argv.flags.watch) {
@@ -167,7 +167,8 @@ if (tsconfigTarget) {
 
 			watcher.on('event', async (event) => {
 				if (event.code === 'BUNDLE_START') {
-					log('Building', ...(Array.isArray(event.input) ? event.input : [event.input]));
+					const inputFiles = Array.isArray(event.input) ? event.input : Object.values(event.input!);
+					log('Building', ...inputFiles.map(formatPath));
 				}
 
 				if (event.code === 'BUNDLE_END') {
@@ -175,7 +176,8 @@ if (tsconfigTarget) {
 						outputOption => event.result.write(outputOption),
 					));
 
-					log('Built', ...(Array.isArray(event.input) ? event.input : [event.input]));
+					const inputFiles = Array.isArray(event.input) ? event.input : Object.values(event.input!);
+					log('Built', ...inputFiles.map(formatPath));
 				}
 
 				if (event.code === 'ERROR') {

@@ -1,24 +1,32 @@
 import fs from 'node:fs';
-import path from 'node:path';
-import type {
-	Plugin, RenderedChunk, OutputChunk, SourceMapInput,
-} from 'rollup';
+import type { Plugin, SourceMapInput } from 'rollup';
 import MagicString from 'magic-string';
+import type { EntryPointValid } from '../../utils/get-entry-points/types.js';
 
 export const patchBinary = (
-	executablePaths: string[],
-): Plugin => ({
-	name: 'patch-binary',
+	entryPoints: EntryPointValid[],
+): Plugin => {
+	const binaryEntryPoints = entryPoints.filter(entry => entry.exportEntry.type === 'binary');
+	if (binaryEntryPoints.length === 0) {
+		return {
+			name: 'patch-binary',
+		};
+	}
 
-	renderChunk: (code, chunk, outputOptions) => {
-		if (!chunk.isEntry || !chunk.facadeModuleId) {
-			return;
-		}
+	const entryNames = new Set(binaryEntryPoints.map(entry => entry.inputName!));
 
-		const entryFileNames = outputOptions.entryFileNames as (chunk: RenderedChunk) => string;
-		const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(chunk))}`;
+	return {
+		name: 'patch-binary',
 
-		if (executablePaths.includes(outputPath)) {
+		renderChunk: (code, chunk, outputOptions) => {
+			if (
+				!chunk.isEntry
+				|| !chunk.facadeModuleId
+				|| !entryNames.has(chunk.name)
+			) {
+				return;
+			}
+
 			const transformed = new MagicString(code);
 			transformed.prepend('#!/usr/bin/env node\n');
 
@@ -30,21 +38,13 @@ export const patchBinary = (
 						: undefined
 				),
 			};
-		}
-	},
+		},
 
-	writeBundle: async (outputOptions, bundle) => {
-		const entryFileNames = outputOptions.entryFileNames as (chunk: OutputChunk) => string;
-
-		const chmodFiles = Object.values(bundle).map(async (chunk) => {
-			const outputChunk = chunk as OutputChunk;
-
-			if (outputChunk.isEntry && outputChunk.facadeModuleId) {
-				const outputPath = `./${path.posix.join(outputOptions.dir!, entryFileNames(outputChunk))}`;
+		writeBundle: async () => {
+			await Promise.all(binaryEntryPoints.map(async ({ exportEntry }) => {
+				const { outputPath } = exportEntry;
 				await fs.promises.chmod(outputPath, 0o755);
-			}
-		});
-
-		await Promise.all(chmodFiles);
-	},
-});
+			}));
+		},
+	};
+};

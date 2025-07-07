@@ -1,18 +1,18 @@
+import path from 'node:path/posix';
 import { fsExists } from '../fs-exists.js';
-import type { ExportEntry, EntryPoint } from './types.js';
-
-const { stringify } = JSON;
+import type { SrcDistPair } from '../../types.js';
+import type { BuildOutput, EntryPoint } from './types.js';
 
 const tryExtensions = async (
 	pathWithoutExtension: string,
 	extensions: readonly string[],
 ) => {
-	for (const extension of extensions) {
-		const pathWithExtension = pathWithoutExtension + extension;
-		if (await fsExists(pathWithExtension)) {
+	for (const srcExtension of extensions) {
+		const sourcePath = pathWithoutExtension + srcExtension;
+		if (await fsExists(sourcePath)) {
 			return {
-				extension,
-				path: pathWithExtension,
+				srcExtension,
+				sourcePath,
 			};
 		}
 	}
@@ -30,32 +30,35 @@ const extensionMap = {
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
 
 export const getSourcePath = async (
-	exportEntry: ExportEntry,
-	source: string,
-	dist: string,
-): Promise<EntryPoint | void> => {
+	exportEntry: BuildOutput,
+	srcdist: SrcDistPair,
+): Promise<EntryPoint> => {
 	const { outputPath } = exportEntry;
-	const sourcePathUnresolved = source + outputPath.slice(dist.length);
-
 	const distExtension = distExtensions.find(extension => outputPath.endsWith(extension));
 	if (!distExtension) {
-		console.warn(`Ignoring entry with unknown extension: ${stringify(outputPath)} (supported extensions: ${distExtensions.join(', ')})`);
-		return;
+		return {
+			error: `Unsupported extension (must be ${distExtensions.join('|')})`,
+			exportEntry,
+		};
 	}
 
-	const sourcePathWithoutExtension = sourcePathUnresolved.slice(0, -distExtension.length);
-	const sourcePath = await tryExtensions(
-		sourcePathWithoutExtension,
+	const noExtension = outputPath.slice(srcdist.dist.length, -distExtension.length);
+	const foundSourceFile = await tryExtensions(
+		path.join(srcdist.srcResolved, noExtension),
 		extensionMap[distExtension],
 	);
 
-	if (sourcePath) {
+	if (foundSourceFile) {
 		return {
 			exportEntry,
-			input: sourcePath.path,
-			srcExtension: sourcePath.extension,
 			distExtension,
+			srcdist,
+			...foundSourceFile,
 		};
 	}
-	throw new Error(`Could not find matching source file for export path: ${stringify(outputPath)}; Expected: ${sourcePathWithoutExtension}[${extensionMap[distExtension].join('|')}]`);
+
+	return {
+		error: `Source file not found: ${path.join(srcdist.src, noExtension)}(${extensionMap[distExtension].join('|')})`,
+		exportEntry,
+	};
 };

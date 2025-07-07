@@ -1,16 +1,56 @@
+import type { SrcDistPair } from '../../types';
+
 export type PackageType = 'module' | 'commonjs';
 
-export type ExportEntry = {
+export type ObjectPath = (string | number)[];
+
+type SourcePackageJson = {
+	type: 'package.json';
+	path: ObjectPath;
+};
+export type OutputSource = 'cli' | SourcePackageJson;
+
+export type Format = 'module' | 'commonjs' | 'types';
+
+type Output<T extends OutputSource> = {
+	source: T;
 	outputPath: string;
-	type: PackageType | 'types' | undefined;
-	platform?: 'node';
-	isExecutable?: boolean;
-	from: string;
+	format: Format;
 };
 
-export type EntryPoint = {
-	input: string;
+export type BinaryOutput = Output<SourcePackageJson> & {
+	type: 'binary';
+};
+
+export type ExportMapOutput = Output<SourcePackageJson> & {
+	type: 'exportmap';
+
+	// Contains node platform
+	conditions: string[];
+};
+
+// Any CLI input would also be considered legacy output
+export type LegacyOutput = Output<OutputSource> & {
+	type: 'legacy';
+	isExecutable?: boolean;
+};
+
+export type BuildOutput = BinaryOutput | ExportMapOutput | LegacyOutput;
+
+export type EntryPointValid<T extends BuildOutput = BuildOutput> = {
+	sourcePath: string;
 	srcExtension: string;
 	distExtension: string;
-	exportEntry: ExportEntry;
+	srcdist: SrcDistPair;
+	exportEntry: T;
+	inputName?: string;
 };
+
+export type EntryPointError<T extends BuildOutput = BuildOutput> = {
+	error: string;
+	exportEntry: T;
+};
+
+export type EntryPoint<T extends BuildOutput = BuildOutput> =
+	| EntryPointValid<T>
+	| EntryPointError<T>;

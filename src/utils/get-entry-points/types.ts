@@ -24,8 +24,6 @@ export type BinaryOutput = Output<SourcePackageJson> & {
 
 export type ExportMapOutput = Output<SourcePackageJson> & {
 	type: 'exportmap';
-
-	// Contains node platform
 	conditions: string[];
 };
 

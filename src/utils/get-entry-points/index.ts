@@ -40,8 +40,6 @@ export const getEntryPoints = async (
 				if (existingEntry.format !== exportEntry.format) {
 					throw new Error(`Conflicting export types "${existingEntry.format}" & "${exportEntry.format}" found for ${exportEntry.outputPath}`);
 				}
-
-				// TODO: Check platform!!
 			} else {
 				mapByOutputPath.set(exportEntry.outputPath, exportEntry);
 			}

@@ -41,7 +41,7 @@ export type EntryPointValid<T extends BuildOutput = BuildOutput> = {
 	distExtension: string;
 	srcdist: SrcDistPair;
 	exportEntry: T;
-	inputName?: string;
+	inputNames?: string[];
 };
 
 export type EntryPointError<T extends BuildOutput = BuildOutput> = {

@@ -13,7 +13,7 @@ export const patchBinary = (
 		};
 	}
 
-	const entryNames = new Set(binaryEntryPoints.map(entry => entry.inputName!));
+	const entryNames = new Set(binaryEntryPoints.flatMap(entry => entry.inputNames!));
 
 	return {
 		name: 'patch-binary',

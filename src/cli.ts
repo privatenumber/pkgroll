@@ -13,6 +13,7 @@ import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
 import type { EntryPointValid } from './utils/get-entry-points/types.js';
 import type { SrcDistPair } from './types.js';
+import { entrySymbol } from './rollup/types';
 
 const { stringify } = JSON;
 
@@ -211,10 +212,40 @@ if (tsconfigTarget) {
 	} else {
 		await Promise.all(
 			rollupConfigs.map(async (rollupConfig) => {
-				const bundle = await rollup(rollupConfig);
+				const build = await rollup(rollupConfig);
 
 				return Promise.all(rollupConfig.output.map(
-					outputOption => bundle.write(outputOption),
+					(outputOption) => {
+						const inputNames = outputOption[entrySymbol].inputNames!;
+
+						/**
+						 * pkgroll merges shared configs, which causes it to build extra entry points
+						 * that weren't actually requested. We need to filter those out here to:
+						 * - Avoid generating unnecessary output files
+						 * - Prevent unexpected files from overwriting the ones we actually want
+						 */
+						outputOption.plugins = [{
+							name: 'filter-unnecessary-outputs',
+							generateBundle: (_options, bundle) => {
+								for (const fileName in bundle) {
+									if (!Object.hasOwn(bundle, fileName)) {
+										continue;
+									}
+
+									const chunk = bundle[fileName];
+									if (
+										'isEntry' in chunk
+										&& chunk.isEntry
+										&& !inputNames.includes(chunk.name)
+									) {
+										delete bundle[fileName];
+									}
+								}
+							},
+						}];
+
+						return build.write(outputOption);
+					},
 				));
 			}),
 		);

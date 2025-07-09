@@ -28,8 +28,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			files.sort();
 			expect(files).toStrictEqual([
 				'mjs.cjs',
-				'mjs.mjs',
-				'value.cjs',
 				'value.mjs',
 			]);
 		});

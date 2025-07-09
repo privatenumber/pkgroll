@@ -1,11 +1,10 @@
-import type { OutputOptions } from 'rollup';
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap, SrcDistPair } from '../types.js';
 import type { EntryPointValid } from '../utils/get-entry-points/types.js';
 import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
 import { normalizePath } from '../utils/normalize-path.js';
-import type { Options } from './types.js';
+import { type Options, type OutputWithOptions, entrySymbol } from './types.js';
 import { getPkgConfig } from './configs/pkg.js';
 import { getDtsConfig } from './configs/dts.js';
 
@@ -59,7 +58,7 @@ export const getRollupConfigs = async (
 		const inputName = (
 			srcdist.distPrefix! + sourcePath.slice(srcdist.srcResolved.length, -srcExtension.length)
 		);
-		entry.inputName = inputName;
+		entry.inputNames = [inputName];
 
 		if (exportEntry.format === 'types') {
 			let config = configs.dts;
@@ -74,13 +73,24 @@ export const getRollupConfigs = async (
 				config.input[inputName] = sourcePath;
 			}
 
-			config.output.push({
-				dir: distDirectory,
-				entryFileNames: `[name]${distExtension}`,
-				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
-				exports: 'auto',
-				format: 'esm',
-			});
+			const outputs = config.output;
+
+			const key = `${srcdist.distPrefix!}-${distExtension}`;
+			if (outputs[key]) {
+				outputs[key][entrySymbol].inputNames!.push(inputName);
+			} else {
+				const outputOptions: OutputWithOptions = {
+					dir: distDirectory,
+					entryFileNames: `[name]${distExtension}`,
+					chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
+					exports: 'auto',
+					format: 'esm',
+					[entrySymbol]: entry,
+				};
+
+				outputs.push(outputOptions);
+				outputs[key] = outputOptions;
+			}
 
 			continue;
 		}
@@ -103,16 +113,18 @@ export const getRollupConfigs = async (
 
 		const outputs = config.output;
 
-		// Shouldnt this just be format and extension?
-		const key = `${exportEntry.type}-${distExtension}`;
-		if (!outputs[key]) {
-			const outputOptions: OutputOptions = {
+		const key = `${exportEntry.format}-${srcdist.distPrefix}-${distExtension}`;
+		if (outputs[key]) {
+			outputs[key][entrySymbol].inputNames!.push(inputName);
+		} else {
+			const outputOptions: OutputWithOptions = {
 				dir: distDirectory,
 				exports: 'auto',
 				format: exportEntry.format,
 				sourcemap: flags.sourcemap,
 				entryFileNames: `[name]${distExtension}`,
 				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
+				[entrySymbol]: entry,
 			};
 
 			outputs.push(outputOptions);

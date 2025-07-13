@@ -8,10 +8,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 	describe('bin', ({ test }) => {
 		test('supports single path', async () => {
 			await using fixture = await createFixture({
-				// Using a subpath tests that the paths are joined correctly on Windows
-				'src/subpath/bin.ts': 'console.log("Hello, world!");',
+				src: {
+					// Using a subpath tests that the paths are joined correctly on Windows
+					'subpath/bin.ts': 'console.log("Hello, world!");',
+					'random-file.ts': 'console.log("Fix #126");',
+				},
 				'package.json': createPackageJson({
 					bin: './dist/subpath/bin.mjs',
+					main: './dist/random-file.mjs',
 				}),
 			});
 

@@ -13,16 +13,21 @@ export const patchBinary = (
 		};
 	}
 
-	const entryNames = new Set(binaryEntryPoints.flatMap(entry => entry.inputNames!));
+	let binaryFiles: Set<string>;
 
 	return {
 		name: 'patch-binary',
+
+		options: () => {
+			// At this point, all inputNames will be set
+			binaryFiles = new Set(binaryEntryPoints.flatMap(entry => entry.inputNames!));
+		},
 
 		renderChunk: (code, chunk, outputOptions) => {
 			if (
 				!chunk.isEntry
 				|| !chunk.facadeModuleId
-				|| !entryNames.has(chunk.name)
+				|| !binaryFiles.has(chunk.name)
 			) {
 				return;
 			}

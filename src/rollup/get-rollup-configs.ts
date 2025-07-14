@@ -85,7 +85,7 @@ export const getRollupConfigs = async (
 					chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
 					exports: 'auto',
 					format: 'esm',
-					interop: "auto",
+					interop: 'auto',
 					[entrySymbol]: entry,
 				};
 

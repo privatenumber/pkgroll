@@ -1,7 +1,9 @@
 import fs from 'node:fs';
+import path from 'node:path/posix';
 import type { Plugin, SourceMapInput } from 'rollup';
 import MagicString from 'magic-string';
 import type { EntryPointValid } from '../../utils/get-entry-points/types.js';
+import { normalizePath } from '../../utils/normalize-path.js';
 
 export const patchBinary = (
 	entryPoints: EntryPointValid[],
@@ -45,10 +47,21 @@ export const patchBinary = (
 			};
 		},
 
-		writeBundle: async () => {
+		writeBundle: async (options, bundle) => {
+			/**
+			 * Not every output contains the binary
+			 * (e.g. the binary may only be .mjs, and the current output may be .cjs)
+			 */
+			const outputFiles = new Set(Object.keys(bundle).map(
+				fileName => normalizePath(path.join(options.dir!, fileName)),
+			));
+
 			await Promise.all(binaryEntryPoints.map(async ({ exportEntry }) => {
 				const { outputPath } = exportEntry;
-				await fs.promises.chmod(outputPath, 0o755);
+				const isInBundle = outputFiles.has(outputPath);
+				if (isInBundle) {
+					await fs.promises.chmod(outputPath, 0o755);
+				}
 			}));
 		},
 	};

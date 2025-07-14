@@ -240,6 +240,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toContain('');
 
 			const content = await fixture.readFile('dist/dog.cjs', 'utf8');
+			expect(content).toMatch('function _interopDefault');
 			expect(content).toMatch('bark__default.default()');
 		});
 	});

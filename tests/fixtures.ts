@@ -286,45 +286,30 @@ export const fixtureUnwrapDefaultExports: FileTree = {
 	'package.json': createPackageJson({
 		exports: './dist/dog.cjs',
 		dependencies: {
-			'dual-in-folders': '*',
+			'wrapped-default-export': '',
 		},
 	}),
 	src: {
 		'dog.js': outdent`
-		import bark from 'dual-in-folders';
+		import bark from 'wrapped-default-export';
 		bark();
 		`,
 	},
 	node_modules: {
-		'dual-in-folders': {
+		'wrapped-default-export': {
 			'package.json': createPackageJson({
-				name: 'dual-in-folders',
-				exports: {
-					'.': {
-						require: './cjs/index.js',
-						import: './esm/index.js',
-						default: './esm/index.js',
-					},
-				},
+				name: 'wrapped-default-export',
+				type: 'commonjs', // default
+				main: 'index.js',
 			}),
-			cjs: {
-				'package.json': createPackageJson({ type: 'commonjs' }),
-				'index.js': outdent`
-				"use strict";
-				Object.defineProperty(exports, "__esModule", { value: true });
-				exports.default = bark;
-				function bark() {
-					console.log('woof');
-				}
-				`,
-			},
-			esm: {
-				'index.js': outdent`
-				export default function bark() {
-					console.log('woof');
-				}
-				`,
-			},
+			'index.js': outdent`
+			"use strict";
+			Object.defineProperty(exports, "__esModule", { value: true });
+			exports.default = bark;
+			function bark() {
+				console.log('woof');
+			}
+			`,
 		},
 	},
 };

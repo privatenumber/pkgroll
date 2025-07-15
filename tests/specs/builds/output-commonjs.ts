@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import { execaNode } from 'execa';
 import { pkgroll } from '../../utils.js';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
@@ -239,9 +240,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toContain('');
 
-			const content = await fixture.readFile('dist/dog.cjs', 'utf8');
+			const content = await fixture.readFile('dist/index.cjs', 'utf8');
 			expect(content).toMatch('function _interopDefault');
-			expect(content).toMatch('bark__default.default()');
+
+			const { stdout } = await execaNode('dist/index.cjs', {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(stdout).toBe('hello');
 		});
 	});
 });

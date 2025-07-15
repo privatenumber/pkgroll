@@ -284,32 +284,28 @@ export const fixtureDynamicImportUnresolvable: FileTree = {
 
 export const fixtureUnwrapDefaultExports: FileTree = {
 	'package.json': createPackageJson({
-		exports: './dist/dog.cjs',
+		exports: './dist/index.cjs',
 		dependencies: {
-			'wrapped-default-export': '',
+			'es-interop': '',
 		},
 	}),
 	src: {
-		'dog.js': outdent`
-		import bark from 'wrapped-default-export';
-		bark();
+		'index.js': outdent`
+		import hello from 'es-interop';
+		hello();
 		`,
 	},
-	node_modules: {
-		'wrapped-default-export': {
-			'package.json': createPackageJson({
-				name: 'wrapped-default-export',
-				type: 'commonjs', // default
-				main: 'index.js',
-			}),
-			'index.js': outdent`
-			"use strict";
-			Object.defineProperty(exports, "__esModule", { value: true });
-			exports.default = bark;
-			function bark() {
-				console.log('woof');
-			}
-			`,
-		},
+	'node_modules/es-interop': {
+		'package.json': createPackageJson({
+			name: 'es-interop',
+		}),
+		'index.js': outdent`
+		"use strict";
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.default = hello;
+		function hello() {
+			console.log('hello');
+		}
+		`,
 	},
 };

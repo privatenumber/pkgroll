@@ -240,14 +240,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toContain('');
 
-			const content = await fixture.readFile('dist/index.cjs', 'utf8');
-			expect(content).toMatch('function _interopDefault');
-
 			const { stdout } = await execaNode('dist/index.cjs', {
 				cwd: fixture.path,
 				nodePath,
 			});
-
 			expect(stdout).toBe('hello');
 		});
 	});

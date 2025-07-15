@@ -1,10 +1,12 @@
 import fs from 'node:fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import { execaNode } from 'execa';
 import { pkgroll } from '../../utils.js';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
 	fixtureDynamicImportUnresolvable,
+	fixtureUnwrapDefaultExports,
 } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
@@ -225,6 +227,24 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
 			expect(content).toMatch('import(');
+		});
+
+		test('unwrap default exports in cjs under default property', async () => {
+			await using fixture = await createFixture(fixtureUnwrapDefaultExports);
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toContain('');
+
+			const { stdout } = await execaNode('dist/index.cjs', {
+				cwd: fixture.path,
+				nodePath,
+			});
+			expect(stdout).toBe('hello');
 		});
 	});
 });

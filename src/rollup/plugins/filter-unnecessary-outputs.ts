@@ -29,7 +29,7 @@ export const filterUnnecessaryOutputs = (
 		const chunksToKeep = new Set<string>();
 		while (queue.length > 0) {
 			const fileName = queue.shift()!;
-			const chunk = bundle[fileName];
+			const chunk = bundle[fileName] as OutputChunk | undefined;
 			if (
 				// Can be an externalized import
 				!chunk
@@ -39,7 +39,12 @@ export const filterUnnecessaryOutputs = (
 			}
 
 			chunksToKeep.add(fileName);
-			for (const imported of (chunk as OutputChunk).dynamicImports) {
+			const allImports = [
+				// Sync chunks that are shared across modules
+				...chunk.imports,
+				...chunk.dynamicImports,
+			];
+			for (const imported of allImports) {
 				queue.push(imported);
 			}
 		}

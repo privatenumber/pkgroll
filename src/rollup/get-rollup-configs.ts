@@ -124,6 +124,7 @@ export const getRollupConfigs = async (
 				sourcemap: flags.sourcemap,
 				entryFileNames: `[name]${distExtension}`,
 				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
+				interop: 'auto',
 				[entrySymbol]: entry,
 			};
 

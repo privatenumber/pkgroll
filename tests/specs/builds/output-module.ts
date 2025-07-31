@@ -276,9 +276,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			test('defined require should not get a createRequire', async () => {
 				await using fixture = await createFixture({
-					'src/dynamic-require.ts': 'const require=console.log; require((() => \'fs\')());',
+					'src/require.ts': 'const require=console.log; require((() => \'fs\')());',
 					'package.json': createPackageJson({
-						main: './dist/dynamic-require.mjs',
+						main: './dist/require.mjs',
 					}),
 				});
 
@@ -290,17 +290,17 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(pkgrollProcess.exitCode).toBe(0);
 				expect(pkgrollProcess.stderr).toBe('');
 
-				const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
+				const content = await fixture.readFile('dist/require.mjs', 'utf8');
 				expect(content).not.toMatch('createRequire');
 				expect(content).not.toMatch('(import.meta.url)');
 				expect(content).toMatch('"fs"');
 			});
 
-			test('object property should not get a createRequire', async () => {
+			test('require property access should not get a createRequire', async () => {
 				await using fixture = await createFixture({
-					'src/dynamic-require.ts': 'console.log({ require: 1 });',
+					'src/require.ts': 'globalThis.require("a")',
 					'package.json': createPackageJson({
-						main: './dist/dynamic-require.mjs',
+						main: './dist/require.mjs',
 					}),
 				});
 
@@ -312,7 +312,28 @@ export default testSuite(({ describe }, nodePath: string) => {
 				expect(pkgrollProcess.exitCode).toBe(0);
 				expect(pkgrollProcess.stderr).toBe('');
 
-				const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
+				const content = await fixture.readFile('dist/require.mjs', 'utf8');
+				expect(content).not.toMatch('createRequire');
+				expect(content).not.toMatch('(import.meta.url)');
+			});
+
+			test('object property should not get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/require.ts': 'console.log({ require: 1 });',
+					'package.json': createPackageJson({
+						main: './dist/require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/require.mjs', 'utf8');
 				expect(content).not.toMatch('createRequire');
 				expect(content).not.toMatch('(import.meta.url)');
 			});

@@ -31,11 +31,17 @@ export const esmInjectCreateRequire = (): Plugin => {
 						return;
 					}
 
+					// Ignore Object property
 					if (
 						parent?.type === 'Property'
 						&& parent.key === node
 						&& !parent.compute
 					) {
+						return;
+					}
+
+					// Ignore MemberExpression with 'require' as a property
+					if (parent?.type === 'MemberExpression') {
 						return;
 					}
 

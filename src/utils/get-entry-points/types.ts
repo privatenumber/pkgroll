@@ -49,6 +49,5 @@ export type EntryPointError<T extends BuildOutput = BuildOutput> = {
 	exportEntry: T;
 };
 
-export type EntryPoint<T extends BuildOutput = BuildOutput> =
-	| EntryPointValid<T>
+export type EntryPoint<T extends BuildOutput = BuildOutput> =	| EntryPointValid<T>
 	| EntryPointError<T>;

@@ -8,12 +8,12 @@ import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
 import { getEntryPoints } from './utils/get-entry-points/index.js';
 import { getRollupConfigs } from './rollup/get-rollup-configs.js';
-import { getTsconfig } from './utils/get-tsconfig';
+import { getTsconfig } from './utils/get-tsconfig.js';
 import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
 import type { EntryPointValid } from './utils/get-entry-points/types.js';
 import type { SrcDistPair } from './types.js';
-import { entrySymbol } from './rollup/types';
+import { entrySymbol } from './rollup/types.js';
 import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-outputs.js';
 
 const { stringify } = JSON;

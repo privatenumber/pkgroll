@@ -8,7 +8,7 @@ import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap } from '../../types.js';
 import { esbuildTransform, esbuildMinify } from '../plugins/esbuild.js';
-import { externalizeNodeBuiltins } from '../plugins/externalize-node-builtins.js';
+import { nodeBuiltins } from '../plugins/node-builtins.js';
 import { patchBinary } from '../plugins/patch-binary.js';
 import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
@@ -37,7 +37,7 @@ export const getPkgConfig = (
 		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
-			externalizeNodeBuiltins(options),
+			nodeBuiltins(options),
 			...(
 				tsconfig
 					? [resolveTsconfigPaths(tsconfig)]

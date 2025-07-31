@@ -1,6 +1,6 @@
 import type { RollupOptions, Plugin } from 'rollup';
 import type { TsConfigResult } from 'get-tsconfig';
-import { externalizeNodeBuiltins } from '../plugins/externalize-node-builtins.js';
+import { nodeBuiltins } from '../plugins/node-builtins.js';
 import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import type { Options, Output } from '../types.js';
@@ -24,7 +24,7 @@ export const getDtsConfig = async (
 		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
-			externalizeNodeBuiltins(options),
+			nodeBuiltins(options),
 			...(
 				tsconfig
 					? [resolveTsconfigPaths(tsconfig)]

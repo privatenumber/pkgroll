@@ -75,9 +75,8 @@ export const getRollupConfigs = async (
 
 			const outputs = config.output;
 
-			const key = `${srcdist.distPrefix!}-${distExtension}`;
-			if (outputs[key]) {
-				outputs[key][entrySymbol].inputNames!.push(inputName);
+			if (outputs[distExtension]) {
+				outputs[distExtension][entrySymbol].inputNames!.push(inputName);
 			} else {
 				const outputOptions: OutputWithOptions = {
 					dir: distDirectory,
@@ -89,7 +88,7 @@ export const getRollupConfigs = async (
 				};
 
 				outputs.push(outputOptions);
-				outputs[key] = outputOptions;
+				outputs[distExtension] = outputOptions;
 			}
 
 			continue;

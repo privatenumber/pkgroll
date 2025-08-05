@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
@@ -134,6 +135,45 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			expect(await fixture.exists('dist-a/nested/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist-b/nested/index.cjs')).toBe(true);
+		});
+
+		test('multiple src and dist types chunk', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					exports: {
+						'./a': './dist-a/index.d.ts',
+						'./b': './dist-b/index.d.ts',
+					},
+				}),
+				'src-a': {
+					'index.ts': 'export * from "./chunk.js"; export const a = 1;',
+					'chunk.ts': 'export const chunk = 2;',
+				},
+				'src-b': {
+					'index.ts': 'export * from "../src-a/chunk.js"; export const b = 2;',
+				},
+				...installTypeScript,
+			});
+
+			const pkgrollProcess = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
+				cwd: fixture.path,
+				nodePath,
+			});
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const distA = await fs.readdir(fixture.getPath('dist-a'));
+			distA.sort();
+			expect(distA).toStrictEqual([
+				'chunk-R5gXnDWm.d.ts',
+				'index.d.ts',
+			]);
+
+			const distB = await fs.readdir(fixture.getPath('dist-b'));
+			distB.sort();
+			expect(distB).toStrictEqual([
+				'index.d.ts',
+			]);
 		});
 	});
 });

@@ -44,6 +44,7 @@
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.1",
 		"@rollup/pluginutils": "^5.2.0",
+		"cjs-module-lexer": "^2.1.0",
 		"esbuild": "^0.25.8",
 		"magic-string": "^0.30.17",
 		"rollup": "^4.46.2",

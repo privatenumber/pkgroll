@@ -226,5 +226,83 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
 			expect(content).toMatch('import(');
 		});
+
+		describe('preserves cjs-module-lexer compatibility for node', ({ test }) => {
+			test('exports', async () => {
+				await using fixture = await createFixture({
+					'package.json': createPackageJson({
+						exports: './dist/index.cjs',
+					}),
+
+					src: {
+						'index.js': `
+						require('./foo.js');
+						exports.foo = 1;
+						`,
+						'foo.js': 'exports.bar = 2',
+					},
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+
+				const content = await fixture.readFile('dist/index.cjs', 'utf8');
+				expect(content).toMatch('0&&(module.exports={foo});');
+			});
+
+			test('reexports', async () => {
+				await using fixture = await createFixture({
+					'package.json': createPackageJson({
+						exports: './dist/index.cjs',
+					}),
+
+					src: {
+						'index.js': `
+						module.exports = require('./bar.js');
+						`,
+						'bar.js': 'exports.bar = 1',
+					},
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+
+				const content = await fixture.readFile('dist/index.cjs', 'utf8');
+				expect(content).toMatch('0&&(module.exports={bar});');
+			});
+
+			test('minified', async () => {
+				await using fixture = await createFixture({
+					'package.json': createPackageJson({
+						exports: './dist/index.cjs',
+					}),
+
+					src: {
+						'index.js': `
+						module.exports = require('./bar.js');
+						`,
+						'bar.js': 'exports.bar = 1',
+					},
+				});
+
+				const pkgrollProcess = await pkgroll(['--minify'], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+
+				const content = await fixture.readFile('dist/index.cjs', 'utf8');
+				expect(content).toMatch('0&&(module.exports={bar});');
+			});
+		});
 	});
 });

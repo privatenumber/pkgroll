@@ -16,6 +16,7 @@ import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
 import type { Options, Output } from '../types.js';
 import type { EntryPointValid } from '../../utils/get-entry-points/types.js';
+import { cjsAnnotateExports } from '../plugins/cjs-annotate-exports.js';
 
 export const getPkgConfig = (
 	options: Options,
@@ -54,6 +55,7 @@ export const getPkgConfig = (
 			stripHashbang(),
 			json(),
 			esbuildTransform(esbuildConfig),
+			cjsAnnotateExports(),
 			commonjs({
 				ignoreDynamicRequires: true,
 				extensions: ['.js', '.ts', '.jsx', '.tsx'],

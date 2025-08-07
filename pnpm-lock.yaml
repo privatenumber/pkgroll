@@ -29,6 +29,9 @@ importers:
       '@rollup/pluginutils':
         specifier: ^5.2.0
         version: 5.2.0(rollup@4.46.2)
+      cjs-module-lexer:
+        specifier: ^2.1.0
+        version: 2.1.0
       esbuild:
         specifier: ^0.25.8
         version: 0.25.8
@@ -992,6 +995,9 @@ packages:
   ci-info@4.3.0:
     resolution: {integrity: sha512-l+2bNRMiQgcfILUi33labAZYIWlH1kWDp+ecNo5iisRKrbm0xcRyCww71/YU0Fkw0mAFpz9bJayXPjey6vkmaQ==}
     engines: {node: '>=8'}
+
+  cjs-module-lexer@2.1.0:
+    resolution: {integrity: sha512-UX0OwmYRYQQetfrLEZeewIFFI+wSTofC+pMBLNuH3RUuu/xzG1oz84UCEDOSoQlN3fZ4+AzmV50ZYvGqkMh9yA==}
 
   clean-pkg-json@1.3.0:
     resolution: {integrity: sha512-EsOnQbKkrmCTIHCYODpIZ4FS1kP8UqX9fEji5SAA2OhG4K+Z/xuXON53hJdSBroVIpxddrUtR/dbh+QF5Aq7Vw==}
@@ -3599,6 +3605,8 @@ snapshots:
   ci-info@3.8.0: {}
 
   ci-info@4.3.0: {}
+
+  cjs-module-lexer@2.1.0: {}
 
   clean-pkg-json@1.3.0: {}
 

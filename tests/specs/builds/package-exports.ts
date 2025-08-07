@@ -168,6 +168,38 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(utilsMjs).toMatch('exports.sayHello =');
 		});
 
+		test('should detect top-level `types` condition', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+				}),
+				'package.json': createPackageJson({
+					exports: {
+						import: './dist/mts.mjs',
+						require: './dist/mts.cjs',
+						types: {
+							import: './dist/mts.d.mts',
+							require: './dist/mts.d.cts',
+						},
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const mtsTypes = await fixture.readFile('dist/mts.d.mts', 'utf8');
+			expect(mtsTypes).toMatch('declare function sayHello');
+
+			const ctsTypes = await fixture.readFile('dist/mts.d.cts', 'utf8');
+			expect(ctsTypes).toMatch('declare function sayHello');
+		});
+
 		test('get basename with dot', async () => {
 			await using fixture = await createFixture({
 				...packageFixture({

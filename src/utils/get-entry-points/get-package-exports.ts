@@ -58,6 +58,7 @@ const parseExportsMap = (
 	return Object.entries(exportMap).flatMap(([key, value]) => {
 		const from = [...packagePath, key];
 		if (typeof value === 'string') {
+			const conditions = getConditions(from);
 			const baseEntry = {
 				type: 'exportmap' as const,
 				source: {
@@ -65,44 +66,20 @@ const parseExportsMap = (
 					path: from,
 				},
 				outputPath: normalizePath(value),
-				conditions: getConditions(from),
+				conditions,
 			};
 
-			if (key === 'require') {
-				return {
-					...baseEntry,
-					format: 'commonjs',
-				};
-			}
-
-			if (key === 'import') {
-				return {
-					...baseEntry,
-					format: getFileType(value) || packageType,
-				};
-			}
-
-			if (key === 'types') {
+			if (conditions.includes('types')) {
 				return {
 					...baseEntry,
 					format: 'types',
 				};
 			}
 
-			if (key === 'node') {
-				return {
-					...baseEntry,
-					format: getFileType(value) || packageType,
-					// platform: 'node',
-				};
-			}
-
-			if (key === 'default') {
-				return {
-					...baseEntry,
-					format: getFileType(value) || packageType,
-				};
-			}
+			return {
+				...baseEntry,
+				format: getFileType(value) || packageType,
+			};
 		}
 
 		return parseExportsMap(value, packageType, from);

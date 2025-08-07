@@ -281,3 +281,31 @@ export const fixtureDynamicImportUnresolvable: FileTree = {
 		'too-dynamic.js': 'console.log(123)',
 	},
 };
+
+export const fixtureUnwrapDefaultExports: FileTree = {
+	'package.json': createPackageJson({
+		exports: './dist/index.cjs',
+		dependencies: {
+			'es-interop': '',
+		},
+	}),
+	src: {
+		'index.js': outdent`
+		import hello from 'es-interop';
+		hello();
+		`,
+	},
+	'node_modules/es-interop': {
+		'package.json': createPackageJson({
+			name: 'es-interop',
+		}),
+		'index.js': outdent`
+		"use strict";
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.default = hello;
+		function hello() {
+			console.log('hello');
+		}
+		`,
+	},
+};

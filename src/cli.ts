@@ -18,6 +18,14 @@ import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-ou
 
 const { stringify } = JSON;
 
+const keyValue = (flagValue: string) => {
+	const [key, value] = flagValue.split('=', 2);
+	return {
+		key,
+		value,
+	};
+};
+
 const argv = cli({
 	name: 'pkgroll',
 
@@ -67,16 +75,12 @@ const argv = cli({
 			default: false,
 		},
 		env: {
-			type: [
-				(flagValue: string) => {
-					const [key, value] = flagValue.split('=', 2);
-					return {
-						key,
-						value,
-					};
-				},
-			],
+			type: [keyValue],
 			description: 'Compile-time environment variables (eg. --env.NODE_ENV=production)',
+		},
+		define: {
+			type: [keyValue],
+			description: 'Targeted strings to replace (eg. --define.process.env.NODE_ENV=\'production\')',
 		},
 
 		// TODO: rename to conditions and -C flag like Node.js

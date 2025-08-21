@@ -9,6 +9,10 @@ export type Options = {
 		key: string;
 		value: string;
 	}[];
+	define: {
+		key: string;
+		value: string;
+	}[];
 	sourcemap?: true | 'inline';
 };
 

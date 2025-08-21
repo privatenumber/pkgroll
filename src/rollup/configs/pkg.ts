@@ -4,6 +4,7 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
+import replace from '@rollup/plugin-replace';
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap } from '../../types.js';
@@ -27,6 +28,12 @@ export const getPkgConfig = (
 	const env = Object.fromEntries(
 		options.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
 	);
+	const define = Object.fromEntries(
+		options.define.map(({ key, value }) => [key, value])
+	);
+
+	// Uncomment for debugging
+	// if (Object.keys(define).length !== 0) console.error(options.define);
 
 	const esbuildConfig: TransformOptions = {
 		target: options.target,
@@ -38,6 +45,10 @@ export const getPkgConfig = (
 		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
+			replace({
+				preventAssignment: true,
+				values: define,
+			}),
 			nodeBuiltins(options),
 			...(
 				tsconfig

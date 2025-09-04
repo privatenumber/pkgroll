@@ -112,7 +112,7 @@ export const getRollupConfigs = async (
 
 		const outputs = config.output;
 
-		const key = `${exportEntry.format}-${srcdist.distPrefix}-${distExtension}`;
+		const key = `${exportEntry.format}-${distExtension}`;
 		if (outputs[key]) {
 			outputs[key][entrySymbol].inputNames!.push(inputName);
 		} else {
@@ -122,6 +122,12 @@ export const getRollupConfigs = async (
 				format: exportEntry.format,
 				sourcemap: flags.sourcemap,
 				entryFileNames: `[name]${distExtension}`,
+
+				/**
+				 * When there's multiple dist directories via `--srcdist`, the entryFileNames
+				 * includes the specific subdirectories they belong to, but the shared
+				 * chunks don't and will be placed in the first dist directory.
+				 */
 				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
 				[entrySymbol]: entry,
 			};

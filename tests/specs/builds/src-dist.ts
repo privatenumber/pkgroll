@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
@@ -174,6 +175,38 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(distB).toStrictEqual([
 				'index.d.ts',
 			]);
+		});
+
+		test('shared chunks go in the first dist directory', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					exports: {
+						'./a': './a/index.mjs',
+						'./b': './b/index.mjs',
+					},
+				}),
+				'src/a': {
+					'shared.js': 'export const x = 1;',
+					'index.js': 'import { x } from "./shared.js";console.log(x)',
+				},
+				'src/b/index.js': 'import { x } from "../a/shared.js";console.log(x)',
+			});
+
+			const pkgrollProcess = await pkgroll(['--srcdist', 'src/a:a', '--srcdist', 'src/b:b'], {
+				cwd: fixture.path,
+				nodePath,
+			});
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const distA = await fs.readdir(path.join(fixture.path, 'a'));
+			const distB = await fs.readdir(path.join(fixture.path, 'b'));
+
+			distA.sort();
+			distB.sort();
+
+			expect(distA).toStrictEqual(['index.mjs', 'shared-DQJTRHGP.mjs']);
+			expect(distB).toStrictEqual(['index.mjs']);
 		});
 	});
 });

@@ -249,6 +249,40 @@ Sometimes it's useful to use `require()` or `require.resolve()` in ESM. ESM code
 
 When compiling to ESM, _Pkgroll_ detects `require()` usages and shims it with [`createRequire(import.meta.url)`](https://nodejs.org/api/module.html#modulecreaterequirefilename).
 
+### Native modules
+
+_pkgroll_ automatically handles native Node.js addons (`.node` files) when you directly import them:
+
+```js
+// src/index.js
+import nativeAddon from './native.node'
+```
+
+After bundling, the `.node` file will be copied to `dist/natives/` and the import will be automatically rewritten to load from the correct location at runtime.
+
+> [!NOTE]
+> - Native modules are platform and architecture-specific. Make sure to distribute the correct `.node` files for your target platforms.
+> - This only works with direct `.node` imports. If you're using packages that dynamically load native modules via `bindings` or `node-pre-gyp`, you'll need to handle them separately.
+
+#### Handling dependencies with native modules
+
+If you're using packages with native modules (like `chokidar` which depends on `fsevents`):
+
+- **If in `dependencies`/`peerDependencies`**: ✅ Works automatically - these are externalized (not bundled)
+- **If in `devDependencies`**: ⚠️ Will be bundled. If they use `bindings()` or `node-pre-gyp` patterns, move them to `dependencies` instead, or use `optionalDependencies` if they're optional.
+
+Example - if you have `chokidar` in `devDependencies` and get build errors, move it to `dependencies`:
+
+```json
+{
+    "dependencies": {
+        "chokidar": "^3.0.0"
+    }
+}
+```
+
+This externalizes it (users will need to install it), avoiding the need to bundle its native modules.
+
 ### Environment variables
 Pass in compile-time environment variables with the `--env` flag.
 

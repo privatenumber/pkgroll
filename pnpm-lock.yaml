@@ -64,8 +64,8 @@ importers:
         specifier: 9.6.0
         version: 9.6.0
       fs-fixture:
-        specifier: ^2.8.1
-        version: 2.8.1
+        specifier: ^2.9.0
+        version: 2.9.0
       get-node:
         specifier: ^15.0.4
         version: 15.0.4
@@ -76,8 +76,8 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0
       lintroll:
-        specifier: ^1.19.1
-        version: 1.19.1(@typescript-eslint/utils@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint@9.32.0))(typescript@5.8.3)
+        specifier: ^1.20.1
+        version: 1.20.1(@typescript-eslint/utils@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint@9.32.0))(typescript@5.8.3)
       manten:
         specifier: ^1.5.0
         version: 1.5.0
@@ -1513,8 +1513,8 @@ packages:
     resolution: {integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww==}
     engines: {node: '>=0.4.x'}
 
-  fs-fixture@2.8.1:
-    resolution: {integrity: sha512-C0xA7XvqZBbbOgitWcMDstfih8GaOPEyXfvNefmV7+1573TCnFQ6hAJEUEzH2LVrscONLh73rvayNfa/m9PMgw==}
+  fs-fixture@2.9.0:
+    resolution: {integrity: sha512-I/DNkzRfL71uabv3270h+lLOlJrUbQDHXb6JZxN8cgiFn0pi0dCE+etE8pzCvMuguSq34ClGXInhoaSW+1RZpw==}
     engines: {node: '>=18.0.0'}
 
   fs.realpath@1.0.0:
@@ -1939,8 +1939,8 @@ packages:
   lie@3.3.0:
     resolution: {integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==}
 
-  lintroll@1.19.1:
-    resolution: {integrity: sha512-TxgDAAp6bGvzi/dg7CpMAPGWxsd57DVubsGzt4+zrHNzfeOmetp67Yr02aUfnbtjR5fbFwcfpWlKKcK2R8nCaQ==}
+  lintroll@1.20.1:
+    resolution: {integrity: sha512-luGaiVofxMi/GEcMI2P2OMOq8ZE2sOoax+Ne1h9QPl7yqJVmMOTEF+ZML9AT1Ol+2VOuYMTdx7GMSHdXbcqcnA==}
     hasBin: true
 
   locate-path@6.0.0:
@@ -4311,7 +4311,7 @@ snapshots:
 
   format@0.2.2: {}
 
-  fs-fixture@2.8.1: {}
+  fs-fixture@2.9.0: {}
 
   fs.realpath@1.0.0: {}
 
@@ -4775,7 +4775,7 @@ snapshots:
     dependencies:
       immediate: 3.0.6
 
-  lintroll@1.19.1(@typescript-eslint/utils@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint@9.32.0))(typescript@5.8.3):
+  lintroll@1.20.1(@typescript-eslint/utils@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.38.0(eslint@9.32.0)(typescript@5.8.3))(eslint@9.32.0))(typescript@5.8.3):
     dependencies:
       '@eslint-community/eslint-plugin-eslint-comments': 4.5.0(eslint@9.32.0)
       '@eslint/js': 9.32.0

@@ -85,7 +85,7 @@ export const nativeModules = (
 			// Return ESM code that Rollup will transform based on output format:
 			// - For ESM: esmInjectCreateRequire plugin adds createRequire shim
 			// - For CJS: Rollup transforms to module.exports = require(...)
-			return `export default require(${JSON.stringify(relativePath)});`;
+			return `export default require("${relativePath}");`;
 		},
 	};
 };

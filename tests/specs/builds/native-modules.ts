@@ -1,5 +1,3 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
@@ -17,13 +15,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					import native from './native.node';
 					console.log(native);
 				`,
+				'src/native.node': Buffer.from('dummy native module'),
 			});
-
-			// Create a dummy .node file after fixture is created
-			await fs.writeFile(
-				path.join(fixture.path, 'src/native.node'),
-				Buffer.from('dummy native module'),
-			);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -34,13 +27,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			// Check that natives directory was created
-			const nativesExists = await fs.access(path.join(fixture.path, 'dist/natives'))
-				.then(() => true)
-				.catch(() => false);
-			expect(nativesExists).toBe(true);
+			expect(await fixture.exists('dist/natives')).toBe(true);
 
 			// Check that .node file was copied
-			const files = await fs.readdir(path.join(fixture.path, 'dist/natives'));
+			const files = await fixture.readdir('dist/natives');
 			expect(files.some(file => file.endsWith('.node'))).toBe(true);
 
 			// Check that import was rewritten and uses createRequire for ESM
@@ -59,13 +49,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 					import native from './native.node';
 					console.log(native);
 				`,
+				'src/native.node': Buffer.from('dummy native module'),
 			});
-
-			// Create a dummy .node file after fixture is created
-			await fs.writeFile(
-				path.join(fixture.path, 'src/native.node'),
-				Buffer.from('dummy native module'),
-			);
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
@@ -76,13 +61,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			// Check that natives directory was created
-			const nativesExists = await fs.access(path.join(fixture.path, 'dist/natives'))
-				.then(() => true)
-				.catch(() => false);
-			expect(nativesExists).toBe(true);
+			expect(await fixture.exists('dist/natives')).toBe(true);
 
 			// Check that .node file was copied
-			const files = await fs.readdir(path.join(fixture.path, 'dist/natives'));
+			const files = await fixture.readdir('dist/natives');
 			expect(files.some(file => file.endsWith('.node'))).toBe(true);
 
 			// Check that import was transformed to require for CJS
@@ -105,23 +87,13 @@ export default testSuite(({ describe }, nodePath: string) => {
 					import native from './native-a.node';
 					console.log(native);
 				`,
+				'src-a/native-a.node': Buffer.from('native module a'),
 				'src-b/index.js': `
 					import native from './native-b.node';
 					console.log(native);
 				`,
+				'src-b/native-b.node': Buffer.from('native module b'),
 			});
-
-			// Create dummy .node files
-			await fs.mkdir(path.join(fixture.path, 'src-a'), { recursive: true });
-			await fs.mkdir(path.join(fixture.path, 'src-b'), { recursive: true });
-			await fs.writeFile(
-				path.join(fixture.path, 'src-a/native-a.node'),
-				Buffer.from('native module a'),
-			);
-			await fs.writeFile(
-				path.join(fixture.path, 'src-b/native-b.node'),
-				Buffer.from('native module b'),
-			);
 
 			const pkgrollProcess = await pkgroll([
 				'--srcdist',
@@ -137,14 +109,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			// Should create natives at common dist directory
-			const nativesPath = path.join(fixture.path, 'natives');
-			const nativesExists = await fs.access(nativesPath)
-				.then(() => true)
-				.catch(() => false);
-			expect(nativesExists).toBe(true);
+			expect(await fixture.exists('natives')).toBe(true);
 
 			// Check both .node files were copied
-			const files = await fs.readdir(nativesPath);
+			const files = await fixture.readdir('natives');
 			expect(files.length).toBeGreaterThanOrEqual(2);
 		});
 	});

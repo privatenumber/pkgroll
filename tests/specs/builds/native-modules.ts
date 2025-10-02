@@ -108,12 +108,15 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			// Should create natives at common dist directory
-			expect(await fixture.exists('natives')).toBe(true);
+			// Should create natives in the first dist directory (like shared chunks)
+			expect(await fixture.exists('dist-a/natives')).toBe(true);
+			expect(await fixture.exists('dist-b/natives')).toBe(false);
 
-			// Check both .node files were copied
-			const files = await fixture.readdir('natives');
+			// Check both .node files were copied to first dist
+			const files = await fixture.readdir('dist-a/natives');
 			expect(files.length).toBeGreaterThanOrEqual(2);
+			expect(files.some(file => file.includes('native-a'))).toBe(true);
+			expect(files.some(file => file.includes('native-b'))).toBe(true);
 		});
 	});
 });

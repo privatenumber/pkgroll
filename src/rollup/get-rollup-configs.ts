@@ -96,12 +96,14 @@ export const getRollupConfigs = async (
 
 		let config = configs.pkg;
 		if (!config) {
+			// Use the first dist directory for shared assets (chunks, natives)
+			const firstDistDirectory = srcdistPairs[0].dist;
 			config = getPkgConfig(
 				flags,
 				aliases,
 				entryPoints,
 				tsconfig,
-				distDirectory,
+				firstDistDirectory,
 			);
 			config.external = getExternalDependencies(packageJson, aliases);
 			configs.pkg = config;

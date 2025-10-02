@@ -43,7 +43,6 @@
 		"@rollup/plugin-inject": "^5.0.5",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.1",
-		"@rollup/plugin-replace": "^6.0.2",
 		"@rollup/pluginutils": "^5.2.0",
 		"cjs-module-lexer": "^2.1.0",
 		"esbuild": "^0.25.8",

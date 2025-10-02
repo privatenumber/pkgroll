@@ -7,10 +7,11 @@ import { createPackageJson } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('native modules', ({ test }) => {
-		test('copies .node files to natives directory', async () => {
+		test('ESM: copies .node files to natives directory', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
-					main: './dist/index.js',
+					type: 'module',
+					main: './dist/index.mjs',
 				}),
 				'src/index.js': `
 					import native from './native.node';
@@ -42,9 +43,54 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const files = await fs.readdir(path.join(fixture.path, 'dist/natives'));
 			expect(files.some(file => file.endsWith('.node'))).toBe(true);
 
-			// Check that import was rewritten
-			const content = await fixture.readFile('dist/index.js', 'utf8');
+			// Check that import was rewritten and uses createRequire for ESM
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
 			expect(content).toMatch('./natives');
+			expect(content).toMatch('createRequire');
+		});
+
+		test('CJS: copies .node files to natives directory', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'commonjs',
+					main: './dist/index.cjs',
+				}),
+				'src/index.js': `
+					import native from './native.node';
+					console.log(native);
+				`,
+			});
+
+			// Create a dummy .node file after fixture is created
+			await fs.writeFile(
+				path.join(fixture.path, 'src/native.node'),
+				Buffer.from('dummy native module'),
+			);
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			// Check that natives directory was created
+			const nativesExists = await fs.access(path.join(fixture.path, 'dist/natives'))
+				.then(() => true)
+				.catch(() => false);
+			expect(nativesExists).toBe(true);
+
+			// Check that .node file was copied
+			const files = await fs.readdir(path.join(fixture.path, 'dist/natives'));
+			expect(files.some(file => file.endsWith('.node'))).toBe(true);
+
+			// Check that import was transformed to require for CJS
+			const content = await fixture.readFile('dist/index.cjs', 'utf8');
+			expect(content).toMatch('./natives');
+			expect(content).toMatch('require');
+			// Should NOT have createRequire in CJS output
+			expect(content).not.toMatch('createRequire');
 		});
 
 		test('handles multiple src:dist pairs', async () => {

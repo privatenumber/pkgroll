@@ -8,7 +8,9 @@ const PREFIX = '\0natives:';
  * Handles native Node.js addons (.node files)
  * - Detects imports of .node files
  * - Copies them to natives directory
- * - Rewrites imports to use createRequire for ESM compatibility
+ * - Returns ESM code that works for both ESM and CJS:
+ *   - ESM: esmInjectCreateRequire plugin adds createRequire shim
+ *   - CJS: Rollup automatically transforms to module.exports = require(...)
  */
 export const nativeModules = (
 	distDirectory: string,
@@ -80,12 +82,10 @@ export const nativeModules = (
 
 			const relativePath = id.slice(PREFIX.length);
 
-			// Generate code that uses createRequire for ESM compatibility
-			return `
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-export default require(${JSON.stringify(relativePath)});
-`;
+			// Return ESM code that Rollup will transform based on output format:
+			// - For ESM: esmInjectCreateRequire plugin adds createRequire shim
+			// - For CJS: Rollup transforms to module.exports = require(...)
+			return `export default require(${JSON.stringify(relativePath)});`;
 		},
 	};
 };

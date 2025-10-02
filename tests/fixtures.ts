@@ -67,20 +67,6 @@ export const fixtureFiles = {
 
 	console.log(1);
 	`,
-	'conditional-require-2.js': outdent`
-	if (
-		process.env.NODE_ENV === 'production'
-		|| typeof Iterator.from === 'function'
-		|| process.env.PROD === 'true'
-	) {
-		console.log('production');
-		require('./cjs.cjs');
-	} else {
-		console.log('development');
-	}
-
-	console.log(1);
-	`,
 
 	'cts.cts': outdent`
 	export function sayHello(name: string) {

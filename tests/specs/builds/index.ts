@@ -8,6 +8,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./output-types.js'), nodePath);
 		runTestSuite(import('./env.js'), nodePath);
 		runTestSuite(import('./define.js'), nodePath);
+		runTestSuite(import('./native-modules.js'), nodePath);
 		runTestSuite(import('./target.js'), nodePath);
 		runTestSuite(import('./minification.js'), nodePath);
 		runTestSuite(import('./package-exports.js'), nodePath);

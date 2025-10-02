@@ -14,6 +14,7 @@ import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
+import { nativeModules } from '../plugins/native-modules.js';
 import type { Options, Output } from '../types.js';
 import type { EntryPointValid } from '../../utils/get-entry-points/types.js';
 import { cjsAnnotateExports } from '../plugins/cjs-annotate-exports.js';
@@ -23,6 +24,7 @@ export const getPkgConfig = (
 	aliases: AliasMap,
 	entryPoints: EntryPointValid[],
 	tsconfig: TsConfigResult | null,
+	distDirectory: string,
 ) => {
 	const env = Object.fromEntries(
 		options.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
@@ -71,6 +73,7 @@ export const getPkgConfig = (
 				warnOnError: true,
 			}),
 			esmInjectCreateRequire(),
+			nativeModules(distDirectory),
 			...(
 				options.minify
 					? [esbuildMinify(esbuildConfig)]

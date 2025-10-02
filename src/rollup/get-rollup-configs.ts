@@ -101,6 +101,7 @@ export const getRollupConfigs = async (
 				aliases,
 				entryPoints,
 				tsconfig,
+				distDirectory,
 			);
 			config.external = getExternalDependencies(packageJson, aliases);
 			configs.pkg = config;

@@ -249,6 +249,21 @@ Sometimes it's useful to use `require()` or `require.resolve()` in ESM. ESM code
 
 When compiling to ESM, _Pkgroll_ detects `require()` usages and shims it with [`createRequire(import.meta.url)`](https://nodejs.org/api/module.html#modulecreaterequirefilename).
 
+### Native modules
+
+_pkgroll_ automatically handles native Node.js addons (`.node` files) when you directly import them:
+
+```js
+// src/index.js
+import nativeAddon from './native.node';
+```
+
+After bundling, the `.node` file will be copied to `dist/natives/` and the import will be automatically rewritten to load from the correct location at runtime.
+
+> [!NOTE]
+> - Native modules are platform and architecture-specific. Make sure to distribute the correct `.node` files for your target platforms.
+> - This only works with direct `.node` imports. If you're using packages that dynamically load native modules via `bindings` or `node-pre-gyp`, you'll need to handle them separately.
+
 ### Environment variables
 Pass in compile-time environment variables with the `--env` flag.
 

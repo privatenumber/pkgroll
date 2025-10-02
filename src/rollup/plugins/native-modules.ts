@@ -13,13 +13,13 @@ const PREFIX = '\0natives:';
 export const nativeModules = (
 	distDirectory: string,
 ): Plugin => {
-	const nativeLibsDir = `${distDirectory}/natives`;
+	const nativeLibsDirectory = `${distDirectory}/natives`;
 	const copiedModules = new Map<string, string>();
 
 	return {
 		name: 'native-modules',
 
-		buildStart() {
+		buildStart: () => {
 			// Reset for watch mode
 			copiedModules.clear();
 		},
@@ -53,21 +53,21 @@ export const nativeModules = (
 
 			// Handle name collisions
 			while (Array.from(copiedModules.values()).includes(outputName)) {
-				const ext = path.extname(basename);
-				const name = path.basename(basename, ext);
-				outputName = `${name}_${counter}${ext}`;
-				counter++;
+				const extension = path.extname(basename);
+				const name = path.basename(basename, extension);
+				outputName = `${name}_${counter}${extension}`;
+				counter += 1;
 			}
 
-			const destPath = path.join(nativeLibsDir, outputName);
+			const destinationPath = path.join(nativeLibsDirectory, outputName);
 			const relativePath = `./natives/${outputName}`;
 
 			// Store mapping
 			copiedModules.set(resolvedPath, relativePath);
 
 			// Create directory and copy file
-			fs.mkdirSync(nativeLibsDir, { recursive: true });
-			fs.copyFileSync(resolvedPath, destPath);
+			fs.mkdirSync(nativeLibsDirectory, { recursive: true });
+			fs.copyFileSync(resolvedPath, destinationPath);
 
 			// Return prefixed ID for the load hook
 			return PREFIX + relativePath;

@@ -78,8 +78,10 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			const pkgrollProcess = await pkgroll([
-				'--srcdist', 'src-a:dist-a',
-				'--srcdist', 'src-b:dist-b',
+				'--srcdist',
+				'src-a:dist-a',
+				'--srcdist',
+				'src-b:dist-b',
 			], {
 				cwd: fixture.path,
 				nodePath,

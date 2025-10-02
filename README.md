@@ -257,6 +257,15 @@ This will replace all instances of `process.env.NODE_ENV` with `'production'` an
 pkgroll --env.NODE_ENV=production
 ```
 
+### Define
+The `--define` flag allows you to replace specific strings in your code at build time. This is useful for dead code elimination and conditional compilation.
+
+```sh
+pkgroll --define.process.env.NODE_ENV='"production"' --define.DEBUG=false
+```
+
+Note: Unlike `--env`, values are not automatically JSON stringified, so you need to include quotes for string values.
+
 ### Minification
 Pass in the `--minify` flag to minify assets.
 ```sh

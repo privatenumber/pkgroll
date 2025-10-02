@@ -27,11 +27,17 @@ export const getPkgConfig = (
 	const env = Object.fromEntries(
 		options.env.map(({ key, value }) => [`process.env.${key}`, JSON.stringify(value)]),
 	);
+	const define = Object.fromEntries(
+		options.define.map(({ key, value }) => [key, value]),
+	);
 
 	const esbuildConfig: TransformOptions = {
 		target: options.target,
 		tsconfigRaw: tsconfig?.config,
-		define: env,
+		define: {
+			...env,
+			...define,
+		},
 	};
 
 	return {

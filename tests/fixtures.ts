@@ -187,7 +187,7 @@ export const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
 
 		'dependency-exports-import.js': outdent`
 		import esm from 'dependency-exports-dual';
-	
+
 		console.log(esm);
 		`,
 	},

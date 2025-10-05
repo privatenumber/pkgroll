@@ -86,15 +86,15 @@ const parseExportsMap = (
 	});
 };
 
-export const getPackageExports = (
+export const getPkgEntryPoints = (
 	packageJson: Readonly<PackageJson>,
 	packageType: PackageType,
 ) => {
-	const exportEntries: BuildOutput[] = [];
+	const pkgEntryPoints: BuildOutput[] = [];
 
 	const mainPath = packageJson.main;
 	if (mainPath) {
-		exportEntries.push({
+		pkgEntryPoints.push({
 			source: {
 				type: 'package.json',
 				path: ['main'],
@@ -109,7 +109,7 @@ export const getPackageExports = (
 	// https://github.com/dherman/defense-of-dot-js/blob/master/proposal.md
 	const modulePath = packageJson.module;
 	if (modulePath) {
-		exportEntries.push({
+		pkgEntryPoints.push({
 			source: {
 				type: 'package.json',
 				path: ['module'],
@@ -123,7 +123,7 @@ export const getPackageExports = (
 	// Entry point for TypeScript
 	const typesPath = packageJson.types;
 	if (typesPath) {
-		exportEntries.push({
+		pkgEntryPoints.push({
 			source: {
 				type: 'package.json',
 				path: ['types'],
@@ -137,7 +137,7 @@ export const getPackageExports = (
 	const { bin } = packageJson;
 	if (bin) {
 		if (typeof bin === 'string') {
-			exportEntries.push({
+			pkgEntryPoints.push({
 				source: {
 					type: 'package.json',
 					path: ['bin'],
@@ -148,7 +148,7 @@ export const getPackageExports = (
 			});
 		} else {
 			for (const [binName, binPath] of Object.entries(bin)) {
-				exportEntries.push({
+				pkgEntryPoints.push({
 					source: {
 						type: 'package.json',
 						path: ['bin', binName],
@@ -164,9 +164,9 @@ export const getPackageExports = (
 	if (packageJson.exports) {
 		const exportMap = parseExportsMap(packageJson.exports, packageType);
 		for (const exportEntry of exportMap) {
-			exportEntries.push(exportEntry);
+			pkgEntryPoints.push(exportEntry);
 		}
 	}
 
-	return exportEntries;
+	return pkgEntryPoints;
 };

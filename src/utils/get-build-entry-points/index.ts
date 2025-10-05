@@ -1,13 +1,13 @@
 import type { PackageJson } from 'type-fest';
 import type { SrcDistPair } from '../../types.js';
 import { applyPublishConfig } from './apply-publish-config.js';
-import { getPackageExports } from './get-package-exports.js';
+import { getPkgEntryPoints } from './get-pkg-entry-points.js';
 import type { CliEntry } from './cli-input.js';
 import { getFileType } from './utils.js';
 import type { BuildOutput, EntryPoint } from './types.js';
 import { getSourcePath } from './get-source-path.js';
 
-export const getEntryPoints = async (
+export const getBuildEntryPoints = async (
 	srcdist: SrcDistPair[],
 	packageJson: PackageJson,
 	cliInputs: CliEntry[],
@@ -15,7 +15,7 @@ export const getEntryPoints = async (
 	applyPublishConfig(packageJson);
 
 	const packageType = packageJson.type ?? 'commonjs';
-	const packageExports = getPackageExports(packageJson, packageType);
+	const packageExports = getPkgEntryPoints(packageJson, packageType);
 
 	if (cliInputs.length > 0) {
 		packageExports.push(...cliInputs.map(input => ({

@@ -1,5 +1,5 @@
 import type { OutputOptions } from 'rollup';
-import type { EntryPointValid } from '../utils/get-entry-points/types';
+import type { EntryPointValid } from '../utils/get-build-entry-points/types';
 
 export type Options = {
 	minify: boolean;

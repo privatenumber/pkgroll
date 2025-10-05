@@ -16,7 +16,7 @@ import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
 import { nativeModules } from '../plugins/native-modules.js';
 import type { Options, Output } from '../types.js';
-import type { EntryPointValid } from '../../utils/get-entry-points/types.js';
+import type { EntryPointValid } from '../../utils/get-build-entry-points/types.js';
 import { cjsAnnotateExports } from '../plugins/cjs-annotate-exports.js';
 
 export const getPkgConfig = (

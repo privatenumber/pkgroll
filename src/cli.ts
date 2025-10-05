@@ -3,15 +3,15 @@ import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
 import { readPackageJson } from './utils/read-package-json.js';
-import { parseCliInputFlag } from './utils/get-entry-points/cli-input.js';
+import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
-import { getEntryPoints } from './utils/get-entry-points/index.js';
+import { getBuildEntryPoints } from './utils/get-build-entry-points/index.js';
 import { getRollupConfigs } from './rollup/get-rollup-configs.js';
 import { getTsconfig } from './utils/get-tsconfig.js';
 import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
-import type { EntryPointValid } from './utils/get-entry-points/types.js';
+import type { EntryPointValid } from './utils/get-build-entry-points/types.js';
 import type { SrcDistPair } from './types.js';
 import { entrySymbol } from './rollup/types.js';
 import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-outputs.js';
@@ -155,15 +155,15 @@ if (tsconfigTarget) {
 
 (async () => {
 	const { packageJson } = await readPackageJson(cwd);
-	const entryPoints = await getEntryPoints(srcDistPairs, packageJson, argv.flags.input);
+	const buildEntryPoints = await getBuildEntryPoints(srcDistPairs, packageJson, argv.flags.input);
 
-	for (const entryPoint of entryPoints) {
+	for (const entryPoint of buildEntryPoints) {
 		if ('error' in entryPoint) {
 			console.warn('Warning:', entryPoint.error);
 		}
 	}
 
-	const validEntryPoints = entryPoints.filter((entry): entry is EntryPointValid => !('error' in entry));
+	const validEntryPoints = buildEntryPoints.filter((entry): entry is EntryPointValid => !('error' in entry));
 	if (validEntryPoints.length === 0) {
 		throw new Error('No entry points found');
 	}

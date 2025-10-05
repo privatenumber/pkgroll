@@ -1,7 +1,7 @@
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap, SrcDistPair } from '../types.js';
-import type { EntryPointValid } from '../utils/get-entry-points/types.js';
+import type { EntryPointValid } from '../utils/get-build-entry-points/types.js';
 import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
 import { normalizePath } from '../utils/normalize-path.js';
 import { type Options, type OutputWithOptions, entrySymbol } from './types.js';

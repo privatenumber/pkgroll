@@ -91,6 +91,26 @@ _Pkgroll_ parses package entry-points from `package.json` by reading properties 
 
 The paths in `./dist` are mapped to paths in `./src` (configurable with the `--srcdist` flag) to determine bundle entry-points.
 
+#### Wildcard exports
+
+_Pkgroll_ supports [wildcard patterns](https://nodejs.org/api/packages.html#subpath-patterns) in `package.json#exports` for exporting multiple modules with a single pattern:
+
+```json5
+{
+    "exports": {
+        "./utils/*": "./dist/utils/*.mjs",
+        "./components/*/index": "./dist/components/*/index.mjs",
+    },
+}
+```
+
+This automatically bundles all matching source files. For example:
+- `src/utils/format.ts` → `dist/utils/format.mjs`
+- `src/components/button/index.ts` → `dist/components/button/index.mjs`
+
+> [!IMPORTANT]
+> Wildcard patterns must include a file extension (e.g., `.mjs`, `.cjs`)
+
 ### Output formats
 _Pkgroll_ detects the format for each entry-point based on the file extension or the `package.json` property it's placed in, using the [same lookup logic as Node.js](https://nodejs.org/api/packages.html#determining-module-system).
 

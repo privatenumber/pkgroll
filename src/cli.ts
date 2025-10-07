@@ -11,6 +11,7 @@ import { getRollupConfigs } from './rollup/get-rollup-configs.js';
 import { getTsconfig } from './utils/get-tsconfig.js';
 import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
+import { prettyPath } from './utils/property-needs-quotes.js';
 import type { EntryPointValid } from './utils/get-build-entry-points/types.js';
 import type { SrcDistPair } from './types.js';
 import { entrySymbol } from './rollup/types.js';
@@ -159,7 +160,11 @@ if (tsconfigTarget) {
 
 	for (const entryPoint of buildEntryPoints) {
 		if ('error' in entryPoint) {
-			console.warn('Warning:', entryPoint.error);
+			const { exportEntry } = entryPoint;
+			const sourcePath = typeof exportEntry.source === 'string'
+				? exportEntry.source
+				: `${exportEntry.source.type}#${prettyPath(exportEntry.source.path)}`;
+			console.warn(`Warning (${sourcePath}):`, entryPoint.error);
 		}
 	}
 

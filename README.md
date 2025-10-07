@@ -99,8 +99,8 @@ _Pkgroll_ supports [wildcard patterns](https://nodejs.org/api/packages.html#subp
 {
     "exports": {
         "./utils/*": "./dist/utils/*.mjs",
-        "./components/*/index": "./dist/components/*/index.mjs"
-    }
+        "./components/*/index": "./dist/components/*/index.mjs",
+    },
 }
 ```
 

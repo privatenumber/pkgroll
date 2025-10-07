@@ -12,6 +12,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./target.js'), nodePath);
 		runTestSuite(import('./minification.js'), nodePath);
 		runTestSuite(import('./package-exports.js'), nodePath);
+		runTestSuite(import('./wildcard-exports.js'), nodePath);
 		runTestSuite(import('./package-imports.js'), nodePath);
 		runTestSuite(import('./bin.js'), nodePath);
 		runTestSuite(import('./dependencies.js'), nodePath);

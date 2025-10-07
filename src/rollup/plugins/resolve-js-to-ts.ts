@@ -1,14 +1,21 @@
 import type { Plugin } from 'rollup';
 
-export const resolveTypescriptMjsCts = (): Plugin => {
+/**
+ * Plugin to resolve JS extensions to TypeScript equivalents
+ * .js -> .ts
+ * .jsx -> .tsx
+ * .mjs -> .mts
+ * .cjs -> .cts
+ */
+export const resolveJsToTs = (): Plugin => {
 	const isJs = /\.(?:[mc]?js|jsx)$/;
 
 	return {
-		name: 'resolve-typescript-mjs-cjs',
+		name: 'resolve-js-to-ts',
 		resolveId(id, importer, options) {
 			if (
-				isJs.test(id)
-				&& importer
+				importer
+				&& isJs.test(id)
 			) {
 				return this.resolve(
 					id.replace(/js(x?)$/, 'ts$1'),

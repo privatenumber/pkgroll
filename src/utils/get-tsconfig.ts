@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { getTsconfig as _getTsconfig, parseTsconfig } from 'get-tsconfig';
 
 export const getTsconfig = (

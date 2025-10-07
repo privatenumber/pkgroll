@@ -110,12 +110,14 @@ export default testSuite(({ describe }, nodePath: string) => {
 					'index.ts': outdent`
 					import * as foo from '@foo/index.js';
 					import { bar } from '~bar';
-					export { foo, bar };`,
+					import { baz } from '#baz';
+					export { foo, bar, baz };`,
 					foo: {
 						'index.ts': 'export { a } from \'@foo/a.js\';',
 						'a.ts': 'export const a = \'a\';',
 					},
 					'bar/index.ts': 'export const bar = \'bar\';',
+					'baz.ts': 'export const baz = \'baz\';',
 				},
 				'package.json': createPackageJson({
 					exports: {
@@ -128,6 +130,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 						paths: {
 							'@foo/*': ['./src/foo/*'],
 							'~bar': ['./src/bar/index.ts'],
+							'#baz': ['./src/baz.ts'],
 						},
 					},
 				}),
@@ -144,6 +147,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
 			expect(content).toMatch('"a"');
 			expect(content).toMatch('"bar"');
+			expect(content).toMatch('"baz"');
 		});
 	});
 
@@ -184,7 +188,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		});
 
 		test('error on invalid tsconfig.json path', async () => {
-			const fixture = await createFixture({
+			await using fixture = await createFixture({
 				src: {
 					'index.ts': 'export default () => "foo";',
 				},

@@ -37,7 +37,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Cannot parse package.json');
+			expect(pkgrollProcess.stderr).toMatch('Error: Failed to parse ./package.json:');
 		});
 
 		test('no entry in package.json', async () => {
@@ -58,7 +58,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
+			expect(pkgrollProcess.stderr).toMatch('No entry points found');
 		});
 
 		test('conflicting entry in package.json', async () => {
@@ -103,8 +103,54 @@ export default testSuite(({ describe }, nodePath: string) => {
 			);
 
 			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Ignoring entry outside of ./dist/ directory: package.json#main="/dist/main.js"');
-			expect(pkgrollProcess.stderr).toMatch('No export entries found in package.json');
+			expect(pkgrollProcess.stderr).toMatch('Ignoring file outside of dist directories');
+			expect(pkgrollProcess.stderr).toMatch('No entry points found');
+		});
+
+		test('cannot find matching source file', async () => {
+			await using fixture = await createFixture({
+				...packageFixture(),
+				'package.json': createPackageJson({
+					name: 'pkg',
+					main: 'dist/missing.js',
+					module: 'dist/missing.mjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll(
+				[],
+				{
+					cwd: fixture.path,
+					nodePath,
+					reject: false,
+				},
+			);
+			expect(pkgrollProcess.exitCode).toBe(1);
+			expect(pkgrollProcess.stderr).toMatch('Source file not found: src/missing(.js|.ts|.tsx|.mts|.cts)');
+		});
+
+		test('ignores unexpected extension', async () => {
+			await using fixture = await createFixture({
+				...packageFixture(),
+				'package.json': createPackageJson({
+					name: 'pkg',
+					exports: {
+						'.': './dist/index.js',
+						'./styles': './dist/unsupported.css',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll(
+				[],
+				{
+					cwd: fixture.path,
+					nodePath,
+					reject: false,
+				},
+			);
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toMatch('Unsupported extension (must be .d.ts|.d.mts|.d.cts|.js|.mjs|.cjs)');
 		});
 	});
 });

@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import type { PackageJson } from 'type-fest';
 import type { AliasMap } from '../../types.js';
 

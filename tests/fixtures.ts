@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import outdent from 'outdent';
 import type { FileTree } from 'fs-fixture';
 import type { PackageJson, TsConfigJson } from 'type-fest';
@@ -6,14 +6,18 @@ import type { PackageJson, TsConfigJson } from 'type-fest';
 export const createPackageJson = (packageJson: PackageJson) => JSON.stringify(packageJson);
 export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify(tsconfigJson);
 
-const typeScriptPath = path.resolve('node_modules/typescript');
-
 export const installTypeScript: FileTree = {
-	'node_modules/typescript': ({ symlink }) => symlink(typeScriptPath, 'dir'),
+	'node_modules/typescript': ({ symlink }) => symlink(path.resolve('node_modules/typescript'), 'dir'),
+};
+
+export const installReact: FileTree = {
+	'node_modules/react': ({ symlink }) => symlink(path.resolve('node_modules/react'), 'dir'),
+	'node_modules/@types/react': ({ symlink }) => symlink(path.resolve('node_modules/@types/react'), 'dir'),
 };
 
 type Options = {
 	installTypeScript?: boolean;
+	installReact?: boolean;
 };
 
 export const fixtureFiles = {
@@ -35,19 +39,6 @@ export const fixtureFiles = {
 		`,
 	},
 
-	pages: {
-		'a.ts': outdent`
-		export function render() {
-			console.log('Page A');
-		}
-		`,
-		'b.ts': outdent`
-		export function render() {
-			console.log('Page B');
-		}
-		`,
-	},
-
 	'cjs.cjs': outdent`
 	#! /usr/bin/env node
 
@@ -63,7 +54,11 @@ export const fixtureFiles = {
 	`,
 
 	'conditional-require.js': outdent`
-	if (process.env.NODE_ENV === 'production') {
+	if (
+		process.env.NODE_ENV === 'production'
+		|| process.env['NODE_ENV'] === 'production'
+		|| process.env['PROD'] === 'true'
+	) {
 		console.log('production');
 		require('./cjs.cjs');
 	} else {
@@ -152,7 +147,7 @@ export const fixtureFiles = {
 	}
 	`,
 
-	'types.ts': outdent`
+	'types/index.ts': outdent`
 	export type SomeType = string | number;
 	`,
 
@@ -170,22 +165,17 @@ export const fixtureFiles = {
 	#! /usr/bin/env node
 	export default 1234;
 	`,
+
+	'unsupported.css': '.unsupported { color: red; }',
 };
 
-export const packageFixture = (
-	options: Options = {},
-): FileTree => ({
+export const packageFixture = (options: Options = {}): FileTree => ({
 	src: fixtureFiles,
-	...(
-		options.installTypeScript
-			? installTypeScript
-			: {}
-	),
+	...(options.installTypeScript ? installTypeScript : {}),
+	...(options.installReact ? installReact : {}),
 });
 
-export const fixtureDependencyExportsMap = (
-	entryFile: string,
-): FileTree => ({
+export const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
 	'package.json': createPackageJson({
 		main: entryFile,
 	}),
@@ -248,5 +238,46 @@ export const fixtureDependencyImportsMap: FileTree = {
 				},
 			},
 		}),
+	},
+};
+
+export const fixtureDynamicImports: FileTree = {
+	'package.json': createPackageJson({
+		main: './dist/dynamic-imports.js',
+	}),
+	src: {
+		'dynamic-imports.js': outdent`
+		const files = [
+			'aaa',
+			'bbb',
+			'ccc',
+		];
+		const randomFile = files[Math.floor(Math.random() * files.length)];
+		import(\`./files/\${randomFile}.js\`)
+		`,
+
+		files: {
+			'aaa.js': 'console.log(111)',
+			'bbb.js': 'console.log(222)',
+			'ccc.js': 'console.log(333)',
+		},
+	},
+};
+
+// https://github.com/privatenumber/pkgroll/issues/104
+export const fixtureDynamicImportUnresolvable: FileTree = {
+	'package.json': createPackageJson({
+		main: './dist/dynamic-imports.js',
+	}),
+	src: {
+		'dynamic-imports.js': outdent`
+		function importModule(path) {
+			// who knows what will be imported here?
+			return import(path);
+		}
+
+		importModule('./too-dynamic.js');
+		`,
+		'too-dynamic.js': 'console.log(123)',
 	},
 };

@@ -57,12 +57,12 @@ npm install --save-dev pkgroll
 	    "exports": {
 	        "require": {
 	            "types": "./dist/index.d.cts",
-	            "default": "./dist/index.cjs"
+	            "default": "./dist/index.cjs",
 	        },
 	        "import": {
 	            "types": "./dist/index.d.mts",
-	            "default": "./dist/index.mjs"
-	        }
+	            "default": "./dist/index.mjs",
+	        },
 	    },
 
 	    // bin files will be compiled to be executable with the Node.js hashbang
@@ -70,8 +70,8 @@ npm install --save-dev pkgroll
 
 	    // (Optional) Add a build script referencing `pkgroll`
 	    "scripts": {
-	        "build": "pkgroll"
-	    }
+	        "build": "pkgroll",
+	    },
 
 	    // ...
 	}
@@ -89,7 +89,7 @@ npm install --save-dev pkgroll
 ### Entry-points
 _Pkgroll_ parses package entry-points from `package.json` by reading properties `main`, `module`, `types`, and `exports`.
 
-The paths in `./dist` are mapped to paths in `./src` (configurable with `--src` and `--dist` flags) to determine bundle entry-points.
+The paths in `./dist` are mapped to paths in `./src` (configurable with the `--srcdist` flag) to determine bundle entry-points.
 
 ### Output formats
 _Pkgroll_ detects the format for each entry-point based on the file extension or the `package.json` property it's placed in, using the [same lookup logic as Node.js](https://nodejs.org/api/packages.html#determining-module-system).
@@ -141,27 +141,51 @@ When generating type declarations (`.d.ts` files), this also bundles and tree-sh
 ```
 
 ### Aliases
-Aliases can be configured in the [import map](https://nodejs.org/api/packages.html#imports), defined in `package.json#imports`.
 
-For native Node.js import mapping, all entries must be prefixed with `#` to indicate an internal [subpath import](https://nodejs.org/api/packages.html#subpath-imports). _Pkgroll_ takes advantage of this behavior to define entries that are _not prefixed_ with `#` as an alias.
+#### Import map
 
-Native Node.js import mapping supports conditional imports (eg. resolving different paths for Node.js and browser), but _Pkgroll_ does not.
+You can configure aliases using the [import map](https://nodejs.org/api/packages.html#imports) in `package.json#imports`.
 
-> ⚠️ Aliases are not supported in type declaration generation. If you need type support, do not use aliases.
+In Node.js, import mappings must start with `#` to indicate an internal [subpath import](https://nodejs.org/api/packages.html#subpath-imports). However, _Pkgroll_ allows defining aliases **without** the `#` prefix.
+
+> [!NOTE]
+> While Node.js supports conditional imports (e.g., different paths for Node.js vs. browsers), _Pkgroll_ does not.
+
+Example:
 
 ```json5
 {
-    // ...
-
     "imports": {
-        // Mapping '~utils' to './src/utils.js'
+        // Alias '~utils' points to './src/utils.js'
         "~utils": "./src/utils.js",
 
-        // Native Node.js import mapping (can't reference ./src)
+        // Native Node.js subpath import (must use '#', can't reference './src')
         "#internal-package": "./vendors/package/index.js",
-    }
+    },
 }
 ```
+
+#### Tsconfig paths
+
+You can also define aliases in `tsconfig.json` using `compilerOptions.paths`:
+
+```json5
+{
+    "compilerOptions": {
+        "paths": {
+            "@foo/*": [
+                "./src/foo/*",
+            ],
+            "~bar": [
+                "./src/bar/index.ts",
+            ],
+        },
+    },
+}
+```
+
+> [!TIP]
+> The community is shifting towards using import maps (`imports`) as the source of truth for aliases because of their wider support across tools like Node.js, TypeScript, Vite, Webpack, and esbuild.
 
 ### Target
 
@@ -225,6 +249,40 @@ Sometimes it's useful to use `require()` or `require.resolve()` in ESM. ESM code
 
 When compiling to ESM, _Pkgroll_ detects `require()` usages and shims it with [`createRequire(import.meta.url)`](https://nodejs.org/api/module.html#modulecreaterequirefilename).
 
+### Native modules
+
+_pkgroll_ automatically handles native Node.js addons (`.node` files) when you directly import them:
+
+```js
+// src/index.js
+import nativeAddon from './native.node'
+```
+
+After bundling, the `.node` file will be copied to `dist/natives/` and the import will be automatically rewritten to load from the correct location at runtime.
+
+> [!NOTE]
+> - Native modules are platform and architecture-specific. Make sure to distribute the correct `.node` files for your target platforms.
+> - This only works with direct `.node` imports. If you're using packages that dynamically load native modules via `bindings` or `node-pre-gyp`, you'll need to handle them separately.
+
+#### Handling dependencies with native modules
+
+If you're using packages with native modules (like `chokidar` which depends on `fsevents`):
+
+- **If in `dependencies`/`peerDependencies`**: ✅ Works automatically - these are externalized (not bundled)
+- **If in `devDependencies`**: ⚠️ Will be bundled. If they use `bindings()` or `node-pre-gyp` patterns, move them to `dependencies` instead, or use `optionalDependencies` if they're optional.
+
+Example - if you have `chokidar` in `devDependencies` and get build errors, move it to `dependencies`:
+
+```json
+{
+    "dependencies": {
+        "chokidar": "^3.0.0"
+    }
+}
+```
+
+This externalizes it (users will need to install it), avoiding the need to bundle its native modules.
+
 ### Environment variables
 Pass in compile-time environment variables with the `--env` flag.
 
@@ -232,6 +290,15 @@ This will replace all instances of `process.env.NODE_ENV` with `'production'` an
 ```sh
 pkgroll --env.NODE_ENV=production
 ```
+
+### Define
+The `--define` flag allows you to replace specific strings in your code at build time. This is useful for dead code elimination and conditional compilation.
+
+```sh
+pkgroll --define.process.env.NODE_ENV='"production"' --define.DEBUG=false
+```
+
+Note: Unlike `--env`, values are not automatically JSON stringified, so you need to include quotes for string values.
 
 ### Minification
 Pass in the `--minify` flag to minify assets.
@@ -263,6 +330,17 @@ Or to inline them in the distribution files:
 pkgroll --sourcemap=inline
 ```
 
+## Dev vs Prod config
+
+In some cases, it makes sense to use different `package.json` field values for the published environment. You can achieve this by using the [`publishConfig`](https://pnpm.io/package_json#publishconfig) field (extended by pnpm). This allows you to override specific fields during publication with a clean separation of concerns.
+
+The following fields can be overridden using `publishConfig`:
+- `bin`
+- `main`
+- `exports`
+- `types`
+- `module`
+
 ## FAQ
 
 ### Why bundle with Rollup?
@@ -292,6 +370,16 @@ pkgroll --sourcemap=inline
 	This may seem counterintuitive because types are a development enhancement. By bundling them in with your package, you remove the need for an external type dependency. Additionally, bundling only keeps the types that are actually used which helps minimize unnecessary bloat.
 
 - **Minification** strips dead-code, comments, white-space, and shortens variable names.
+
+### How does it compare to tsup?
+
+They are similar bundlers, but I think the main differences are:
+
+- _pkgroll_ is zero-config. It reads the entry-points declared in your `package.json` to determine how to bundle the package. _tsup_ requires manual configuration.
+
+- _pkgroll_ is a thin abstraction over Rollup (just smartly configures it). Similarly, _tsup_ is a thin abstraction over esbuild. _pkgroll_ also uses esbuild for transformations & minification as a Rollup plugin, but the bundling & tree-shaking is done by Rollup (which is [known to output best/cleanest code](#why-bundle-with-rollup)). However, when _tsup_ emits type declaration, it also uses Rollup which negates the performance benefits from using esbuild.
+
+- IIRC because _tsup_ uses esbuild, the ESM to CJS compilation wasn't great compared to Rollups. As a package maintainer who wants to support both ESM and CJS exports, this was one of the biggest limitations of using _tsup_ (which compelled me to develop _pkgroll_).
 
 ## Sponsors
 

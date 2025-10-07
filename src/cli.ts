@@ -1,18 +1,30 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
 import { readPackageJson } from './utils/read-package-json.js';
-import { getExportEntries } from './utils/parse-package-json/get-export-entries.js';
+import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
-import { getSourcePaths } from './utils/get-source-path.js';
-import { getRollupConfigs } from './utils/get-rollup-configs.js';
-import { getTsconfig } from './utils/get-tsconfig';
-import { log } from './utils/log.js';
+import { getBuildEntryPoints } from './utils/get-build-entry-points/index.js';
+import { getRollupConfigs } from './rollup/get-rollup-configs.js';
+import { getTsconfig } from './utils/get-tsconfig.js';
+import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
+import type { EntryPointValid } from './utils/get-build-entry-points/types.js';
+import type { SrcDistPair } from './types.js';
+import { entrySymbol } from './rollup/types.js';
+import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-outputs.js';
 
 const { stringify } = JSON;
+
+const keyValue = (flagValue: string) => {
+	const [key, value] = flagValue.split('=', 2);
+	return {
+		key,
+		value,
+	};
+};
 
 const argv = cli({
 	name: 'pkgroll',
@@ -20,15 +32,24 @@ const argv = cli({
 	version,
 
 	flags: {
+		input: {
+			type: [parseCliInputFlag],
+			alias: 'i',
+			description: 'Dist paths for source files to bundle (Only use if you cannot use package.json entries)',
+		},
 		src: {
 			type: String,
-			description: 'Source directory',
+			description: 'Source directory (Deprecated, use `srcdist` instead)',
 			default: './src',
 		},
 		dist: {
 			type: String,
-			description: 'Distribution directory',
+			description: 'Distribution directory (Deprecated, use `srcdist` instead)',
 			default: './dist',
+		},
+		srcdist: {
+			type: [String],
+			description: 'Source and distribution folder pairs (eg. default `src:dist`)',
 		},
 		minify: {
 			type: Boolean,
@@ -54,16 +75,12 @@ const argv = cli({
 			default: false,
 		},
 		env: {
-			type: [
-				(flagValue: string) => {
-					const [key, value] = flagValue.split('=');
-					return {
-						key,
-						value,
-					};
-				},
-			],
+			type: [keyValue],
 			description: 'Compile-time environment variables (eg. --env.NODE_ENV=production)',
+		},
+		define: {
+			type: [keyValue],
+			description: 'Targeted strings to replace (eg. --define.process.env.NODE_ENV=\'production\')',
 		},
 
 		// TODO: rename to conditions and -C flag like Node.js
@@ -107,13 +124,28 @@ const argv = cli({
 
 const cwd = process.cwd();
 
-/**
- * The sourcepath may be a symlink.
- * In the tests, the temp directory is a symlink:
- * /var/folders/hl/ -> /private/var/folders/hl/
- */
-const sourcePath = normalizePath(argv.flags.src, true);
-const distPath = normalizePath(argv.flags.dist, true);
+const srcDistPairs: SrcDistPair[] = [];
+
+if (argv.flags.srcdist.length > 0) {
+	for (const srcDist of argv.flags.srcdist) {
+		const [src, dist] = srcDist.split(':', 2);
+		if (!src || !dist) {
+			throw new Error(`Invalid src:dist pair ${stringify(srcDist)}. Expected format: src:dist`);
+		}
+
+		srcDistPairs.push({
+			src: normalizePath(src, true),
+			srcResolved: normalizePath(fs.realpathSync.native(src), true),
+			dist: normalizePath(dist, true),
+		});
+	}
+} else {
+	srcDistPairs.push({
+		src: normalizePath(argv.flags.src, true),
+		srcResolved: normalizePath(fs.realpathSync.native(argv.flags.src), true),
+		dist: normalizePath(argv.flags.dist, true),
+	});
+}
 
 const tsconfig = getTsconfig(argv.flags.tsconfig);
 const tsconfigTarget = tsconfig?.config.compilerOptions?.target;
@@ -122,38 +154,23 @@ if (tsconfigTarget) {
 }
 
 (async () => {
-	const packageJson = await readPackageJson(cwd);
+	const { packageJson } = await readPackageJson(cwd);
+	const buildEntryPoints = await getBuildEntryPoints(srcDistPairs, packageJson, argv.flags.input);
 
-	let exportEntries = getExportEntries(packageJson);
-
-	exportEntries = exportEntries.filter((entry) => {
-		const validPath = entry.outputPath.startsWith(distPath);
-
-		if (!validPath) {
-			console.warn(`Ignoring entry outside of ${distPath} directory: package.json#${entry.from}=${stringify(entry.outputPath)}`);
+	for (const entryPoint of buildEntryPoints) {
+		if ('error' in entryPoint) {
+			console.warn('Warning:', entryPoint.error);
 		}
-
-		return validPath;
-	});
-
-	if (exportEntries.length === 0) {
-		throw new Error('No export entries found in package.json');
 	}
 
-	const sourcePaths = (await Promise.all(exportEntries.map(exportEntry => getSourcePaths(exportEntry, sourcePath, distPath, cwd))));
-	const flatSourcePaths = sourcePaths.flat();
+	const validEntryPoints = buildEntryPoints.filter((entry): entry is EntryPointValid => !('error' in entry));
+	if (validEntryPoints.length === 0) {
+		throw new Error('No entry points found');
+	}
 
 	const rollupConfigs = await getRollupConfigs(
-
-		/**
-		 * Resolve symlink in source path.
-		 *
-		 * Tests since symlinks because tmpdir is a symlink:
-		 * /var/ -> /private/var/
-		 */
-		normalizePath(fs.realpathSync.native(sourcePath), true),
-		distPath,
-		flatSourcePaths,
+		srcDistPairs,
+		validEntryPoints,
 		argv.flags,
 		getAliases(packageJson, cwd),
 		packageJson,
@@ -166,18 +183,21 @@ if (tsconfigTarget) {
 		 * deletes what it needs to but pkgroll runs multiple builds (e.g. d.ts, mjs, etc)
 		 * so as a plugin, it won't be aware of the files emitted by other builds
 		 */
-		await cleanDist(distPath);
+		await Promise.all(
+			srcDistPairs.map(({ dist }) => cleanDist(dist)),
+		);
 	}
 
 	if (argv.flags.watch) {
 		log('Watch initialized');
 
-		Object.values(rollupConfigs).map(async (rollupConfig) => {
+		rollupConfigs.map(async (rollupConfig) => {
 			const watcher = watch(rollupConfig);
 
 			watcher.on('event', async (event) => {
 				if (event.code === 'BUNDLE_START') {
-					log('Building', ...(Array.isArray(event.input) ? event.input : [event.input]));
+					const inputFiles = Array.isArray(event.input) ? event.input : Object.values(event.input!);
+					log('Building', ...inputFiles.map(formatPath));
 				}
 
 				if (event.code === 'BUNDLE_END') {
@@ -185,7 +205,8 @@ if (tsconfigTarget) {
 						outputOption => event.result.write(outputOption),
 					));
 
-					log('Built', ...(Array.isArray(event.input) ? event.input : [event.input]));
+					const inputFiles = Array.isArray(event.input) ? event.input : Object.values(event.input!);
+					log('Built', ...inputFiles.map(formatPath));
 				}
 
 				if (event.code === 'ERROR') {
@@ -195,11 +216,16 @@ if (tsconfigTarget) {
 		});
 	} else {
 		await Promise.all(
-			Object.values(rollupConfigs).map(async (rollupConfig) => {
-				const bundle = await rollup(rollupConfig);
+			rollupConfigs.map(async (rollupConfig) => {
+				const build = await rollup(rollupConfig);
 
 				return Promise.all(rollupConfig.output.map(
-					outputOption => bundle.write(outputOption),
+					(outputOption) => {
+						const inputNames = outputOption[entrySymbol].inputNames!;
+						outputOption.plugins = [filterUnnecessaryOutputs(inputNames)];
+
+						return build.write(outputOption);
+					},
 				));
 			}),
 		);

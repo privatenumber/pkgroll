@@ -1,4 +1,4 @@
-import { builtinModules } from 'module';
+import { builtinModules } from 'node:module';
 import type { Plugin } from 'rollup';
 
 type Semver = [number, number, number];
@@ -19,7 +19,7 @@ const compareSemver = (
  * Alternatively, we can create a mapping via output.paths
  * but this seems cleaner
  */
-export const externalizeNodeBuiltins = ({ target }: {
+export const nodeBuiltins = ({ target }: {
 	target: string[];
 }): Plugin => {
 	/**
@@ -55,7 +55,7 @@ export const externalizeNodeBuiltins = ({ target }: {
 	});
 
 	return {
-		name: 'externalize-node-builtins',
+		name: 'node-builtins',
 		resolveId: (id) => {
 			const hasNodeProtocol = id.startsWith('node:');
 			if (stripNodeProtocol && hasNodeProtocol) {

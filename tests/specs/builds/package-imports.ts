@@ -12,6 +12,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 				'package.json': createPackageJson({
 					main: './dist/entry.js',
 					imports: {
+						// @ts-expect-error Invalid subpath import
 						'~': './src/nested',
 					},
 				}),

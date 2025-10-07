@@ -109,6 +109,37 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(utilsCjs).toMatch('exports.sayHello =');
 		});
 
+		test('conditions - types', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+				}),
+				'package.json': createPackageJson({
+					type: 'module',
+					exports: {
+						types: {
+							default: './dist/mts.d.ts',
+						},
+						import: './dist/mts.js',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const indexMjs = await fixture.readFile('dist/mts.js', 'utf8');
+			expect(indexMjs).toMatch('function sayGoodbye(name) {');
+
+			const indexDts = await fixture.readFile('dist/mts.d.ts', 'utf8');
+			expect(indexDts).toMatch('declare function sayGoodbye(name: string): void;');
+		});
+
 		test('conditions - import should allow cjs', async () => {
 			await using fixture = await createFixture({
 				...packageFixture(),
@@ -137,17 +168,19 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(utilsMjs).toMatch('exports.sayHello =');
 		});
 
-		test('conditions - wildcard subpath exports', async () => {
+		test('should detect top-level `types` condition', async () => {
 			await using fixture = await createFixture({
-				...packageFixture({ installTypeScript: true }),
+				...packageFixture({
+					installTypeScript: true,
+				}),
 				'package.json': createPackageJson({
 					exports: {
-						'./pages/*': {
-							import: './dist/pages/*.mjs',
-							require: './dist/pages/*.cjs',
-							types: './dist/pages/*.d.ts',
+						import: './dist/mts.mjs',
+						require: './dist/mts.cjs',
+						types: {
+							import: './dist/mts.d.mts',
+							require: './dist/mts.d.cts',
 						},
-						'.': './dist/index.js',
 					},
 				}),
 			});
@@ -160,20 +193,74 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			const indexCjs = await fixture.readFile('dist/pages/a.cjs', 'utf8');
-			expect(indexCjs).toMatch('exports.render');
-			const indexMjs = await fixture.readFile('dist/pages/a.mjs', 'utf8');
-			expect(indexMjs).toMatch('export { render }');
-			const utilsCjs = await fixture.readFile('dist/pages/b.cjs', 'utf8');
-			expect(utilsCjs).toMatch('exports.render');
-			const utilsMjs = await fixture.readFile('dist/pages/b.mjs', 'utf8');
-			expect(utilsMjs).toMatch('export { render }');
+			const mtsTypes = await fixture.readFile('dist/mts.d.mts', 'utf8');
+			expect(mtsTypes).toMatch('declare function sayHello');
 
-			expect(await fixture.exists('dist/index.js')).toEqual(true);
-			expect(await fixture.exists('dist/pages/a.js')).toEqual(true);
-			expect(await fixture.exists('dist/pages/b.js')).toEqual(true);
-			expect(await fixture.exists('dist/pages/a.d.ts')).toEqual(true);
-			expect(await fixture.exists('dist/pages/b.d.ts')).toEqual(true);
+			const ctsTypes = await fixture.readFile('dist/mts.d.cts', 'utf8');
+			expect(ctsTypes).toMatch('declare function sayHello');
+		});
+
+		test('get basename with dot', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({
+					installTypeScript: true,
+				}),
+				src: {
+					'index.node.ts': 'export default () => "foo";',
+					nested: {
+						'index.node.ts': 'export default () => "foo";',
+					},
+				},
+				'package.json': createPackageJson({
+					exports: {
+						'./': {
+							default: './dist/index.node.js',
+							types: './dist/index.node.d.ts',
+						},
+						'./nested': {
+							default: './dist/nested/index.node.js',
+							types: './dist/nested/index.node.d.ts',
+						},
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.node.js', 'utf8');
+			expect(content).toMatch('module.exports =');
+			await fixture.exists('dist/index.node.d.ts');
+			await fixture.exists('dist/nested/index.node.js');
+			await fixture.exists('dist/nested/index.node.d.ts');
+		});
+
+		test('publishConfig', async () => {
+			await using fixture = await createFixture({
+				...packageFixture(),
+				'package.json': createPackageJson({
+					exports: './dist/invalid.js',
+					publishConfig: {
+						exports: './dist/index.js',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.js', 'utf8');
+			expect(content).toMatch('module.exports =');
 		});
 	});
 });

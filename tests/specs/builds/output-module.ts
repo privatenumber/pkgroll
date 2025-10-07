@@ -1,7 +1,12 @@
+import fs from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson } from '../../fixtures.js';
+import {
+	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
+	fixtureDynamicImportUnresolvable,
+} from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('output: module', ({ test }) => {
@@ -83,7 +88,37 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cjs.mjs', 'utf8');
-			expect(content).toMatch('export { cjs$1 as default }');
+			expect(content).toMatch('export { cjs as default }');
+		});
+
+		test('{ type: commonjs, field: component, srcExt: tsx, distExt: mjs }', async () => {
+			await using fixture = await createFixture({
+				...packageFixture({ installReact: true }),
+				'package.json': createPackageJson({
+					main: './dist/component.mjs',
+					peerDependencies: {
+						react: '*',
+					},
+				}),
+				'tsconfig.json': createTsconfigJson({
+					compilerOptions: {
+						jsx: 'react-jsx',
+					},
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/component.mjs', 'utf8');
+			expect(content).toMatch('import { jsx } from \'react/jsx-runtime\'');
+			expect(content).toMatch('const Component = () => /* @__PURE__ */ jsx("div", { children: "Hello World" })');
+			expect(content).toMatch('export { Component }');
 		});
 
 		test('{ type: commonjs, field: main, srcExt: mts, distExt: mjs }', async () => {
@@ -147,7 +182,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(content).toMatch('export { sayHello }');
 		});
 
-		test('require() works in esm', async () => {
+		test('require() gets converted to import in esm', async () => {
 			await using fixture = await createFixture({
 				...packageFixture(),
 				'package.json': createPackageJson({
@@ -168,7 +203,8 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(js).not.toMatch('createRequire');
 
 			const mjs = await fixture.readFile('dist/require.mjs', 'utf8');
-			expect(mjs).toMatch('createRequire');
+			expect(mjs).not.toMatch('require(');
+			expect(mjs).toMatch(/import . from"fs"/);
 		});
 
 		test('conditional require() no side-effects', async () => {
@@ -188,7 +224,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
-			expect(content).toMatch('\tconsole.log(\'side effect\');');
+			expect(content).toMatch('\tconsole.log("side effect");');
 		});
 
 		test('require() & createRequire gets completely removed on conditional', async () => {
@@ -209,9 +245,164 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 			const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
 			expect(content).not.toMatch('\tconsole.log(\'side effect\');');
+			expect(content).not.toMatch('require(');
+			expect(content).toMatch('"development"');
+		});
 
-			const [, createRequireMangledVariable] = content.toString().match(/createRequire as (\w+)/)!;
-			expect(content).not.toMatch(`${createRequireMangledVariable}(`);
+		describe('injects createRequire', ({ test }) => {
+			test('dynamic require should get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/dynamic-require.ts': 'require((() => \'fs\')());',
+					'package.json': createPackageJson({
+						main: './dist/dynamic-require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
+				expect(content).toMatch('createRequire');
+				expect(content).toMatch('(import.meta.url)');
+
+				// Shouldn't throw
+				await import(pathToFileURL(fixture.getPath('dist/dynamic-require.mjs')).toString());
+			});
+
+			test('defined require should not get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/require.ts': 'const require=console.log; require((() => \'fs\')());',
+					'package.json': createPackageJson({
+						main: './dist/require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/require.mjs', 'utf8');
+				expect(content).not.toMatch('createRequire');
+				expect(content).not.toMatch('(import.meta.url)');
+				expect(content).toMatch('"fs"');
+			});
+
+			test('require property access should not get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/require.ts': 'globalThis.require("a")',
+					'package.json': createPackageJson({
+						main: './dist/require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/require.mjs', 'utf8');
+				expect(content).not.toMatch('createRequire');
+				expect(content).not.toMatch('(import.meta.url)');
+			});
+
+			test('object property should not get a createRequire', async () => {
+				await using fixture = await createFixture({
+					'src/require.ts': 'console.log({ require: 1 });',
+					'package.json': createPackageJson({
+						main: './dist/require.mjs',
+					}),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+				expect(pkgrollProcess.stderr).toBe('');
+
+				const content = await fixture.readFile('dist/require.mjs', 'utf8');
+				expect(content).not.toMatch('createRequire');
+				expect(content).not.toMatch('(import.meta.url)');
+			});
+		});
+
+		test('dynamic imports', async () => {
+			await using fixture = await createFixture({
+				...fixtureDynamicImports,
+				'package.json': createPackageJson({
+					exports: './dist/dynamic-imports.mjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/dynamic-imports.mjs', 'utf8');
+			expect(content).toMatch('import(');
+
+			const files = await fs.readdir(fixture.getPath('dist'));
+			files.sort();
+			expect(files[0]).toMatch(/^aaa-/);
+			expect(files[1]).toMatch(/^bbb-/);
+			expect(files[2]).toMatch(/^ccc-/);
+		});
+
+		// https://github.com/privatenumber/pkgroll/issues/104
+		test('unresolvable dynamic import should not fail', async () => {
+			await using fixture = await createFixture({
+				...fixtureDynamicImportUnresolvable,
+				'package.json': createPackageJson({
+					exports: './dist/dynamic-imports.mjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toContain('[plugin rollup-plugin-dynamic-import-variables]');
+
+			const content = await fixture.readFile('dist/dynamic-imports.mjs', 'utf8');
+			expect(content).toMatch('import(');
+		});
+
+		// https://github.com/privatenumber/pkgroll/issues/115
+		test('import.meta.url should be preserved', async () => {
+			await using fixture = await createFixture({
+				'src/index.js': 'console.log(import.meta.url)',
+				'package.json': createPackageJson({
+					exports: './dist/index.mjs',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll(['--target=es2017'], {
+				cwd: fixture.path,
+				nodePath,
+			});
+			expect(pkgrollProcess.exitCode).toBe(0);
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('import.meta.url');
 		});
 	});
 });

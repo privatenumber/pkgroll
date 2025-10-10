@@ -11,6 +11,8 @@ _pkgroll_ is a JavaScript package bundler powered by Rollup that automatically b
 
 Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/.d.ts outputs!
 
+> **Manifest formats**: In addition to `package.json`, pkgroll also supports `package.yaml` (pnpm-style). If both `package.yaml` and `package.json` exist, `package.yaml` is preferred. The returned `packageJsonPath` in internal APIs will point to whichever file was used.
+
 ### Features
 - ✅ `package.json#exports` to define entry-points
 - ✅ Dependency externalization

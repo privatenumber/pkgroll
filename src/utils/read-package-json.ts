@@ -33,7 +33,7 @@ export const readPackageJson = async (directoryPath: string) => {
 			throw new Error(`Failed to parse ${formatPath(packageJsonPath)}: ${(error as Error).message}`);
 		}
 	} else {
-		throw new Error(`package.json not found nor package.yaml found in: ${directoryPath}`);
+		throw new Error(`package.json not found at: ${packageJsonPath} (also checked for package.yaml)`);
 	}
 
 	return {

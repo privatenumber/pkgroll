@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { version } from '../package.json';
-import { readPackageJson } from './utils/read-package-json.js';
+import { readPackage } from './utils/read-package.js';
 import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.js';
 import { getAliases } from './utils/parse-package-json/get-aliases.js';
 import { normalizePath } from './utils/normalize-path.js';
@@ -155,7 +155,7 @@ if (tsconfigTarget) {
 }
 
 (async () => {
-	const { packageJson } = await readPackageJson(cwd);
+	const { packageJson } = await readPackage(cwd);
 	const buildEntryPoints = await getBuildEntryPoints(srcDistPairs, packageJson, argv.flags.input);
 
 	for (const entryPoint of buildEntryPoints) {

@@ -5,7 +5,7 @@ import { fsExists } from './fs-exists.js';
 import { formatPath } from './log.js';
 import { parse as yamlParse } from 'yaml';
 
-export const readPackageJson = async (directoryPath: string) => {
+export const readPackage = async (directoryPath: string) => {
 	const packageYamlPath = path.join(directoryPath, 'package.yaml');
 	const packageJsonPath = path.join(directoryPath, 'package.json');
 

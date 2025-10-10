@@ -5,6 +5,31 @@ import type { PackageJson, TsConfigJson } from 'type-fest';
 
 export const createPackageJson = (packageJson: PackageJson) => JSON.stringify(packageJson);
 export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify(tsconfigJson);
+export const createPackageYaml = (packageJson: PackageJson) => {
+	const lines: string[] = [];
+	for (const [key, value] of Object.entries(packageJson)) {
+		if (value === undefined) continue;
+		if (Array.isArray(value)) {
+			lines.push(`${key}:`);
+			for (const item of value) lines.push(`  - ${item}`);
+		} else if (value && typeof value === 'object') {
+			lines.push(`${key}:`);
+			for (const [k2, v2] of Object.entries(value as any)) {
+				if (v2 && typeof v2 === 'object' && !Array.isArray(v2)) {
+					lines.push(`  ${k2}:`);
+					for (const [k3, v3] of Object.entries(v2 as any)) {
+						lines.push(`    ${k3}: ${v3}`);
+					}
+				} else {
+					lines.push(`  ${k2}: ${v2}`);
+				}
+			}
+		} else {
+			lines.push(`${key}: ${value}`);
+		}
+	}
+	return lines.join('\n') + '\n';
+};
 
 export const installTypeScript: FileTree = {
 	'node_modules/typescript': ({ symlink }) => symlink(path.resolve('node_modules/typescript'), 'dir'),

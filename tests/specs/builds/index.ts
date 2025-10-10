@@ -20,5 +20,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./sourcemap.js'), nodePath);
 		runTestSuite(import('./typescript.js'), nodePath);
 		runTestSuite(import('./clean-dist.js'), nodePath);
+		runTestSuite(import('./package-yaml.js'), nodePath);
 	});
 });

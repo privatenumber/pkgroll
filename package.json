@@ -75,7 +75,7 @@
 		"react": "^19.1.1",
 		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
 		"tsx": "^4.20.3",
-		"type-fest": "^4.41.0",
+		"type-fest": "^5.0.1",
 		"typescript": "^5.8.3"
 	}
 }

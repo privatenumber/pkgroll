@@ -88,8 +88,8 @@ importers:
         specifier: ^19.1.1
         version: 19.1.1
       rollup-plugin-dts:
-        specifier: 6.2.1
-        version: 6.2.1(rollup@4.46.2)(typescript@5.8.3)
+        specifier: github:privatenumber/rollup-plugin-dts#npm/master
+        version: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/65095db3269e4293a0d91bf079ba4e69ca3e78ac(rollup@4.46.2)(typescript@5.8.3)
       tsx:
         specifier: ^4.20.3
         version: 4.20.3
@@ -2097,6 +2097,9 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
+  magic-string@0.30.19:
+    resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
+
   manten@1.5.0:
     resolution: {integrity: sha512-Cdw/Sd3vbq8Y8qUT+YaxTzYMDZQn1kjOUfqD6NwzXTdLWJtIjEoXr0DuaHyb9YkU+567V/TIvj5il5/P5pV9zA==}
 
@@ -2556,8 +2559,9 @@ packages:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
     hasBin: true
 
-  rollup-plugin-dts@6.2.1:
-    resolution: {integrity: sha512-sR3CxYUl7i2CHa0O7bA45mCrgADyAQ0tVtGSqi3yvH28M+eg1+g5d7kQ9hLvEz5dorK3XVsH5L2jwHLQf72DzA==}
+  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/65095db3269e4293a0d91bf079ba4e69ca3e78ac:
+    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/65095db3269e4293a0d91bf079ba4e69ca3e78ac}
+    version: 6.2.3
     engines: {node: '>=16'}
     peerDependencies:
       rollup: ^3.29.4 || ^4
@@ -5150,6 +5154,10 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  magic-string@0.30.19:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+
   manten@1.5.0:
     dependencies:
       expect: 29.7.0
@@ -5793,9 +5801,9 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
-  rollup-plugin-dts@6.2.1(rollup@4.46.2)(typescript@5.8.3):
+  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/65095db3269e4293a0d91bf079ba4e69ca3e78ac(rollup@4.46.2)(typescript@5.8.3):
     dependencies:
-      magic-string: 0.30.17
+      magic-string: 0.30.19
       rollup: 4.46.2
       typescript: 5.8.3
     optionalDependencies:

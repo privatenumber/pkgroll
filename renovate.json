@@ -1,0 +1,88 @@
+// https://docs.renovatebot.com/configuration-options/
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+	"extends": [
+		// Enables sensible defaults for most project types
+		"config:recommended",
+
+		// Groups all minor/patch updates into a single PR
+		"group:allNonMajor",
+
+		// This enables smart 'feat'/'fix' types, overriding the
+		// conservative 'chore' default from config:recommended
+		":semanticCommits"
+	],
+
+	// This section forces Renovate to always pin GitHub Actions to a specific commit hash
+	// for maximum build reproducibility. It automatically adds a comment with the
+	// original version tag, e.g., uses: actions/checkout@a1b2c3d4... # v4.1.1
+	"github-actions": {
+		"pinDigests": true
+	},
+
+	// When updating a version range (e.g., "^1.2.3"), bump the version in-place
+	// to "^1.3.0" rather than replacing the range ("1.3.0"). This is a best practice
+	// when using a lockfile.
+	"rangeStrategy": "bump",
+
+	"packageRules": [
+		{
+			// This is the main rule for ALL non-major updates (both npm and GitHub Actions).
+			// It sets the schedule and automerge policy, providing a full week for review.
+			"description": "Schedule and automerge all non-major updates on Fridays",
+			"matchUpdateTypes": [
+				"minor",
+				"patch",
+				"digest"
+			],
+			// PR Creation: Fri 6 AM - 7 AM JST (Thursday 21:00-22:00 UTC)
+			"schedule": [
+				"after 9pm and before 10pm on Thursday"
+			],
+			"automerge": true,
+			// Automerge: The *following* Friday 5 AM - 6 AM JST (Thursday 20:00-21:00 UTC)
+			"automergeSchedule": [
+				"after 8pm and before 9pm on Thursday"
+			]
+		},
+		{
+			// This rule handles ALL GitHub Action updates (pinning and version bumps).
+			// It assigns them to a separate group and sets their commit type to 'ci'.
+			"description": "Group GitHub Actions and set commit type to 'ci'",
+			"matchManagers": [
+				"github-actions"
+			],
+			"groupName": "github-actions",
+			"semanticCommitType": "ci",
+			"semanticCommitScope": "github-actions"
+		},
+		{
+			// Specifically enable updates for the "packageManager" field in package.json,
+			// used for managing the pnpm version via Corepack.
+			"description": "Enable pnpm packageManager updates",
+			"matchManagers": [
+				"npm"
+			],
+			"matchDepTypes": [
+				"packageManager"
+			],
+			"enabled": true
+		}
+	],
+
+	// Regenerate the pnpm-lock.yaml file weekly to pull in the latest transitive
+	// dependencies. This PR is kept separate from other updates and is automerged.
+	"lockFileMaintenance": {
+		"enabled": true,
+		"automerge": true,
+		// Automerge: Fri 5 AM - 6 AM JST (Thursday 20:00-21:00 UTC)
+		"automergeSchedule": [
+			"after 8pm and before 9pm on Thursday"
+		],
+		// PR Creation: Fri 6 AM - 7 AM JST (Thursday 21:00-22:00 UTC)
+		"schedule": [
+			"after 9pm and before 10pm on Thursday"
+		]
+	}
+}

@@ -79,6 +79,9 @@ npm install --save-dev pkgroll
 
 	Paths that start with `./dist/` are automatically mapped to files in the `./src/` directory.
 
+> [!TIP]
+> In addition to `package.json`, pkgroll also supports [pnpm's `package.yaml`](https://pnpm.io/package_json#:~:text=In%20addition%20to%20the%20traditional%20package.json%20format%2C%20pnpm%20also%20supports%20package.json5%20(via%20json5)%20and%20package.yaml%20(via%20js%2Dyaml).).
+
 3. Package roll!
 	```sh
 	npm run build # or npx pkgroll

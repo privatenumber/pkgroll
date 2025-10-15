@@ -2,9 +2,11 @@ import path from 'node:path';
 import outdent from 'outdent';
 import type { FileTree } from 'fs-fixture';
 import type { PackageJson, TsConfigJson } from 'type-fest';
+import { stringify as yamlStringify } from 'yaml';
 
 export const createPackageJson = (packageJson: PackageJson) => JSON.stringify(packageJson);
 export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify(tsconfigJson);
+export const createPackageYaml = (packageJson: PackageJson) => yamlStringify(packageJson);
 
 export const installTypeScript: FileTree = {
 	'node_modules/typescript': ({ symlink }) => symlink(path.resolve('node_modules/typescript'), 'dir'),

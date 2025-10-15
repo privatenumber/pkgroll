@@ -48,7 +48,8 @@
 		"esbuild": "^0.25.8",
 		"magic-string": "^0.30.17",
 		"rollup": "^4.46.2",
-		"rollup-pluginutils": "^2.8.2"
+		"rollup-pluginutils": "^2.8.2",
+		"yaml": "^2.8.1"
 	},
 	"peerDependencies": {
 		"typescript": "^4.1 || ^5.0"

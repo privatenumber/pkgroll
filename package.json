@@ -70,13 +70,13 @@
 		"get-node": "^15.0.4",
 		"get-tsconfig": "^4.10.1",
 		"kolorist": "^1.8.0",
-		"lintroll": "^1.20.1",
+		"lintroll": "^1.23.1",
 		"manten": "^1.5.0",
 		"outdent": "^0.8.0",
 		"react": "^19.1.1",
-		"rollup-plugin-dts": "6.2.1",
+		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
 		"tsx": "^4.20.3",
-		"type-fest": "^4.41.0",
+		"type-fest": "^5.0.1",
 		"typescript": "^5.8.3"
 	}
 }

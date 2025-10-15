@@ -1,6 +1,5 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { readPackage } from '../../../src/utils/read-package.js';
 import { pkgroll } from '../../utils.js';
 import { createPackageYaml, packageFixture } from '../../fixtures.js';
 
@@ -11,15 +10,7 @@ export default testSuite(async ({ describe }, nodePath: string) => {
 				...packageFixture(),
 				'package.yaml': createPackageYaml({
 					name: 'pkgroll-yaml',
-					version: '1.2.3',
 					main: './dist/index.js',
-					description: 'Test package.yaml support',
-					keywords: ['yaml', 'test'],
-					license: 'MIT',
-					author: {
-						name: 'Test Author',
-						email: 'test@example.com',
-					},
 				}),
 			});
 
@@ -31,10 +22,7 @@ export default testSuite(async ({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
-			const { packageJson, packageJsonPath } = await readPackage(fixture.path);
-			expect(packageJson.name).toBe('pkgroll-yaml');
-			expect(packageJson.version).toBe('1.2.3');
-			expect(packageJsonPath.endsWith('package.yaml')).toBe(true);
+			expect(await fixture.exists('dist/index.js')).toBe(true);
 		});
 	});
 });

@@ -1,16 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { PackageJson } from 'type-fest';
+import { parse as yamlParse } from 'yaml';
 import { fsExists } from './fs-exists.js';
 import { formatPath } from './log.js';
-import { parse as yamlParse } from 'yaml';
 
 export const readPackage = async (directoryPath: string) => {
 	const packageYamlPath = path.join(directoryPath, 'package.yaml');
 	const packageJsonPath = path.join(directoryPath, 'package.json');
 
 	let packagePath: string;
-	let packageObj: PackageJson;
+	let packageObject: PackageJson;
 
 	if (await fsExists(packageYamlPath)) {
 		packagePath = packageYamlPath;
@@ -18,7 +18,7 @@ export const readPackage = async (directoryPath: string) => {
 		const packageYamlString = await fs.promises.readFile(packageYamlPath, 'utf8');
 
 		try {
-			packageObj = yamlParse(packageYamlString);
+			packageObject = yamlParse(packageYamlString);
 		} catch (error) {
 			throw new Error(`Failed to parse ${formatPath(packageYamlPath)}: ${(error as Error).message}`);
 		}
@@ -28,7 +28,7 @@ export const readPackage = async (directoryPath: string) => {
 		const packageJsonString = await fs.promises.readFile(packageJsonPath, 'utf8');
 
 		try {
-			packageObj = JSON.parse(packageJsonString);
+			packageObject = JSON.parse(packageJsonString);
 		} catch (error) {
 			throw new Error(`Failed to parse ${formatPath(packageJsonPath)}: ${(error as Error).message}`);
 		}
@@ -37,7 +37,7 @@ export const readPackage = async (directoryPath: string) => {
 	}
 
 	return {
-		packageJson: packageObj,
+		packageJson: packageObject,
 		packageJsonPath: packagePath,
 	};
 };

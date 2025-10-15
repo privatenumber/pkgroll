@@ -1,6 +1,6 @@
 import { testSuite, expect } from 'manten';
-import { readPackage } from '../../../src/utils/read-package.js';
 import { createFixture } from 'fs-fixture';
+import { readPackage } from '../../../src/utils/read-package.js';
 import { pkgroll } from '../../utils.js';
 import { createPackageYaml, packageFixture } from '../../fixtures.js';
 

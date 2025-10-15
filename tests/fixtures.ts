@@ -8,10 +8,10 @@ export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify
 export const createPackageYaml = (packageJson: PackageJson) => {
 	const lines: string[] = [];
 	for (const [key, value] of Object.entries(packageJson)) {
-		if (value === undefined) continue;
+		if (value === undefined) { continue; }
 		if (Array.isArray(value)) {
 			lines.push(`${key}:`);
-			for (const item of value) lines.push(`  - ${item}`);
+			for (const item of value) { lines.push(`  - ${item}`); }
 		} else if (value && typeof value === 'object') {
 			lines.push(`${key}:`);
 			for (const [k2, v2] of Object.entries(value as any)) {
@@ -28,7 +28,7 @@ export const createPackageYaml = (packageJson: PackageJson) => {
 			lines.push(`${key}: ${value}`);
 		}
 	}
-	return lines.join('\n') + '\n';
+	return `${lines.join('\n')}\n`;
 };
 
 export const installTypeScript: FileTree = {

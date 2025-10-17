@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { Plugin } from 'rollup';
+import { slash } from '../../utils/normalize-path.js';
 
 const PREFIX = '\0natives:';
 
@@ -75,9 +76,9 @@ export const nativeModules = (
 			}
 
 			// Generate the require path relative to the final bundle directory
-			const relativePath = `./${path.relative(distDirectory, destinationPath)}`;
+			const relativePath = `./${slash(path.relative(distDirectory, destinationPath))}`;
 
-			return `export default require("${relativePath.replaceAll('\\', '/')}");`;
+			return `export default require("${relativePath}");`;
 		},
 
 		generateBundle: async () => {

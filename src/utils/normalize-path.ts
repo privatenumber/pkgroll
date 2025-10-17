@@ -1,5 +1,8 @@
 import path from 'node:path';
 
+// Convert Windows backslashes to forward slashes
+export const slash = (p: string) => p.replaceAll('\\', '/');
+
 export const normalizePath = (
 	filePath: string,
 	isDirectory?: boolean,

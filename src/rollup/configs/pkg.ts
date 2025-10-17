@@ -15,6 +15,7 @@ import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
 import { nativeModules } from '../plugins/native-modules.js';
+import { externalPkgImports } from '../plugins/external-pkg-imports.js';
 import type { Options, Output } from '../types.js';
 import type { EntryPointValid } from '../../utils/get-build-entry-points/types.js';
 import { cjsAnnotateExports } from '../plugins/cjs-annotate-exports.js';
@@ -56,6 +57,7 @@ export const getPkgConfig = (
 			alias({
 				entries: aliases,
 			}),
+			externalPkgImports(),
 			nodeResolve({
 				extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 				exportConditions: options.exportCondition,

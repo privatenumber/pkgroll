@@ -22,8 +22,10 @@ export type BinaryOutput = Output<SourcePackageJson> & {
 	type: 'binary';
 };
 
-export type ExportMapOutput = Output<SourcePackageJson> & {
-	type: 'exportmap';
+export type PackageMapType = 'exports' | 'imports';
+
+export type PackageMapOutput = Output<SourcePackageJson> & {
+	type: PackageMapType;
 	conditions: string[];
 };
 
@@ -33,7 +35,7 @@ export type LegacyOutput = Output<OutputSource> & {
 	isExecutable?: boolean;
 };
 
-export type BuildOutput = BinaryOutput | ExportMapOutput | LegacyOutput;
+export type BuildOutput = BinaryOutput | PackageMapOutput | LegacyOutput;
 
 export type EntryPointValid<T extends BuildOutput = BuildOutput> = {
 	sourcePath: string;

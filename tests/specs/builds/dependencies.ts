@@ -227,7 +227,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 
 		test('imports map - node', async () => {
 			await using fixture = await createFixture(fixtureDependencyImportsMap);
-
 			const pkgrollProcess = await pkgroll(['--export-condition=node'], {
 				cwd: fixture.path,
 				nodePath,

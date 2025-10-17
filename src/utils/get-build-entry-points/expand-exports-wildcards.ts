@@ -48,9 +48,9 @@ export const expandBuildOutputWildcards = async (
 	const expandedResults = await Promise.all(
 		buildOutputs.map(async (output) => {
 			if (
-				// Only process exports wildcards (not main/module/types/bin/cli)
+				// Only process exports/imports wildcards (not main/module/types/bin/cli)
 				typeof output.source === 'string'
-				|| output.source.path[0] !== 'exports'
+				|| (output.source.path[0] !== 'exports' && output.source.path[0] !== 'imports')
 
 				// Skip non-wildcard entries
 				|| !output.outputPath.includes('*')

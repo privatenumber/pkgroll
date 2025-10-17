@@ -1,66 +1,76 @@
 import type { PackageJson } from 'type-fest';
 import { normalizePath } from '../normalize-path.js';
-import type { PackageType, BuildOutput, ObjectPath } from './types.js';
+import type {
+	PackageType, BuildOutput, ObjectPath, PackageMapType,
+} from './types.js';
 import { getFileType, isPath } from './utils.js';
 
 const getConditions = (
 	fromPath: ObjectPath,
 ) => fromPath.slice(1).filter(part => (typeof part === 'string' && part[0] !== '.')) as string[];
 
-const parseExportsMap = (
-	exportMap: PackageJson['exports'],
+const parsePackageMap = (
+	packageMap: PackageJson['exports'] | PackageJson['imports'],
 	packageType: PackageType,
-	packagePath: ObjectPath = ['exports'],
+	mapType: PackageMapType,
+	packagePath: ObjectPath = [mapType],
 ): BuildOutput[] => {
-	if (!exportMap) {
+	if (!packageMap) {
 		return [];
 	}
 
-	if (typeof exportMap === 'string') {
+	if (typeof packageMap === 'string') {
 		return [{
 			source: {
 				type: 'package.json',
 				path: [...packagePath],
 			},
-			type: 'exportmap',
+			type: mapType,
 			conditions: [],
-			format: getFileType(exportMap) || packageType,
-			outputPath: normalizePath(exportMap),
+			format: getFileType(packageMap) || packageType,
+			outputPath: normalizePath(packageMap),
 		}];
 	}
 
-	if (Array.isArray(exportMap)) {
-		return exportMap.flatMap(
-			(exportPath, index) => {
+	if (Array.isArray(packageMap)) {
+		return packageMap.flatMap(
+			(mapPath, index) => {
 				const from = [...packagePath, index];
 				return (
-					typeof exportPath === 'string'
+					typeof mapPath === 'string'
 						? (
-							isPath(exportPath)
+							isPath(mapPath)
 								? {
 									source: {
 										type: 'package.json',
 										path: [...from],
 									},
-									type: 'exportmap',
+									type: mapType,
 									conditions: getConditions(from),
-									format: getFileType(exportPath) || packageType,
-									outputPath: normalizePath(exportPath),
+									format: getFileType(mapPath) || packageType,
+									outputPath: normalizePath(mapPath),
 								}
 								: []
 						)
-						: parseExportsMap(exportPath, packageType, from)
+						: parsePackageMap(mapPath, packageType, mapType, from)
 				);
 			},
 		);
 	}
 
-	return Object.entries(exportMap).flatMap(([key, value]) => {
+	const isImports = mapType === 'imports' && packagePath.length === 1;
+	return Object.entries(packageMap).flatMap(([key, value]) => {
+		// For imports, only process # imports at the top level
+		// Nested keys are export conditions (node, default, etc.)
+		if (isImports && key[0] !== '#') {
+			return [];
+		}
+
 		const from = [...packagePath, key];
 		if (typeof value === 'string') {
 			const conditions = getConditions(from);
 			const baseEntry = {
-				type: 'exportmap' as const,
+				type: mapType,
 				source: {
 					type: 'package.json' as const,
 					path: from,
@@ -82,7 +92,7 @@ const parseExportsMap = (
 			};
 		}
 
-		return parseExportsMap(value, packageType, from);
+		return parsePackageMap(value, packageType, mapType, from);
 	});
 };
 
@@ -162,10 +172,13 @@ export const getPkgEntryPoints = (
 	}
 
 	if (packageJson.exports) {
-		const exportMap = parseExportsMap(packageJson.exports, packageType);
-		for (const exportEntry of exportMap) {
-			pkgEntryPoints.push(exportEntry);
-		}
+		const exportMap = parsePackageMap(packageJson.exports, packageType, 'exports');
+		pkgEntryPoints.push(...exportMap);
+	}
+
+	if (packageJson.imports) {
+		const importEntries = parsePackageMap(packageJson.imports, packageType, 'imports');
+		pkgEntryPoints.push(...importEntries);
 	}
 
 	return pkgEntryPoints;

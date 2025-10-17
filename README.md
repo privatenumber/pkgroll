@@ -114,6 +114,22 @@ This automatically bundles all matching source files. For example:
 > [!IMPORTANT]
 > Wildcard patterns must include a file extension (e.g., `.mjs`, `.cjs`)
 
+#### Subpath Imports
+
+_Pkgroll_ supports building entry-points defined in [`package.json#imports` (Node.js subpath imports)](https://nodejs.org/api/packages.html#subpath-imports), including conditional imports:
+
+```json
+{
+    "imports": {
+        "#my-pkg": "./dist/index.js",
+        "#env": {
+            "node": "./dist/env.node.js",
+            "default": "./dist/env.browser.js"
+        }
+    }
+}
+```
+
 ### Output formats
 _Pkgroll_ detects the format for each entry-point based on the file extension or the `package.json` property it's placed in, using the [same lookup logic as Node.js](https://nodejs.org/api/packages.html#determining-module-system).
 
@@ -170,9 +186,6 @@ When generating type declarations (`.d.ts` files), this also bundles and tree-sh
 You can configure aliases using the [import map](https://nodejs.org/api/packages.html#imports) in `package.json#imports`.
 
 In Node.js, import mappings must start with `#` to indicate an internal [subpath import](https://nodejs.org/api/packages.html#subpath-imports). However, _Pkgroll_ allows defining aliases **without** the `#` prefix.
-
-> [!NOTE]
-> While Node.js supports conditional imports (e.g., different paths for Node.js vs. browsers), _Pkgroll_ does not.
 
 Example:
 

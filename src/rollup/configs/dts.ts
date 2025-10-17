@@ -3,6 +3,7 @@ import type { TsConfigResult } from 'get-tsconfig';
 import { nodeBuiltins } from '../plugins/node-builtins.js';
 import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
+import { externalPkgImports } from '../plugins/external-pkg-imports.js';
 import type { Options, Output } from '../types.js';
 
 export const getDtsConfig = async (
@@ -24,6 +25,7 @@ export const getDtsConfig = async (
 		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
+			externalPkgImports(),
 			nodeBuiltins(options),
 			...(
 				tsconfig

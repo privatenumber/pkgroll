@@ -1,6 +1,6 @@
 import path from 'node:path/posix';
 import { fsExists } from '../fs-exists.js';
-import type { SrcDistPair } from '../../types.js';
+import type { SrcDistPairInput } from '../../types.js';
 import type { BuildOutput, EntryPoint } from './types.js';
 
 const tryExtensions = async (
@@ -31,7 +31,7 @@ const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[
 
 export const getSourcePath = async (
 	exportEntry: BuildOutput,
-	srcdist: SrcDistPair,
+	srcdist: SrcDistPairInput,
 ): Promise<EntryPoint> => {
 	const { outputPath } = exportEntry;
 	const distExtension = distExtensions.find(extension => outputPath.endsWith(extension));

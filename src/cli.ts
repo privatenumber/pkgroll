@@ -13,7 +13,7 @@ import { log, formatPath } from './utils/log.js';
 import { cleanDist } from './utils/clean-dist.js';
 import { prettyPath } from './utils/property-needs-quotes.js';
 import type { EntryPointValid } from './utils/get-build-entry-points/types.js';
-import type { SrcDistPair } from './types.js';
+import type { SrcDistPairInput } from './types.js';
 import { entrySymbol } from './rollup/types.js';
 import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-outputs.js';
 
@@ -125,7 +125,7 @@ const argv = cli({
 
 const cwd = process.cwd();
 
-const srcDistPairs: SrcDistPair[] = [];
+const srcDistPairs: SrcDistPairInput[] = [];
 
 if (argv.flags.srcdist.length > 0) {
 	for (const srcDist of argv.flags.srcdist) {

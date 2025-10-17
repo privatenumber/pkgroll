@@ -1,5 +1,5 @@
 import type { PackageJson } from 'type-fest';
-import type { SrcDistPair } from '../../types.js';
+import type { SrcDistPairInput } from '../../types.js';
 import { applyPublishConfig } from './apply-publish-config.js';
 import { getPkgEntryPoints } from './get-pkg-entry-points.js';
 import type { CliEntry } from './cli-input.js';
@@ -9,7 +9,7 @@ import { getSourcePath } from './get-source-path.js';
 import { expandBuildOutputWildcards } from './expand-exports-wildcards.js';
 
 export const getBuildEntryPoints = async (
-	srcdist: SrcDistPair[],
+	srcdist: SrcDistPairInput[],
 	packageJson: PackageJson,
 	cliInputs: CliEntry[],
 ): Promise<EntryPoint[]> => {

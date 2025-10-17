@@ -1,8 +1,11 @@
 export type AliasMap = { [alias: string]: string };
 
-export type SrcDistPair = {
+export type SrcDistPairInput = {
 	src: string;
 	dist: string;
 	srcResolved: string;
-	distPrefix?: string;
+};
+
+export type SrcDistPair = SrcDistPairInput & {
+	distPrefix: string;
 };

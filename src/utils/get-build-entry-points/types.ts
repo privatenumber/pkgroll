@@ -1,4 +1,4 @@
-import type { SrcDistPair } from '../../types';
+import type { SrcDistPairInput } from '../../types';
 
 export type PackageType = 'module' | 'commonjs';
 
@@ -41,7 +41,7 @@ export type EntryPointValid<T extends BuildOutput = BuildOutput> = {
 	sourcePath: string;
 	srcExtension: string;
 	distExtension: string;
-	srcdist: SrcDistPair;
+	srcdist: SrcDistPairInput;
 	exportEntry: T;
 	inputNames?: string[];
 };

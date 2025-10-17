@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { SrcDistPair } from '../../types.js';
+import type { SrcDistPairInput } from '../../types.js';
 import { getDirectoryFiles } from '../get-directory-files.js';
 import type { BuildOutput, EntryPointError } from './types.js';
 
@@ -42,7 +42,7 @@ const extractWildcardMatch = (
 
 export const expandBuildOutputWildcards = async (
 	buildOutputs: BuildOutput[],
-	srcdistPairs: SrcDistPair[],
+	srcdistPairs: SrcDistPairInput[],
 ): Promise<(BuildOutput | EntryPointError<BuildOutput>)[]> => {
 	const sortedByDistLength = Array.from(srcdistPairs).sort((a, b) => b.dist.length - a.dist.length);
 	const expandedResults = await Promise.all(

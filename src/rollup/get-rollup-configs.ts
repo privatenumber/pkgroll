@@ -1,6 +1,6 @@
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
-import type { AliasMap, SrcDistPair } from '../types.js';
+import type { AliasMap, SrcDistPair, SrcDistPairInput } from '../types.js';
 import type { EntryPointValid } from '../utils/get-build-entry-points/types.js';
 import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
 import { normalizePath } from '../utils/normalize-path.js';
@@ -35,28 +35,50 @@ const getCommonPath = (paths: string[]): string => {
 };
 
 export const getRollupConfigs = async (
-	srcdistPairs: SrcDistPair[],
+	srcdistPairsInput: SrcDistPairInput[],
 	entryPoints: EntryPointValid[],
 	flags: Options,
 	aliases: AliasMap,
 	packageJson: PackageJson,
 	tsconfig: TsConfigResult | null,
 ) => {
-	const distDirectory = normalizePath(getCommonPath(srcdistPairs.map(({ dist }) => dist)), true);
+	/**
+	 * Calculate shared dist directory for Rollup's `dir` option.
+	 *
+	 * When multiple src:dist pairs exist (e.g., src:dist-a, lib:dist-b):
+	 * - sharedDistDirectory = common path (e.g., "" for root, or "dist/" if both under dist/)
+	 * - distPrefix = relative path from shared to specific dist (e.g., "dist-a/", "dist-b/")
+	 *
+	 * Rollup output config uses:
+	 * - `dir: sharedDistDirectory` - where Rollup writes files
+	 * - `entryFileNames: [name].js` - includes distPrefix in [name]
+	 * - `chunkFileNames: ${distPrefix}[name]-[hash].js` - shared chunks go to first dist
+	 *
+	 * Example: dist-a/index.js and dist-b/utils.js both output to root with prefixes.
+	 */
+	const sharedDistDirectory = normalizePath(
+		getCommonPath(srcdistPairsInput.map(({ dist }) => dist)),
+		true,
+	);
 
-	for (const srcdistPair of srcdistPairs) {
-		srcdistPair.distPrefix = srcdistPair.dist.slice(distDirectory.length);
+	// Add distPrefix to each pair for Rollup path patterns
+	// This mutates the input objects and changes their type from Input → configured
+	for (const srcdistPair of srcdistPairsInput) {
+		(srcdistPair as SrcDistPair).distPrefix = srcdistPair.dist.slice(sharedDistDirectory.length);
 	}
+	const srcdistPairs = srcdistPairsInput as SrcDistPair[];
 
 	const configs: RollupConfigs = Object.create(null);
 
 	for (const entry of entryPoints) {
 		const {
-			sourcePath, srcdist, srcExtension, distExtension, exportEntry,
+			sourcePath, srcExtension, distExtension, exportEntry,
 		} = entry;
+		// Cast srcdist to SrcDistPair since distPrefix was added above
+		const srcdist = entry.srcdist as SrcDistPair;
 
 		const inputName = (
-			srcdist.distPrefix! + sourcePath.slice(srcdist.srcResolved.length, -srcExtension.length)
+			srcdist.distPrefix + sourcePath.slice(srcdist.srcResolved.length, -srcExtension.length)
 		);
 		entry.inputNames = [inputName];
 
@@ -79,9 +101,9 @@ export const getRollupConfigs = async (
 				outputs[distExtension][entrySymbol].inputNames!.push(inputName);
 			} else {
 				const outputOptions: OutputWithOptions = {
-					dir: distDirectory,
+					dir: sharedDistDirectory,
 					entryFileNames: `[name]${distExtension}`,
-					chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
+					chunkFileNames: `${srcdist.distPrefix}[name]-[hash]${distExtension}`,
 					exports: 'auto',
 					format: 'esm',
 					[entrySymbol]: entry,
@@ -120,7 +142,7 @@ export const getRollupConfigs = async (
 			outputs[key][entrySymbol].inputNames!.push(inputName);
 		} else {
 			const outputOptions: OutputWithOptions = {
-				dir: distDirectory,
+				dir: sharedDistDirectory,
 				exports: 'auto',
 				format: exportEntry.format,
 				sourcemap: flags.sourcemap,
@@ -131,7 +153,7 @@ export const getRollupConfigs = async (
 				 * includes the specific subdirectories they belong to, but the shared
 				 * chunks don't and will be placed in the first dist directory.
 				 */
-				chunkFileNames: `${srcdist.distPrefix!}[name]-[hash]${distExtension}`,
+				chunkFileNames: `${srcdist.distPrefix}[name]-[hash]${distExtension}`,
 				[entrySymbol]: entry,
 			};
 

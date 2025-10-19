@@ -6,446 +6,759 @@ import { pkgroll } from '../../utils.js';
 import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.js';
 
 export default testSuite(({ describe }, nodePath: string) => {
-	describe('imports as build targets', async ({ test }) => {
-		test('basic # import', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						'#utils': './dist/utils.js',
-					},
-					exports: './dist/index.js',
-				}),
-				src: {
-					'utils.ts': 'export const helper = () => "util";',
-					'index.ts': 'export { helper } from "#utils";',
-				},
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-				import { helper } from "test-pkg";
-				console.log(helper());
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Verify dist file contains externalized # import
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
-			expect(distContent).toMatch('#utils');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('util');
-		});
-
-		test('conditional # import', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						'#env': {
-							node: './dist/env-node.js',
-							default: './dist/env-browser.js',
-						},
-					},
-					exports: './dist/index.js',
-				}),
-				src: {
-					'env-node.ts': 'export const platform = "node";',
-					'env-browser.ts': 'export const platform = "browser";',
-					'index.ts': 'export { platform } from "#env";',
-				},
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-				import { platform } from "test-pkg";
-				console.log(platform);
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Verify dist file contains externalized # import
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
-			expect(distContent).toMatch('#env');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('node');
-		});
-
-		test('non-# import is skipped', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						// @ts-expect-error - Testing non-# import (not spec-compliant but we handle it)
-						'my-alias': './src/internal.js',
-					},
-					exports: './dist/index.js',
-				}),
-				src: {
-					'index.ts': 'export const value = 456;',
-					'internal.js': 'export const internal = true;',
-				},
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-				import { value } from "test-pkg";
-				console.log(value);
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Only exports should be built, not non-# imports
-			const indexExists = await fixture.exists(`${packagePath}/dist/index.js`);
-			expect(indexExists).toBe(true);
-
-			// internal.js shouldn't be in dist (it's an alias, not a build target)
-			const internalExists = await fixture.exists(`${packagePath}/dist/internal.js`);
-			expect(internalExists).toBe(false);
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('456');
-		});
-
-		test('wildcard # import', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						'#components/*': './dist/components/*.js',
-					},
-					exports: './dist/index.js',
-				}),
-				src: {
-					components: {
-						'button.ts': 'export const Button = "button";',
-						'input.ts': 'export const Input = "input";',
-					},
-					'index.ts': outdent`
-					export { Button } from "#components/button";
-					export { Input } from "#components/input";
-					`,
-				},
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-				import { Button, Input } from "test-pkg";
-				console.log(Button + Input);
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Verify dist file contains externalized # imports
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
-			expect(distContent).toMatch('#components/button');
-			expect(distContent).toMatch('#components/input');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('buttoninput');
-		});
-
-		test('mixed # and non-# imports - only # are built', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						'#valid': './dist/valid.js',
-						// @ts-expect-error - Testing non-# import (not spec-compliant)
-						'invalid-alias': './src/invalid.js',
-					},
-					exports: './dist/index.js',
-				}),
-				src: {
-					'valid.ts': 'export const valid = "works";',
-					'invalid.js': 'export const invalid = "skipped";',
-					'index.ts': 'export { valid } from "#valid";',
-				},
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-				import { valid } from "test-pkg";
-				console.log(valid);
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Valid # import should be built
-			const validExists = await fixture.exists(`${packagePath}/dist/valid.js`);
-			expect(validExists).toBe(true);
-
-			// Non-# import should not be built
-			const invalidExists = await fixture.exists(`${packagePath}/dist/invalid.js`);
-			expect(invalidExists).toBe(false);
-
-			// Verify dist file contains externalized # import
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
-			expect(distContent).toMatch('#valid');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('works');
-		});
-
-		test('nested condition keys (node, default) are processed despite not starting with #', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						'#platform': {
-							node: './dist/node.js',
-							default: './dist/browser.js',
-						},
-					},
-					exports: './dist/index.js',
-				}),
-				src: {
-					'node.ts': 'export const env = "node";',
-					'browser.ts': 'export const env = "browser";',
-					'index.ts': 'export { env } from "#platform";',
-				},
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-				import { env } from "test-pkg";
-				console.log(env);
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Both condition files should be built
-			const nodeExists = await fixture.exists(`${packagePath}/dist/node.js`);
-			expect(nodeExists).toBe(true);
-
-			const browserExists = await fixture.exists(`${packagePath}/dist/browser.js`);
-			expect(browserExists).toBe(true);
-
-			// Verify dist file contains externalized # import
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
-			expect(distContent).toMatch('#platform');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('node');
-		});
-
-		test('types with # imports are externalized', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					imports: {
-						'#utils': './dist/utils.d.ts',
-					},
-					exports: './dist/index.d.ts',
-				}),
-				src: {
-					'utils.ts': 'export const helper = (): string => "util";',
-					'index.ts': 'export { helper } from "#utils";',
-				},
-				...installTypeScript,
-			};
-
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				// Consumer TypeScript file that uses the package
-				'consumer.ts': outdent`
-					import { helper } from "test-pkg";
-					const result: string = helper();
-				`,
-				'tsconfig.json': createTsconfigJson({
-					compilerOptions: {
-						strict: true,
-						module: 'preserve',
-					},
-				}),
-			});
-
-			// Build the package
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Verify .d.ts contains externalized # import (not inlined)
-			const dtsContent = await fixture.readFile(`${packagePath}/dist/index.d.ts`, 'utf8');
-			expect(dtsContent).toMatch('#utils');
-
-			// Type-check the consumer to ensure types resolve correctly
-			const typeCheck = await execa('tsc', ['--noEmit'], {
-				cwd: fixture.path,
-				reject: false,
-			});
-			expect(typeCheck.exitCode).toBe(0);
-		});
-
-		test('monorepo hoisted dependencies - # imports from dependencies are not externalized', async () => {
-			// Monorepo structure:
-			// packages/my-package/
-			// node_modules/hoisted-dep/ (hoisted dependency)
-			const packagePath = 'packages/my-package';
-			const hoistedDepPath = 'node_modules/hoisted-dep';
-			await using fixture = await createFixture({
-				[packagePath]: {
-					'package.json': createPackageJson({
-						name: 'my-package',
-						type: 'module',
-						imports: {
-							'#internal': './dist/internal.js',
-						},
-						exports: './dist/index.js',
-					}),
-					src: {
-						'internal.ts': 'export const internal = "internal";',
-						'index.ts': outdent`
-						import { internal } from "#internal";
-						import { hoisted } from "hoisted-dep";
-						export { internal, hoisted };
-						`,
-					},
-				},
-				[hoistedDepPath]: {
-					'package.json': createPackageJson({
-						name: 'hoisted-dep',
-						type: 'module',
-						imports: {
-							'#dep-internal': './dep-internal.js',
-						},
-						exports: './index.js',
-					}),
-					'index.js': 'export { depInternal as hoisted } from "#dep-internal";',
-					'dep-internal.js': 'export const depInternal = "hoisted";',
-				},
-				'load-pkg.mjs': outdent`
-				import { internal, hoisted } from "./packages/my-package/dist/index.js";
-				console.log(internal + hoisted);
-				`,
-			});
-
-			// Build the package from packages/my-package
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// Verify my-package dist contains externalized # import (from own package)
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
-			expect(distContent).toMatch('#internal');
-
-			// Dependency's # imports should be bundled (not externalized)
-			// because hoisted-dep is in node_modules
-			expect(distContent).not.toMatch('#dep-internal');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('internalhoisted');
-		});
-
-		test('node_modules substring in source path should not prevent # import externalization', async () => {
-			// Edge case: source directory name contains "node_modules" substring
-			// e.g., src/node_modules/file.ts
-			// This should still externalize # imports (it's not a real dependency)
-			const packagePath = 'node_modules/test-pkg';
-			await using fixture = await createFixture({
-				[packagePath]: {
+	describe('imports as build targets', async ({ describe }) => {
+		describe('basic imports', ({ test }) => {
+			test('simple # import', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
 					'package.json': createPackageJson({
 						name: 'test-pkg',
 						type: 'module',
 						imports: {
-							'#internal': './dist/node_modules_backup/internal.js',
+							'#utils': './dist/utils.js',
 						},
-						exports: './dist/node_modules_backup/index.js',
+						exports: './dist/index.js',
 					}),
 					src: {
-						node_modules_backup: {
-							'helper.ts': 'export const value = "backup";',
-							'internal.ts': 'export { value as internal } from "./helper.js";',
-							'index.ts': 'export { internal } from "#internal";',
+						'utils.ts': 'export const helper = () => "util";',
+						'index.ts': 'export { helper } from "#utils";',
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { helper } from "test-pkg";
+					console.log(helper());
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(distContent).toMatch('#utils');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('util');
+			});
+
+			test('conditional # import (node/default)', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#env': {
+								node: './dist/env-node.js',
+								default: './dist/env-browser.js',
+							},
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						'env-node.ts': 'export const platform = "node";',
+						'env-browser.ts': 'export const platform = "browser";',
+						'index.ts': 'export { platform } from "#env";',
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { platform } from "test-pkg";
+					console.log(platform);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(distContent).toMatch('#env');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('node');
+			});
+
+			test('types with # imports are externalized', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#utils': './dist/utils.d.ts',
+						},
+						exports: './dist/index.d.ts',
+					}),
+					src: {
+						'utils.ts': 'export const helper = (): string => "util";',
+						'index.ts': 'export { helper } from "#utils";',
+					},
+					...installTypeScript,
+				};
+
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'consumer.ts': outdent`
+						import { helper } from "test-pkg";
+						const result: string = helper();
+					`,
+					'tsconfig.json': createTsconfigJson({
+						compilerOptions: {
+							strict: true,
+							module: 'preserve',
+						},
+					}),
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const dtsContent = await fixture.readFile(`${packagePath}/dist/index.d.ts`, 'utf8');
+				expect(dtsContent).toMatch('#utils');
+
+				const typeCheck = await execa('tsc', ['--noEmit'], {
+					cwd: fixture.path,
+					reject: false,
+				});
+				expect(typeCheck.exitCode).toBe(0);
+			});
+		});
+
+		describe('wildcard imports - directory patterns', ({ test }) => {
+			test('simple directory wildcard', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#components/*': './dist/components/*.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						components: {
+							'button.ts': 'export const Button = "button";',
+							'input.ts': 'export const Input = "input";',
+						},
+						'index.ts': outdent`
+						export { Button } from "#components/button";
+						export { Input } from "#components/input";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { Button, Input } from "test-pkg";
+					console.log(Button + Input);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(distContent).toMatch('#components/button');
+				expect(distContent).toMatch('#components/input');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('buttoninput');
+			});
+
+			test('root-level wildcard', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#./*': './*.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						'helper-a.ts': 'export const helperA = "a";',
+						'helper-b.ts': 'export const helperB = "b";',
+						'index.ts': outdent`
+						export { helperA } from "#./dist/helper-a";
+						export { helperB } from "#./dist/helper-b";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { helperA, helperB } from "test-pkg";
+					console.log(helperA + helperB);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toContain('');
+
+				expect(await fixture.exists(`${packagePath}/dist/index.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/helper-a.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/helper-b.js`)).toBe(true);
+
+				const indexContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(indexContent).toMatch('#./dist/helper-a');
+				expect(indexContent).toMatch('#./dist/helper-b');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('ab');
+			});
+
+			test('nested directory paths', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#lib/*': './dist/lib/*.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						lib: {
+							'module.ts': 'export const value = "value";',
+							'utils/string/format.ts': 'export const format = (s: string) => s;',
+							'nested/deep/path/index.ts': 'export const deep = "deep";',
+						},
+						'index.ts': outdent`
+						export { value } from "#lib/module";
+						export { format } from "#lib/utils/string/format";
+						export { deep } from "#lib/nested/deep/path/index";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { value, format, deep } from "test-pkg";
+					console.log(value + format("test") + deep);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				expect(await fixture.exists(`${packagePath}/dist/lib/module.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/lib/utils/string/format.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/lib/nested/deep/path/index.js`)).toBe(true);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('valuetestdeep');
+			});
+
+			test('path with constant suffix', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#features/*/handler': './dist/features/*/handler.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						features: {
+							'auth/handler.ts': 'export const auth = "auth";',
+							'billing/nested/handler.ts': 'export const billing = "billing";',
+						},
+						'index.ts': outdent`
+						export { auth } from "#features/auth/handler";
+						export { billing } from "#features/billing/nested/handler";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { auth, billing } from "test-pkg";
+					console.log(auth + billing);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				expect(await fixture.exists(`${packagePath}/dist/features/auth/handler.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/features/billing/nested/handler.js`)).toBe(true);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('authbilling');
+			});
+		});
+
+		describe('wildcard imports - filename patterns', ({ test }) => {
+			test('filename prefix', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#utils/*': './dist/utils/helper-*.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						utils: {
+							'helper-foo.ts': 'export const foo = "foo";',
+							'helper-bar.ts': 'export const bar = "bar";',
+							'ignored.ts': 'export const ignored = "ignored";',
+						},
+						'index.ts': outdent`
+						export { foo } from "#utils/foo";
+						export { bar } from "#utils/bar";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { foo, bar } from "test-pkg";
+					console.log(foo + bar);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				expect(await fixture.exists(`${packagePath}/dist/utils/helper-foo.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/utils/helper-bar.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/utils/ignored.js`)).toBe(false);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('foobar');
+			});
+
+			test('filename suffix', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#libs/*': './dist/libs/*-lib.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						libs: {
+							'foo-lib.ts': 'export const foo = "foo";',
+							'bar-lib.ts': 'export const bar = "bar";',
+							'ignored.ts': 'export const ignored = "ignored";',
+						},
+						'index.ts': outdent`
+						export { foo } from "#libs/foo";
+						export { bar } from "#libs/bar";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { foo, bar } from "test-pkg";
+					console.log(foo + bar);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				expect(await fixture.exists(`${packagePath}/dist/libs/foo-lib.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/libs/bar-lib.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/libs/ignored.js`)).toBe(false);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('foobar');
+			});
+
+			test('filename prefix and suffix', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#components/*': './dist/components/ui.*.component.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						components: {
+							'ui.button.component.ts': 'export const Button = "button";',
+							'ui.input.component.ts': 'export const Input = "input";',
+							'ignored.ts': 'export const ignored = "ignored";',
+						},
+						'index.ts': outdent`
+						export { Button } from "#components/button";
+						export { Input } from "#components/input";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { Button, Input } from "test-pkg";
+					console.log(Button + Input);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				expect(await fixture.exists(`${packagePath}/dist/components/ui.button.component.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/components/ui.input.component.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/components/ignored.js`)).toBe(false);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('buttoninput');
+			});
+		});
+
+		describe('wildcard imports - multiple wildcards', ({ test }) => {
+			test('validates all wildcards capture same value', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#features/*': './dist/*/*/handler.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						'auth/auth/handler.ts': 'export const auth = "auth";',
+						'api/api/handler.ts': 'export const api = "api";',
+						'mismatched/other/handler.ts': 'export const other = "other";',
+						'index.ts': outdent`
+						export { auth } from "#features/auth";
+						export { api } from "#features/api";
+						`,
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { auth, api } from "test-pkg";
+					console.log(auth + api);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				expect(await fixture.exists(`${packagePath}/dist/auth/auth/handler.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/api/api/handler.js`)).toBe(true);
+				expect(await fixture.exists(`${packagePath}/dist/mismatched/other/handler.js`)).toBe(false);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('authapi');
+			});
+		});
+
+		describe('non-# import handling', ({ test }) => {
+			test('non-# imports are skipped', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							// @ts-expect-error - Testing non-# import (not spec-compliant but we handle it)
+							'my-alias': './src/internal.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						'index.ts': 'export const value = 456;',
+						'internal.js': 'export const internal = true;',
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { value } from "test-pkg";
+					console.log(value);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const indexExists = await fixture.exists(`${packagePath}/dist/index.js`);
+				expect(indexExists).toBe(true);
+
+				const internalExists = await fixture.exists(`${packagePath}/dist/internal.js`);
+				expect(internalExists).toBe(false);
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('456');
+			});
+
+			test('mixed # and non-# imports - only # are built', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#valid': './dist/valid.js',
+							// @ts-expect-error - Testing non-# import (not spec-compliant)
+							'invalid-alias': './src/invalid.js',
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						'valid.ts': 'export const valid = "works";',
+						'invalid.js': 'export const invalid = "skipped";',
+						'index.ts': 'export { valid } from "#valid";',
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { valid } from "test-pkg";
+					console.log(valid);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const validExists = await fixture.exists(`${packagePath}/dist/valid.js`);
+				expect(validExists).toBe(true);
+
+				const invalidExists = await fixture.exists(`${packagePath}/dist/invalid.js`);
+				expect(invalidExists).toBe(false);
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(distContent).toMatch('#valid');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('works');
+			});
+
+			test('condition keys (node/default) processed despite not starting with #', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				const consumedPackage = {
+					'package.json': createPackageJson({
+						name: 'test-pkg',
+						type: 'module',
+						imports: {
+							'#platform': {
+								node: './dist/node.js',
+								default: './dist/browser.js',
+							},
+						},
+						exports: './dist/index.js',
+					}),
+					src: {
+						'node.ts': 'export const env = "node";',
+						'browser.ts': 'export const env = "browser";',
+						'index.ts': 'export { env } from "#platform";',
+					},
+				};
+				await using fixture = await createFixture({
+					[packagePath]: consumedPackage,
+					'load-pkg.mjs': outdent`
+					import { env } from "test-pkg";
+					console.log(env);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const nodeExists = await fixture.exists(`${packagePath}/dist/node.js`);
+				expect(nodeExists).toBe(true);
+
+				const browserExists = await fixture.exists(`${packagePath}/dist/browser.js`);
+				expect(browserExists).toBe(true);
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(distContent).toMatch('#platform');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('node');
+			});
+		});
+
+		describe('edge cases', ({ test }) => {
+			test('monorepo: hoisted dependencies - # imports from dependencies are bundled', async () => {
+				const packagePath = 'packages/my-package';
+				const hoistedDepPath = 'node_modules/hoisted-dep';
+				await using fixture = await createFixture({
+					[packagePath]: {
+						'package.json': createPackageJson({
+							name: 'my-package',
+							type: 'module',
+							imports: {
+								'#internal': './dist/internal.js',
+							},
+							exports: './dist/index.js',
+						}),
+						src: {
+							'internal.ts': 'export const internal = "internal";',
+							'index.ts': outdent`
+							import { internal } from "#internal";
+							import { hoisted } from "hoisted-dep";
+							export { internal, hoisted };
+							`,
 						},
 					},
-				},
-				'load-pkg.mjs': outdent`
-				import { internal } from "test-pkg";
-				console.log(internal);
-				`,
+					[hoistedDepPath]: {
+						'package.json': createPackageJson({
+							name: 'hoisted-dep',
+							type: 'module',
+							imports: {
+								'#dep-internal': './dep-internal.js',
+							},
+							exports: './index.js',
+						}),
+						'index.js': 'export { depInternal as hoisted } from "#dep-internal";',
+						'dep-internal.js': 'export const depInternal = "hoisted";',
+					},
+					'load-pkg.mjs': outdent`
+					import { internal, hoisted } from "./packages/my-package/dist/index.js";
+					console.log(internal + hoisted);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
+				expect(distContent).toMatch('#internal');
+				expect(distContent).not.toMatch('#dep-internal');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('internalhoisted');
 			});
 
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
+			test('node_modules substring in path should not prevent # import externalization', async () => {
+				const packagePath = 'node_modules/test-pkg';
+				await using fixture = await createFixture({
+					[packagePath]: {
+						'package.json': createPackageJson({
+							name: 'test-pkg',
+							type: 'module',
+							imports: {
+								'#internal': './dist/node_modules_backup/internal.js',
+							},
+							exports: './dist/node_modules_backup/index.js',
+						}),
+						src: {
+							node_modules_backup: {
+								'helper.ts': 'export const value = "backup";',
+								'internal.ts': 'export { value as internal } from "./helper.js";',
+								'index.ts': 'export { internal } from "#internal";',
+							},
+						},
+					},
+					'load-pkg.mjs': outdent`
+					import { internal } from "test-pkg";
+					console.log(internal);
+					`,
+				});
+
+				const result = await pkgroll([], {
+					cwd: fixture.getPath(packagePath),
+					nodePath,
+				});
+
+				expect(result.exitCode).toBe(0);
+				expect(result.stderr).toBe('');
+
+				const distContent = await fixture.readFile(`${packagePath}/dist/node_modules_backup/index.js`, 'utf8');
+				expect(distContent).toMatch('#internal');
+
+				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+				expect(stdout).toBe('backup');
 			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// # import should be externalized (importer is from src/, not from node_modules/)
-			const distContent = await fixture.readFile(`${packagePath}/dist/node_modules_backup/index.js`, 'utf8');
-			expect(distContent).toMatch('#internal');
-
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('backup');
 		});
 	});
 });

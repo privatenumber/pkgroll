@@ -15,6 +15,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./wildcard-exports.js'), nodePath);
 		runTestSuite(import('./package-imports.js'), nodePath);
 		runTestSuite(import('./imports.js'), nodePath);
+		runTestSuite(import('./imports-alias.js'), nodePath);
 		runTestSuite(import('./bin.js'), nodePath);
 		runTestSuite(import('./dependencies.js'), nodePath);
 		runTestSuite(import('./real-dependencies.js'), nodePath);

@@ -1,12 +1,77 @@
 import { testSuite, expect } from 'manten';
-import { createFixture } from 'fs-fixture';
+import { outdent } from 'outdent';
+import { createFixture, type FileTree } from 'fs-fixture';
 import { pkgroll } from '../../utils.js';
 import {
 	installTypeScript,
 	createPackageJson,
-	fixtureDependencyExportsMap,
-	fixtureDependencyImportsMap,
 } from '../../fixtures.js';
+
+const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
+	'package.json': createPackageJson({
+		main: entryFile,
+	}),
+
+	src: {
+		'dependency-exports-require.js': outdent`
+		console.log(require('dependency-exports-dual'));
+		`,
+
+		'dependency-exports-import.js': outdent`
+		import esm from 'dependency-exports-dual';
+
+		console.log(esm);
+		`,
+	},
+
+	'node_modules/dependency-exports-dual': {
+		'file.js': outdent`
+		module.exports = 'cjs';
+		`,
+		'file.mjs': outdent`
+		export default 'esm';
+		`,
+		'package.json': createPackageJson({
+			name: 'dependency-exports-dual',
+			exports: {
+				require: './file.js',
+				import: './file.mjs',
+			},
+		}),
+	},
+});
+
+const fixtureDependencyImportsMap: FileTree = {
+	'package.json': createPackageJson({
+		main: './dist/dependency-imports-map.js',
+	}),
+
+	'src/dependency-imports-map.js': outdent`
+	import value from 'dependency-imports-map';
+	console.log(value);
+	`,
+
+	'node_modules/dependency-imports-map': {
+		'default.js': outdent`
+		module.exports = 'default';
+		`,
+		'index.js': outdent`
+		console.log(require('#conditional'));
+		`,
+		'node.js': outdent`
+		module.exports = 'node';
+		`,
+		'package.json': createPackageJson({
+			name: 'dependency-exports-dual',
+			imports: {
+				'#conditional': {
+					node: './node.js',
+					default: './default.js',
+				},
+			},
+		}),
+	},
+};
 
 export default testSuite(({ describe }, nodePath: string) => {
 	describe('dependencies', ({ test }) => {

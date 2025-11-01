@@ -30,6 +30,9 @@ export default testSuite(({ describe }, nodePath: string) => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
 					main: './dist/index.mjs',
+					devDependencies: {
+						dep: '*',
+					},
 				}),
 				'src/index.mjs': 'import "dep"',
 				'node_modules/dep': {

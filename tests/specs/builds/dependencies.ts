@@ -10,6 +10,9 @@ import {
 const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
 	'package.json': createPackageJson({
 		main: entryFile,
+		devDependencies: {
+			'dependency-exports-dual': '*',
+		},
 	}),
 
 	src: {
@@ -44,6 +47,9 @@ const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
 const fixtureDependencyImportsMap: FileTree = {
 	'package.json': createPackageJson({
 		main: './dist/dependency-imports-map.js',
+		devDependencies: {
+			'dependency-imports-map': '*',
+		},
 	}),
 
 	'src/dependency-imports-map.js': outdent`

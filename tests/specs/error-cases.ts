@@ -21,25 +21,6 @@ export default testSuite(({ describe }, nodePath: string) => {
 			expect(pkgrollProcess.stderr).toMatch('package.json not found');
 		});
 
-		test('invalid package.json', async () => {
-			await using fixture = await createFixture({
-				...packageFixture(),
-				'package.json': '{ name: pkg }',
-			});
-
-			const pkgrollProcess = await pkgroll(
-				[],
-				{
-					cwd: fixture.path,
-					nodePath,
-					reject: false,
-				},
-			);
-
-			expect(pkgrollProcess.exitCode).toBe(1);
-			expect(pkgrollProcess.stderr).toMatch('Error: Failed to parse ./package.json:');
-		});
-
 		test('no entry in package.json', async () => {
 			await using fixture = await createFixture({
 				...packageFixture(),

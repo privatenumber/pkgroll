@@ -58,8 +58,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       cleye:
-        specifier: ^1.3.4
-        version: 1.3.4
+        specifier: ^2.0.0
+        version: 2.0.0
       estree-walker:
         specifier: ^3.0.3
         version: 3.0.3
@@ -1270,6 +1270,9 @@ packages:
 
   cleye@1.3.4:
     resolution: {integrity: sha512-Rd6M8ecBDtdYdPR22h6gG37lPqqJ3hSOaplaGwuGYey9xKmEElOvTgupqfyLSlISshroRpVhYjDtW3vwNUNBaQ==}
+
+  cleye@2.0.0:
+    resolution: {integrity: sha512-O4pienLd7x3kzjdhzz0nIEmPuX84I1C1UjLPdMe+0TebP2aTuPoXx15zvLMgSUIn+ZAJJzH9cH4aEVA1bDdmsA==}
 
   cli-progress@3.12.0:
     resolution: {integrity: sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A==}
@@ -2904,6 +2907,9 @@ packages:
   terminal-columns@1.4.1:
     resolution: {integrity: sha512-IKVL/itiMy947XWVv4IHV7a0KQXvKjj4ptbi7Ew9MPMcOLzkiQeyx3Gyvh62hKrfJ0RZc4M1nbhzjNM39Kyujw==}
 
+  terminal-columns@2.0.0:
+    resolution: {integrity: sha512-6IByuUjyNZJXUtwDNm+OIe62zgwwaRbH+WMNTcx05O2G5V9WhvluAAHJY8OvUdwmzMPpqAD/7EUpGdI6ae1aiQ==}
+
   text-decoder@1.2.3:
     resolution: {integrity: sha512-3/o9z3X0X0fTupwsYvR03pJ/DjWuqqrfwBgTQzdWDiQSm9KitAyz/9WqsT2JQW7KV2m+bC2ol/zqpW37NHxLaA==}
 
@@ -2954,6 +2960,9 @@ packages:
 
   type-flag@3.0.0:
     resolution: {integrity: sha512-3YaYwMseXCAhBB14RXW5cRQfJQlEknS6i4C8fCfeUdS3ihG9EdccdR9kt3vP73ZdeTGmPb4bZtkDn5XMIn1DLA==}
+
+  type-flag@4.0.2:
+    resolution: {integrity: sha512-diALGSg9wBpvowixHbIeCJtXNxUKJHUNR8oE67K9zuPkpBe5FMmg+dpevDWmEwGQDmn/RJD3m7szs6Ssdz5A4w==}
 
   typed-array-buffer@1.0.3:
     resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
@@ -4131,6 +4140,11 @@ snapshots:
     dependencies:
       terminal-columns: 1.4.1
       type-flag: 3.0.0
+
+  cleye@2.0.0:
+    dependencies:
+      terminal-columns: 2.0.0
+      type-flag: 4.0.2
 
   cli-progress@3.12.0:
     dependencies:
@@ -6295,6 +6309,8 @@ snapshots:
 
   terminal-columns@1.4.1: {}
 
+  terminal-columns@2.0.0: {}
+
   text-decoder@1.2.3:
     dependencies:
       b4a: 1.6.7
@@ -6352,6 +6368,8 @@ snapshots:
       tagged-tag: 1.0.0
 
   type-flag@3.0.0: {}
+
+  type-flag@4.0.2: {}
 
   typed-array-buffer@1.0.3:
     dependencies:

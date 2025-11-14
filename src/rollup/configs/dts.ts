@@ -1,13 +1,16 @@
 import type { RollupOptions, Plugin } from 'rollup';
 import type { TsConfigResult } from 'get-tsconfig';
+import type { PackageJson } from 'type-fest';
 import { nodeBuiltins } from '../plugins/node-builtins.js';
 import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import { externalPkgImports } from '../plugins/external-pkg-imports.js';
+import { externalizeDependencies } from '../plugins/externalize-dependencies.js';
 import type { Options, Output } from '../types.js';
 
 export const getDtsConfig = async (
 	options: Options,
+	packageJson: PackageJson,
 	tsconfig: TsConfigResult | null,
 ) => {
 	const [dts, ts] = await Promise.all([
@@ -32,6 +35,7 @@ export const getDtsConfig = async (
 					? [resolveTsconfigPaths(tsconfig)]
 					: []
 			),
+			externalizeDependencies(packageJson, true),
 			resolveJsToTs(),
 			dts.default({
 				respectExternal: true,
@@ -59,6 +63,5 @@ export const getDtsConfig = async (
 			}) as Plugin,
 		],
 		output: [] as unknown as Output,
-		external: [] as (string | RegExp)[],
 	} satisfies RollupOptions;
 };

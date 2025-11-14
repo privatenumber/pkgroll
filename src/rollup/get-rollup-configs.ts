@@ -2,7 +2,6 @@ import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { AliasMap, SrcDistPair, SrcDistPairInput } from '../types.js';
 import type { EntryPointValid } from '../utils/get-build-entry-points/types.js';
-import { getExternalDependencies } from '../utils/parse-package-json/get-external-dependencies.js';
 import { normalizePath } from '../utils/normalize-path.js';
 import { type Options, type OutputWithOptions, entrySymbol } from './types.js';
 import { getPkgConfig } from './configs/pkg.js';
@@ -86,8 +85,7 @@ export const getRollupConfigs = async (
 			let config = configs.dts;
 
 			if (!config) {
-				config = await getDtsConfig(flags, tsconfig);
-				config.external = getExternalDependencies(packageJson, aliases, true);
+				config = await getDtsConfig(flags, packageJson, tsconfig);
 				configs.dts = config;
 			}
 
@@ -122,12 +120,12 @@ export const getRollupConfigs = async (
 			const firstDistDirectory = srcdistPairs[0].dist;
 			config = getPkgConfig(
 				flags,
+				packageJson,
 				aliases,
 				entryPoints,
 				tsconfig,
 				firstDistDirectory,
 			);
-			config.external = getExternalDependencies(packageJson, aliases);
 			configs.pkg = config;
 		}
 

@@ -1,5 +1,6 @@
 import type { RollupOptions } from 'rollup';
 import type { TransformOptions } from 'esbuild';
+import type { PackageJson } from 'type-fest';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -16,12 +17,14 @@ import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
 import { nativeModules } from '../plugins/native-modules.js';
 import { externalPkgImports } from '../plugins/external-pkg-imports.js';
+import { externalizeDependencies } from '../plugins/externalize-dependencies.js';
 import type { Options, Output } from '../types.js';
 import type { EntryPointValid } from '../../utils/get-build-entry-points/types.js';
 import { cjsAnnotateExports } from '../plugins/cjs-annotate-exports.js';
 
 export const getPkgConfig = (
 	options: Options,
+	packageJson: PackageJson,
 	aliases: AliasMap,
 	entryPoints: EntryPointValid[],
 	tsconfig: TsConfigResult | null,
@@ -58,6 +61,7 @@ export const getPkgConfig = (
 				entries: aliases,
 			}),
 			externalPkgImports(),
+			externalizeDependencies(packageJson),
 			nodeResolve({
 				extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 				exportConditions: options.exportCondition,
@@ -84,6 +88,5 @@ export const getPkgConfig = (
 			patchBinary(entryPoints),
 		],
 		output: [] as unknown as Output,
-		external: [] as (string | RegExp)[],
 	} satisfies RollupOptions;
 };

@@ -18,6 +18,7 @@ export default testSuite(({ describe }, nodePath: string) => {
 		runTestSuite(import('./imports-alias.js'), nodePath);
 		runTestSuite(import('./bin.js'), nodePath);
 		runTestSuite(import('./dependencies.js'), nodePath);
+		runTestSuite(import('./externalize-dependencies.js'), nodePath);
 		runTestSuite(import('./real-dependencies.js'), nodePath);
 		runTestSuite(import('./src-dist.js'), nodePath);
 		runTestSuite(import('./sourcemap.js'), nodePath);

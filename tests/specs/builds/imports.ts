@@ -567,11 +567,12 @@ export default testSuite(({ describe }, nodePath: string) => {
 				});
 
 				expect(result.exitCode).toBe(0);
-				expect(result.stderr).toBe('');
+				expect(result.stderr).toMatch(/^"hoisted-dep" imported by ".*\/packages\/my-package\/src\/index\.ts" but not declared in package\.json\. Will be bundled to prevent failure at runtime\.$/);
 
 				const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
 				expect(distContent).toMatch('#internal');
 				expect(distContent).not.toMatch('#dep-internal');
+				expect(distContent).not.toMatch('hoisted-dep');
 
 				const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
 				expect(stdout).toBe('internalhoisted');

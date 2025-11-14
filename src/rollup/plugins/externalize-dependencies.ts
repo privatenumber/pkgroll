@@ -1,6 +1,8 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import type { Plugin } from 'rollup';
 import type { PackageJson } from 'type-fest';
+import { slash } from '../../utils/normalize-path.js';
 
 const typesPrefix = '@types/';
 
@@ -34,8 +36,6 @@ const getOriginalPackageName = (typePackageName: string): string => {
 
 	return originalName;
 };
-
-const dependencyTypes = ['peerDependencies', 'dependencies', 'optionalDependencies'] as const;
 
 /**
  * Extract package name from import specifier
@@ -76,72 +76,137 @@ const isBareSpecifier = (id: string): boolean => {
 	);
 };
 
+const dependencyTypes = ['peerDependencies', 'dependencies', 'optionalDependencies'] as const;
+
 /**
- * Externalize dependencies listed in package.json
- * (dependencies, peerDependencies, optionalDependencies)
+ * Check if an importer path is from node_modules
+ */
+const isFromNodeModules = (importerPath: string, cwd: string): boolean => {
+	const relativePath = slash(path.relative(cwd, importerPath));
+	const pathSegments = relativePath.split('/');
+	return pathSegments.includes('node_modules');
+};
+
+/**
+ * Externalize dependencies based on package.json classification.
+ *
+ * - dependencies/peerDependencies/optionalDependencies: externalized
+ * - devDependencies ONLY: error if not resolvable, bundle if resolvable
+ * - unlisted: warn and bundle
  */
 export const externalizeDependencies = (
 	packageJson: PackageJson,
-	forTypes = false,
+	pluginOptions?: {
+
+		/**
+		 * Skip warnings for unlisted dependencies.
+		 * Useful for type declaration builds where imports may not match runtime dependencies.
+		 */
+		skipUnlistedWarnings?: boolean;
+
+		/**
+		 * Whether this is for types builds.
+		 * When true, enables @types package warnings.
+		 */
+		forTypes?: boolean;
+	},
 ): Plugin => {
-	const externalDependencies = new Set<string>();
-	const { devDependencies } = packageJson;
+	// Resolve to canonical path to handle Windows 8.3 short paths
+	const cwd = fs.realpathSync.native(process.cwd());
 
+	// Build sets for quick lookup
+	const runtimeDependencies = new Set<string>();
+	const devDeps = new Set<string>(Object.keys(packageJson.devDependencies || {}));
+
+	// External dependencies (always externalized)
 	for (const property of dependencyTypes) {
-		const externalDependenciesObject = packageJson[property];
+		const deps = packageJson[property];
+		if (deps) {
+			for (const packageName of Object.keys(deps)) {
+				runtimeDependencies.add(packageName);
 
-		if (!externalDependenciesObject) {
-			continue;
-		}
-
-		const packageNames = Object.keys(externalDependenciesObject);
-
-		for (const packageName of packageNames) {
-			/**
-			 * "@types/name" is imported in source as "name"
-			 * e.g. '@types/react' is imported as 'react'
-			 *
-			 * This was motivated by @types/estree, which doesn't
-			 * actually have a runtime package. It's a type-only package.
-			 */
-			if (packageName.startsWith(typesPrefix)) {
-				if (forTypes) {
-					const originalPackageName = getOriginalPackageName(packageName);
-					externalDependencies.add(originalPackageName);
+				/**
+				 * "@types/name" packages are imported as "name" in source
+				 * e.g. '@types/react' is imported as 'react'
+				 *
+				 * This was motivated by @types/estree, which doesn't
+				 * actually have a runtime package. It's a type-only package.
+				 */
+				if (packageName.startsWith(typesPrefix)) {
+					runtimeDependencies.add(getOriginalPackageName(packageName));
 				}
-			} else {
-				if (devDependencies && forTypes) {
-					const typePackageName = getAtTypesPackageName(packageName);
-					if (
-						devDependencies[typePackageName]
-						&& !(typePackageName in externalDependenciesObject)
-					) {
-						console.warn(`Recommendation: "${typePackageName}" is externalized because "${packageName}" is in "${property}". Place "${typePackageName}" in "${property}" as well so users don't have missing types.`);
-					}
-				}
-
-				externalDependencies.add(packageName);
 			}
 		}
 	}
 
 	return {
 		name: 'externalize-dependencies',
-		resolveId(id) {
-			// Only check bare specifiers (skip relative/absolute paths)
+		async resolveId(id, importer, options) {
+			// Only process bare specifiers
 			if (!isBareSpecifier(id)) {
 				return null;
 			}
 
-			// Extract the package name (handles subpaths and scoped packages)
+			// Extract package name (handle @scoped/package)
 			const packageName = extractPackageName(id);
 
-			// Check if this package is in external dependencies
-			if (externalDependencies.has(packageName)) {
+			// 1. External dependencies → externalize (always, even from node_modules)
+			if (runtimeDependencies.has(packageName)) {
+				// Check if @types package is in devDependencies while runtime package is externalized
+				// Only warn when building types (not for JS-only builds)
+				if (pluginOptions?.forTypes) {
+					const typePackageName = getAtTypesPackageName(packageName);
+					if (devDeps.has(typePackageName)) {
+						console.warn(
+							`Recommendation: "${typePackageName}" is bundled (devDependencies) but "${packageName}" is externalized. Place "${typePackageName}" in dependencies/peerDependencies as well so users don't have missing types.`,
+						);
+					}
+				}
+
 				return {
 					id,
 					external: true,
 				};
+			}
+
+			// // Only process imports from source (not from node_modules) for dev/unlisted deps
+			// if (importer && isFromNodeModules(importer, cwd)) {
+			// 	return null;
+			// }
+
+			if (devDeps.has(packageName)) {
+				// Check that it's resolvable first
+				const resolved = await this.resolve(id, importer, {
+					...options,
+					skipSelf: true,
+				});
+
+				// If unresolvable, error
+				if (!resolved) {
+					const errorMessage = `Could not resolve "${id}" even though it's declared in package.json. Try re-installing node_modules.`;
+					console.error(errorMessage);
+					throw new Error(errorMessage);
+				}
+
+				// Check if @types package is externalized while runtime package will be bundled
+				// Only warn when building types (not for JS-only builds)
+				if (pluginOptions?.forTypes) {
+					const typePackageName = getAtTypesPackageName(packageName);
+					if (runtimeDependencies.has(typePackageName)) {
+						console.warn(
+							`Recommendation: "${typePackageName}" is externalized but "${packageName}" is bundled (devDependencies). This may cause type mismatches for consumers. Consider moving "${packageName}" to dependencies or "${typePackageName}" to devDependencies.`,
+						);
+					}
+				}
+
+				return resolved;
+			}
+
+			// 3. Not listed → warn and bundle
+			if (importer && !isFromNodeModules(importer, cwd) && !pluginOptions?.skipUnlistedWarnings) {
+				console.warn(
+					`"${packageName}" imported by "${slash(importer)}" but not declared in package.json. Will be bundled to prevent failure at runtime.`,
+				);
 			}
 
 			return null;

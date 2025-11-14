@@ -35,7 +35,10 @@ export const getDtsConfig = async (
 					? [resolveTsconfigPaths(tsconfig)]
 					: []
 			),
-			externalizeDependencies(packageJson, true),
+			externalizeDependencies(packageJson, {
+				skipUnlistedWarnings: true,
+				forTypes: true,
+			}),
 			resolveJsToTs(),
 			dts.default({
 				respectExternal: true,

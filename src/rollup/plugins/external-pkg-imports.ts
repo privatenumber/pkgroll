@@ -1,7 +1,6 @@
-import path from 'node:path';
 import fs from 'node:fs';
 import type { Plugin } from 'rollup';
-import { slash } from '../../utils/normalize-path.js';
+import { isFromNodeModules } from '../../utils/is-from-node-modules.js';
 
 /**
  * Externalize package imports from the current package so Node.js
@@ -18,15 +17,9 @@ export const externalPkgImports = (): Plugin => {
 				return null;
 			}
 
-			if (importer) {
-				// Get path relative to cwd
-				const relativePath = slash(path.relative(cwd, importer));
-				// Check if importer is from a dependency (has /node_modules/ path segment)
-				const pathSegments = relativePath.split('/');
-				if (pathSegments.includes('node_modules')) {
-					// Let Node-resolver handle imports maps from dependencies
-					return null;
-				}
+			if (importer && isFromNodeModules(importer, cwd)) {
+				// Let Node-resolver handle imports maps from dependencies
+				return null;
 			}
 
 			// Import is from current package, externalize it

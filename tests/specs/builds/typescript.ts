@@ -149,6 +149,107 @@ export default testSuite('TypeScript', ({ test, describe }, nodePath: string) =>
 		expect(content).toMatch('"baz"');
 	});
 
+	test('prefer .ts over .js in source code', async () => {
+		// In source code, TypeScript files should be preferred over JavaScript
+		// when both exist for the same import specifier
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				main: './dist/index.js',
+				type: 'module',
+			}),
+
+			src: {
+				'index.ts': 'import { value } from "./file.js"; console.log(value);',
+				// Both files exist, .ts should be preferred
+				'file.ts': 'export const value = "from-typescript";',
+				'file.js': 'export const value = "from-javascript";',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		// Should prefer .ts when both exist in source code
+		expect(content).toMatch('from-typescript');
+		expect(content).not.toMatch('from-javascript');
+	});
+
+	test('prefer .js over .ts in node_modules (esbuild behavior)', async () => {
+		// Tests esbuild's resolution behavior where .js is preferred over .ts
+		// in node_modules to avoid issues with:
+		// 1. Packages that accidentally ship both .js and .ts
+		// 2. Missing or unpublished tsconfig.json
+		//
+		// Resolution order:
+		// - Source code: .ts before .js
+		// - node_modules: .js before .ts
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				main: './dist/index.js',
+				devDependencies: {
+					'pkg-with-both': '*',
+					'pkg-with-only-ts': '*',
+				},
+			}),
+
+			'src/index.ts': `
+			import { fromBoth } from 'pkg-with-both';
+			import { fromTs } from 'pkg-with-only-ts';
+			console.log(fromBoth, fromTs);
+			`,
+
+			node_modules: {
+				'pkg-with-both': {
+					'package.json': createPackageJson({
+						name: 'pkg-with-both',
+						type: 'module',
+						main: './index.js',
+					}),
+					// Entry point imports from a relative file
+					'index.js': 'export { fromBoth } from "./file.js";',
+					// Package accidentally ships both .js and .ts for the same file
+					'file.js': 'export const fromBoth = "compiled-js";',
+					'file.ts': 'export const fromBoth: string = "source-ts";',
+				},
+
+				'pkg-with-only-ts': {
+					'package.json': createPackageJson({
+						name: 'pkg-with-only-ts',
+						type: 'module',
+						main: './index.js',
+					}),
+					'index.js': 'export { fromTs } from "./file.js";',
+					// Package only ships .ts (forgot to compile or .npmignore misconfigured)
+					'file.ts': 'export const fromTs: string = "only-ts";',
+				},
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		// Should prefer .js when both exist in node_modules
+		expect(content).toMatch('compiled-js');
+		expect(content).not.toMatch('source-ts');
+
+		// Should use .ts when only .ts exists in node_modules
+		expect(content).toMatch('only-ts');
+	});
+
 	describe('custom tsconfig.json path', ({ test }) => {
 		test('respects compile target', async () => {
 			await using fixture = await createFixture({

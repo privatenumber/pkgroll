@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import type { Plugin } from 'rollup';
 import type { PackageJson } from 'type-fest';
 import { slash } from '../../utils/normalize-path.js';
+import { isFromNodeModules } from '../../utils/is-from-node-modules.js';
 
 const typesPrefix = '@types/';
 
@@ -77,15 +78,6 @@ const isBareSpecifier = (id: string): boolean => {
 };
 
 const dependencyTypes = ['peerDependencies', 'dependencies', 'optionalDependencies'] as const;
-
-/**
- * Check if an importer path is from node_modules
- */
-const isFromNodeModules = (importerPath: string, cwd: string): boolean => {
-	const relativePath = slash(path.relative(cwd, importerPath));
-	const pathSegments = relativePath.split('/');
-	return pathSegments.includes('node_modules');
-};
 
 /**
  * Externalize dependencies based on package.json classification.

@@ -1,5 +1,6 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import { execaNode } from 'execa';
 import { pkgroll } from '../../utils.js';
 import {
 	installTypeScript,
@@ -395,6 +396,283 @@ export default testSuite('externalize-dependencies plugin', ({ test }, nodePath:
 		const contentTypes = await fixture.readFile('dist/index.d.ts', 'utf8');
 		// eslint types should be externalized (peerDependency)
 		expect(contentTypes).toMatch('eslint');
+	});
+
+	test('add explicit extensions to externalized package imports', async ({ onTestFail }) => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				main: './dist/index.js',
+				dependencies: {
+					'external-pkg': '*',
+				},
+			}),
+			'src/index.ts': `
+			// Import without extension - works in tsx, breaks in Node
+			import { foo } from 'external-pkg/file-without-ext';
+			console.log(foo);
+			`,
+			'node_modules/external-pkg': {
+				'package.json': JSON.stringify({
+					type: 'module',
+					name: 'external-pkg',
+				}),
+				'file-without-ext.js': 'export const foo = \'bar\';',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		onTestFail(() => {
+			console.log('Fixture path:', fixture.path);
+			console.log('Build output:', content);
+		});
+
+		// pkgroll should rewrite import to have explicit .js extension
+		expect(content).toMatch('\'external-pkg/file-without-ext.js\'');
+
+		// Verify it actually runs in Node.js
+		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+			cwd: fixture.path,
+			reject: false,
+		});
+		if (exitCode !== 0) {
+			console.log('Node.js stderr:', runStderr);
+		}
+		expect(exitCode).toBe(0);
+	});
+
+	test('package with exports (no subpaths) - keep original import', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				main: './dist/index.js',
+				dependencies: {
+					'pkg-with-exports': '*',
+				},
+			}),
+			'src/index.ts': `
+			import { foo } from 'pkg-with-exports/file';
+			console.log(foo);
+			`,
+			'node_modules/pkg-with-exports': {
+				'package.json': JSON.stringify({
+					type: 'module',
+					name: 'pkg-with-exports',
+					exports: {
+						import: './index.js',
+						require: './index.cjs',
+					},
+				}),
+				'file.js': 'export const foo = \'bar\';',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		// Should NOT add extension - package has exports (conditions object)
+		expect(content).toMatch('\'pkg-with-exports/file\'');
+	});
+
+	test('package with subpaths exports - defined subpath keeps original', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				main: './dist/index.js',
+				dependencies: {
+					'pkg-with-subpaths': '*',
+				},
+			}),
+			'src/index.ts': `
+			import { foo } from 'pkg-with-subpaths/utils';
+			console.log(foo);
+			`,
+			'node_modules/pkg-with-subpaths': {
+				'package.json': JSON.stringify({
+					type: 'module',
+					name: 'pkg-with-subpaths',
+					exports: {
+						'.': './index.js',
+						'./utils': './utils.js',
+					},
+				}),
+				'utils.js': 'export const foo = \'bar\';',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		// Should NOT add extension - subpath is defined in exports
+		expect(content).toMatch('\'pkg-with-subpaths/utils\'');
+	});
+
+	test('package with subpaths exports - undefined subpath keeps original', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				main: './dist/index.js',
+				dependencies: {
+					'pkg-with-subpaths': '*',
+				},
+			}),
+			'src/index.ts': `
+			import { foo } from 'pkg-with-subpaths/other';
+			console.log(foo);
+			`,
+			'node_modules/pkg-with-subpaths': {
+				'package.json': JSON.stringify({
+					type: 'module',
+					name: 'pkg-with-subpaths',
+					exports: {
+						'.': './index.js',
+						'./utils': './utils.js',
+					},
+				}),
+				'other.js': 'export const foo = \'bar\';',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		// Should NOT add extension - package has exports field (even though subpath not defined)
+		// Node.js will error at runtime if trying to access undefined subpath
+		expect(content).toMatch('\'pkg-with-subpaths/other\'');
+	});
+
+	test('import with double extension (.min.js) resolves correctly', async ({ onTestFail }) => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				main: './dist/index.js',
+				dependencies: {
+					'external-pkg': '*',
+				},
+			}),
+			'src/index.ts': `
+			import lib from 'external-pkg/lib.min';
+			console.log(lib);
+			`,
+			'node_modules/external-pkg': {
+				'package.json': JSON.stringify({
+					type: 'module',
+					name: 'external-pkg',
+				}),
+				'lib.min.js': 'export default \'minified\';',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		onTestFail(() => {
+			console.log('Fixture path:', fixture.path);
+			console.log('Build output:', content);
+		});
+
+		// Should add .js extension to lib.min
+		expect(content).toMatch('\'external-pkg/lib.min.js\'');
+
+		// Verify it actually runs in Node.js
+		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+			cwd: fixture.path,
+			reject: false,
+		});
+		if (exitCode !== 0) {
+			console.log('Node.js stderr:', runStderr);
+		}
+		expect(exitCode).toBe(0);
+	});
+
+	test('directory import resolves to index.js', async ({ onTestFail }) => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				main: './dist/index.js',
+				dependencies: {
+					'external-pkg': '*',
+				},
+			}),
+			'src/index.ts': `
+			import utils from 'external-pkg/utils';
+			console.log(utils);
+			`,
+			'node_modules/external-pkg': {
+				'package.json': JSON.stringify({
+					type: 'module',
+					name: 'external-pkg',
+				}),
+				utils: {
+					'index.js': 'export default \'utils\';',
+				},
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.js', 'utf8');
+
+		onTestFail(() => {
+			console.log('Fixture path:', fixture.path);
+			console.log('Build output:', content);
+		});
+
+		// Should resolve directory to index.js
+		expect(content).toMatch('\'external-pkg/utils/index.js\'');
+
+		// Verify it actually runs in Node.js
+		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+			cwd: fixture.path,
+			reject: false,
+		});
+		if (exitCode !== 0) {
+			console.log('Node.js stderr:', runStderr);
+		}
+		expect(exitCode).toBe(0);
 	});
 
 	test('only warn about @types packages that are actually imported (fixes #49)', async () => {

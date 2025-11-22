@@ -675,6 +675,63 @@ export default testSuite('externalize-dependencies plugin', ({ test }, nodePath:
 		expect(exitCode).toBe(0);
 	});
 
+	test('hoisted dependency without exports gets bundled (not externalized)', async ({ onTestFail }) => {
+		await using fixture = await createFixture({
+			project: {
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.js',
+					dependencies: {
+						'hoisted-dep': '*',
+					},
+				}),
+				'src/index.ts': `
+				// Importing hoisted-dep which is available in node_modules (hoisted from declared-pkg)
+				// Since it's not in package.json, it will be bundled
+				import { util } from 'hoisted-dep/utils';
+				console.log(util);
+				`,
+			},
+			// hoisted-dep is available at top-level (hoisted)
+			'node_modules/hoisted-dep': {
+				'package.json': JSON.stringify({
+					name: 'hoisted-dep',
+					type: 'module',
+				}),
+				'utils.js': 'export const util = "hoisted-util";',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.getPath('project'),
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('project/dist/index.js', 'utf8');
+
+		onTestFail(() => {
+			console.log('Fixture path:', fixture.path);
+			console.log('Build output:', content);
+		});
+
+		// hoisted-dep should be externalized (declared in dependencies)
+		// and should have explicit .js extension added
+		expect(content).toMatch('\'hoisted-dep/utils.js\'');
+
+		// Verify it actually runs in Node.js
+		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+			cwd: fixture.getPath('project'),
+			reject: false,
+		});
+		if (exitCode !== 0) {
+			console.log('Node.js stderr:', runStderr);
+		}
+		expect(exitCode).toBe(0);
+	});
+
 	test('only warn about @types packages that are actually imported (fixes #49)', async () => {
 		await using fixture = await createFixture({
 			'src/index.ts': `

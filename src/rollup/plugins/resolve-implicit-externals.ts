@@ -88,7 +88,7 @@ export const resolveImplicitExternals = (): Plugin => ({
 
 		// If not resolved or not external, skip
 		if (!resolved || !resolved.external) {
-			return null;
+			return resolved;
 		}
 
 		// Find the package in node_modules
@@ -96,7 +96,7 @@ export const resolveImplicitExternals = (): Plugin => ({
 		const packageJsonPath = up(`node_modules/${packageName}/package.json`, { cwd: startDir });
 		if (!packageJsonPath) {
 			// Package not found - let externalizeDependencies handle it
-			return null;
+			return resolved;
 		}
 
 		// Read package.json to check for exports field
@@ -105,7 +105,7 @@ export const resolveImplicitExternals = (): Plugin => ({
 
 		// If package has exports, let Node.js handle resolution
 		if (pkgJson.exports) {
-			return null;
+			return resolved;
 		}
 
 		// No exports - try to resolve with implicit extensions
@@ -114,7 +114,7 @@ export const resolveImplicitExternals = (): Plugin => ({
 
 		if (!resolvedPath) {
 			// File not found - let externalizeDependencies handle it
-			return null;
+			return resolved;
 		}
 
 		// Extract the relative path from package directory
@@ -122,8 +122,8 @@ export const resolveImplicitExternals = (): Plugin => ({
 		const externalPath = `${packageName}/${relativePath}`;
 
 		return {
+			...resolved,
 			id: externalPath,
-			external: true,
 		};
 	},
 });

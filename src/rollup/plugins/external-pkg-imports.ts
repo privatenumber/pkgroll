@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import type { Plugin } from 'rollup';
-import { isFromNodeModules } from '../../utils/is-from-node-modules.js';
+import { isFromNodeModules } from '../../utils/import-specifier.js';
 
 /**
  * Externalize package imports from the current package so Node.js

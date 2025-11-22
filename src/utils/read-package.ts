@@ -17,7 +17,7 @@ const readPackageYaml = async (
 	}
 };
 
-const readPackageJson = async (
+export const readPackageJson = async (
 	packageJsonPath: string,
 ): Promise<PackageJson> => {
 	const packageJsonString = await fs.readFile(packageJsonPath, 'utf8');

@@ -1,9 +1,12 @@
-import path from 'node:path';
 import fs from 'node:fs';
 import type { Plugin } from 'rollup';
 import type { PackageJson } from 'type-fest';
 import { slash } from '../../utils/normalize-path.js';
-import { isFromNodeModules } from '../../utils/is-from-node-modules.js';
+import {
+	parseSpecifier,
+	isBareSpecifier,
+	isFromNodeModules,
+} from '../../utils/import-specifier.js';
 
 const typesPrefix = '@types/';
 
@@ -36,45 +39,6 @@ const getOriginalPackageName = (typePackageName: string): string => {
 	}
 
 	return originalName;
-};
-
-/**
- * Extract package name from import specifier
- * Examples:
- * - 'foo' → 'foo'
- * - 'foo/bar' → 'foo'
- * - '@org/pkg' → '@org/pkg'
- * - '@org/pkg/sub' → '@org/pkg'
- */
-const extractPackageName = (specifier: string): string => {
-	const firstSlash = specifier.indexOf('/');
-	if (firstSlash === -1) {
-		return specifier;
-	}
-
-	if (specifier[0] === '@') {
-		// Scoped package: @org/package[/subpath]
-		const secondSlash = specifier.indexOf('/', firstSlash + 1);
-		return secondSlash === -1
-			? specifier
-			: specifier.slice(0, secondSlash);
-	}
-
-	// Regular package: package[/subpath]
-	return specifier.slice(0, firstSlash);
-};
-
-/**
- * Check if a specifier is a bare specifier (not relative or absolute)
- */
-const isBareSpecifier = (id: string): boolean => {
-	const firstCharacter = id[0];
-	return !(
-		firstCharacter === '.'
-		|| firstCharacter === '/'
-		|| firstCharacter === '#'
-		|| path.isAbsolute(id)
-	);
 };
 
 const dependencyTypes = ['peerDependencies', 'dependencies', 'optionalDependencies'] as const;
@@ -140,7 +104,7 @@ export const externalizeDependencies = (
 			}
 
 			// Extract package name (handle @scoped/package)
-			const packageName = extractPackageName(id);
+			const [packageName] = parseSpecifier(id);
 
 			// 1. External dependencies → externalize (always, even from node_modules)
 			if (runtimeDependencies.has(packageName)) {

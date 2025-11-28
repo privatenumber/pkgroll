@@ -57,13 +57,13 @@ export const getPkgConfig = (
 					? [resolveTsconfigPaths(tsconfig)]
 					: []
 			),
-			resolveJsToTs(),
 			alias({
 				entries: aliases,
 			}),
 			externalPkgImports(),
 			resolveImplicitExternals(),
 			externalizeDependencies(packageJson),
+			resolveJsToTs(),
 			nodeResolve({
 				extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 				exportConditions: options.exportCondition,

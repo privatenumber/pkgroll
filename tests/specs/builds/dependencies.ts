@@ -306,4 +306,31 @@ export default testSuite('dependencies', ({ test }, nodePath: string) => {
 		const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
 		expect(content).toMatch('node');
 	});
+
+	test('should not resolve .js to .ts in externalized dependency', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				main: './dist/index.mjs',
+				dependencies: {
+					dep: '*',
+				},
+			}),
+			'src/index.ts': 'import "dep/file.js";',
+			'node_modules/dep/file.js': 'module.exports.foo = function() {};',
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.mjs', 'utf8');
+
+		// Should import from .js, not .ts
+		expect(content).toMatch("from 'dep/file.js'");
+		expect(content).not.toMatch('file.ts');
+	});
 });

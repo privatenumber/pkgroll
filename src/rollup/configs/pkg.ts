@@ -40,7 +40,7 @@ export const getPkgConfig = (
 
 	const esbuildConfig: TransformOptions = {
 		target: options.target,
-		sourcemap:options.sourcemap,
+		sourcemap: options.sourcemap,
 		tsconfigRaw: tsconfig?.config,
 		define: {
 			...env,

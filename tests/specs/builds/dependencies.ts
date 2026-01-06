@@ -330,7 +330,7 @@ export default testSuite('dependencies', ({ test }, nodePath: string) => {
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');
 
 		// Should import from .js, not .ts
-		expect(content).toMatch("from 'dep/file.js'");
+		expect(content).toMatch("import 'dep/file.js'");
 		expect(content).not.toMatch('file.ts');
 	});
 });

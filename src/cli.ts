@@ -224,14 +224,18 @@ if (tsconfigTarget) {
 			rollupConfigs.map(async (rollupConfig) => {
 				const build = await rollup(rollupConfig);
 
-				return Promise.all(rollupConfig.output.map(
-					(outputOption) => {
-						const inputNames = outputOption[entrySymbol].inputNames!;
-						outputOption.plugins = [filterUnnecessaryOutputs(inputNames)];
+				try {
+					await Promise.all(rollupConfig.output.map(
+						(outputOption) => {
+							const inputNames = outputOption[entrySymbol].inputNames!;
+							outputOption.plugins = [filterUnnecessaryOutputs(inputNames)];
 
-						return build.write(outputOption);
-					},
-				));
+							return build.write(outputOption);
+						},
+					));
+				} finally {
+					await build.close();
+				}
 			}),
 		);
 	}

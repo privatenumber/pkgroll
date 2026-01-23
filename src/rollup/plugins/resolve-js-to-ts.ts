@@ -28,7 +28,12 @@ export const resolveJsToTs = (): Plugin => {
 				// For source code: try .ts first (default behavior)
 				if (!isFromNodeModules(importer)) {
 					const tsId = id.replace(/js(x?)$/, 'ts$1');
-					return this.resolve(tsId, importer, options);
+
+					// skipSelf prevents infinite recursion if .ts doesn't exist
+					return this.resolve(tsId, importer, {
+						...options,
+						skipSelf: true,
+					});
 				}
 
 				// For node_modules: try .js first, only use .ts if .js doesn't exist

@@ -1,21 +1,16 @@
 import type { Plugin, InternalModuleFormat } from 'rollup';
-import { createFilter } from '@rollup/pluginutils';
 import { transform, type TransformOptions, type Format } from 'esbuild';
 
 export const esbuildTransform = (
 	options?: TransformOptions,
-): Plugin => {
-	const filter = createFilter(
-		/\.([cm]?[jt]s|[jt]sx)$/,
-	);
-
-	return {
-		name: 'esbuild-transform',
-		transform: async (code, id) => {
-			if (!filter(id)) {
-				return null;
-			}
-
+): Plugin => ({
+	name: 'esbuild-transform',
+	// Hook filtering added in Rollup 4.38.0
+	transform: {
+		filter: {
+			id: /\.([cm]?[jt]s|[jt]sx)$/,
+		},
+		async handler(code, id) {
 			const result = await transform(code, {
 				...options,
 
@@ -41,8 +36,8 @@ export const esbuildTransform = (
 				map: result.map || null,
 			};
 		},
-	};
-};
+	},
+});
 
 const getEsbuildFormat = (
 	rollupFormat: InternalModuleFormat,

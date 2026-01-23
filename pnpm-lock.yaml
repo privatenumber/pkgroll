@@ -23,9 +23,6 @@ importers:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.3
         version: 16.0.3(rollup@4.53.3)
-      '@rollup/pluginutils':
-        specifier: ^5.3.0
-        version: 5.3.0(rollup@4.53.3)
       cjs-module-lexer:
         specifier: ^2.1.1
         version: 2.1.1

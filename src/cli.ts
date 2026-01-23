@@ -206,16 +206,23 @@ if (tsconfigTarget) {
 				}
 
 				if (event.code === 'BUNDLE_END') {
-					await Promise.all(rollupConfig.output.map(
-						outputOption => event.result.write(outputOption),
-					));
+					try {
+						await Promise.all(rollupConfig.output.map(
+							outputOption => event.result.write(outputOption),
+						));
 
-					const inputFiles = Array.isArray(event.input) ? event.input : Object.values(event.input!);
-					log('Built', ...inputFiles.map(formatPath));
+						const inputFiles = Array.isArray(event.input)
+							? event.input
+							: Object.values(event.input!);
+						log('Built', ...inputFiles.map(formatPath));
+					} finally {
+						await event.result.close();
+					}
 				}
 
 				if (event.code === 'ERROR') {
 					log('Error:', event.error.message);
+					await event.result?.close();
 				}
 			});
 		});

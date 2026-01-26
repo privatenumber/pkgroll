@@ -63,6 +63,11 @@ export const getDtsConfig = async (
 					moduleResolution: ts.default.ModuleResolutionKind.Bundler,
 				},
 				tsconfig: tsconfig?.path,
+
+				// Enable TypeScript declarationMap for .ts inputs when sourcemaps are enabled
+				// This allows the output .d.ts.map to chain back to original .ts sources
+				// Respects either --sourcemap flag or declarationMap in tsconfig
+				sourcemap: Boolean(options.sourcemap || tsconfig?.config.compilerOptions?.declarationMap),
 			}) as Plugin,
 		],
 		output: [] as unknown as Output,

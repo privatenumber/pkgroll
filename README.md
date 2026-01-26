@@ -355,7 +355,7 @@ pkgroll --clean-dist
 ```
 
 ### Source maps
-Pass in the `--sourcemap` flag to emit a source map file:
+Pass in the `--sourcemap` flag to emit source map files for both JavaScript and TypeScript declaration outputs:
 
 ```sh
 pkgroll --sourcemap
@@ -365,6 +365,22 @@ Or to inline them in the distribution files:
 ```sh
 pkgroll --sourcemap=inline
 ```
+
+#### Declaration source maps
+
+For `.d.ts` files specifically, you can also enable source maps via [`declarationMap`](https://www.typescriptlang.org/tsconfig/#declarationMap) in `tsconfig.json`:
+
+```json
+{
+    "compilerOptions": {
+        "declarationMap": true
+    }
+}
+```
+
+This enables "Go to Definition" in IDEs to navigate directly to the original `.ts` source files instead of the bundled `.d.ts` files.
+
+Using `declarationMap` only generates `.d.ts.map` files (not `.js.map`), which is useful if you only need source maps for type definitions.
 
 ## Dev vs Prod config
 

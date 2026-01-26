@@ -104,6 +104,8 @@ export const getRollupConfigs = async (
 					chunkFileNames: `${srcdist.distPrefix}[name]-[hash]${distExtension}`,
 					exports: 'auto',
 					format: 'esm',
+					// .d.ts sourcemaps enabled via --sourcemap flag or declarationMap in tsconfig
+					sourcemap: flags.sourcemap || tsconfig?.config.compilerOptions?.declarationMap,
 					[entrySymbol]: entry,
 				};
 

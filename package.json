@@ -58,6 +58,7 @@
 		}
 	},
 	"devDependencies": {
+		"@jridgewell/trace-mapping": "^0.3.31",
 		"@types/node": "^24.10.0",
 		"@types/react": "^19.2.2",
 		"clean-pkg-json": "^1.3.0",
@@ -73,7 +74,7 @@
 		"manten": "^1.8.0",
 		"outdent": "^0.8.0",
 		"react": "^19.2.0",
-		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
+		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/fix/sourcemap-ts-input",
 		"tsx": "^4.20.6",
 		"type-fest": "^5.2.0",
 		"typescript": "^5.9.3"

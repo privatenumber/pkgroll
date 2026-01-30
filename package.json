@@ -75,7 +75,7 @@
 		"manten": "^1.8.0",
 		"outdent": "^0.8.0",
 		"react": "^19.2.0",
-		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/fix/sourcemap-ts-input",
+		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
 		"tsx": "^4.20.6",
 		"type-fest": "^5.2.0",
 		"typescript": "^5.9.3"

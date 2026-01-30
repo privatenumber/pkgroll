@@ -7,6 +7,7 @@ import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import type { TsConfigResult } from 'get-tsconfig';
+import { importTrace } from 'rollup-plugin-import-trace';
 import type { AliasMap } from '../../types.js';
 import { esbuildTransform, esbuildMinify } from '../plugins/esbuild.js';
 import { nodeBuiltins } from '../plugins/node-builtins.js';
@@ -52,6 +53,7 @@ export const getPkgConfig = (
 		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
+			importTrace(),
 			nodeBuiltins(options),
 			...(
 				tsconfig

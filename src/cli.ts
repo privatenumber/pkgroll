@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
+import { patchErrorWithTrace } from 'rollup-plugin-import-trace';
 import { version } from '../package.json';
 import { readPackage } from './utils/read-package.js';
 import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.js';
@@ -247,6 +248,7 @@ if (tsconfigTarget) {
 		);
 	}
 })().catch((error) => {
-	console.error(error);
+	patchErrorWithTrace(error);
+	console.error('Error:', error instanceof Error ? error.message : String(error));
 	process.exit(1);
 });

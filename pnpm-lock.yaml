@@ -35,6 +35,9 @@ importers:
       rollup:
         specifier: ^4.53.1
         version: 4.53.3
+      rollup-plugin-import-trace:
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.53.3)
       rollup-pluginutils:
         specifier: ^2.8.2
         version: 2.8.2
@@ -2598,6 +2601,18 @@ packages:
     peerDependencies:
       rollup: ^3.29.4 || ^4
       typescript: ^4.5 || ^5.0
+
+  rollup-plugin-import-trace@1.0.0:
+    resolution: {integrity: sha512-byUjwhEc42qnbcTOZ7E0cDDNidkKkN4VwoW5dknA/61F0c60v2l2ktPraUH4+ehhZ/L/yS/Exry/q8gz0hEZOQ==}
+    engines: {node: '>=20.20.0'}
+    peerDependencies:
+      rollup: ^3.0.0 || ^4.0.0
+      vite: ^5.0.0 || ^6.0.0 || ^7.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+      vite:
+        optional: true
 
   rollup-pluginutils@2.8.2:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
@@ -5777,6 +5792,10 @@ snapshots:
       typescript: 5.9.3
     optionalDependencies:
       '@babel/code-frame': 7.28.6
+
+  rollup-plugin-import-trace@1.0.0(rollup@4.53.3):
+    optionalDependencies:
+      rollup: 4.53.3
 
   rollup-pluginutils@2.8.2:
     dependencies:

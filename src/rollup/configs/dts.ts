@@ -1,6 +1,7 @@
 import type { RollupOptions, Plugin } from 'rollup';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { PackageJson } from 'type-fest';
+import { importTrace } from 'rollup-plugin-import-trace';
 import { nodeBuiltins } from '../plugins/node-builtins.js';
 import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
 import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
@@ -28,6 +29,7 @@ export const getDtsConfig = async (
 		input: {} as Record<string, string>,
 		preserveEntrySignatures: 'strict' as const,
 		plugins: [
+			importTrace(),
 			externalPkgImports(),
 			nodeBuiltins(options),
 			...(

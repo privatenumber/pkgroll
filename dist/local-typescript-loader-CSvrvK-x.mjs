@@ -1,0 +1,1 @@
+var c=Object.defineProperty;var t=(r,o)=>c(r,"name",{value:o,configurable:!0});import{createRequire as p}from"node:module";const e=p(import.meta.url),s=t(()=>{const r=process.cwd();try{return e.resolve("typescript",{paths:[r]})}catch{throw new Error(`Could not find \`typescript\` in ${r}`)}},"getLocalTypescriptPath");var a=e(s());export{a as default};

@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { patchErrorWithTrace } from 'rollup-plugin-import-trace';
@@ -155,7 +156,7 @@ if (tsconfigTarget) {
 	argv.flags.target.push(tsconfigTarget);
 }
 
-(async () => {
+const generateRollupConfigs = async () => {
 	const { packageJson } = await readPackage(cwd);
 	const buildEntryPoints = await getBuildEntryPoints(srcDistPairs, packageJson, argv.flags.input);
 
@@ -174,7 +175,7 @@ if (tsconfigTarget) {
 		throw new Error('No entry points found');
 	}
 
-	const rollupConfigs = await getRollupConfigs(
+	return getRollupConfigs(
 		srcDistPairs,
 		validEntryPoints,
 		argv.flags,
@@ -182,7 +183,9 @@ if (tsconfigTarget) {
 		packageJson,
 		tsconfig,
 	);
+};
 
+(async () => {
 	if (argv.flags.cleanDist) {
 		/**
 		 * Typically, something like this would be implemented as a plugin, so it only
@@ -197,37 +200,73 @@ if (tsconfigTarget) {
 	if (argv.flags.watch) {
 		log('Watch initialized');
 
-		rollupConfigs.map(async (rollupConfig) => {
-			const watcher = watch(rollupConfig);
+		let watchers: ReturnType<typeof watch>[] = [];
 
-			watcher.on('event', async (event) => {
-				if (event.code === 'BUNDLE_START') {
-					const inputFiles = Array.isArray(event.input) ? event.input : Object.values(event.input!);
-					log('Building', ...inputFiles.map(formatPath));
-				}
+		const startWatchers = async () => {
+			const rollupConfigs = await generateRollupConfigs();
+			watchers = rollupConfigs.map((rollupConfig) => {
+				const watcher = watch(rollupConfig);
 
-				if (event.code === 'BUNDLE_END') {
-					try {
-						await Promise.all(rollupConfig.output.map(
-							outputOption => event.result.write(outputOption),
-						));
-
+				watcher.on('event', async (event) => {
+					if (event.code === 'BUNDLE_START') {
 						const inputFiles = Array.isArray(event.input)
 							? event.input
 							: Object.values(event.input!);
-						log('Built', ...inputFiles.map(formatPath));
-					} finally {
-						await event.result.close();
+						log('Building', ...inputFiles.map(formatPath));
 					}
-				}
 
-				if (event.code === 'ERROR') {
-					log('Error:', event.error.message);
-					await event.result?.close();
-				}
+					if (event.code === 'BUNDLE_END') {
+						try {
+							await Promise.all(rollupConfig.output.map(
+								outputOption => event.result.write(outputOption),
+							));
+
+							const inputFiles = Array.isArray(event.input)
+								? event.input
+								: Object.values(event.input!);
+							log('Built', ...inputFiles.map(formatPath));
+						} finally {
+							await event.result.close();
+						}
+					}
+
+					if (event.code === 'ERROR') {
+						log('Error:', event.error.message);
+						await event.result?.close();
+					}
+				});
+
+				return watcher;
 			});
+		};
+
+		const closeWatchers = async () => {
+			await Promise.all(watchers.map(watcher => watcher.close()));
+			watchers = [];
+		};
+
+		await startWatchers();
+
+		/**
+		 * Rollup's watcher only rebuilds with the same config — it can't
+		 * pick up new entry points. Using fs.watch to close and restart
+		 * matches how Rollup CLI handles config file changes internally.
+		 */
+		let debounceTimer: ReturnType<typeof setTimeout>;
+		fs.watch(path.join(cwd, 'package.json'), () => {
+			clearTimeout(debounceTimer);
+			debounceTimer = setTimeout(async () => {
+				log('package.json changed, restarting...');
+				try {
+					await closeWatchers();
+					await startWatchers();
+				} catch (error) {
+					log('Error:', (error as Error).message);
+				}
+			}, 100);
 		});
 	} else {
+		const rollupConfigs = await generateRollupConfigs();
 		await Promise.all(
 			rollupConfigs.map(async (rollupConfig) => {
 				const build = await rollup(rollupConfig);

@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import outdent from 'outdent';
 import { pkgroll } from '../../utils.js';
 import {
 	packageFixture,
@@ -309,6 +310,36 @@ export default testSuite('types', ({ test }, nodePath: string) => {
 
 		const utilsDCts = await fixture.readFile('dist/utils.d.cts', 'utf8');
 		expect(utilsDCts).toMatch('declare function sayHello');
+	});
+
+	// https://github.com/privatenumber/pkgroll/issues/79
+	test('nested dotted namespace', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				types: './dist/index.d.ts',
+			}),
+			'src/index.ts': outdent`
+			declare namespace foo.bar {
+				interface A {
+					b: string;
+				}
+			}
+
+			export { foo };
+			`,
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.d.ts', 'utf8');
+		expect(content).toMatch('namespace foo');
 	});
 
 	test('bundles .d.ts', async () => {

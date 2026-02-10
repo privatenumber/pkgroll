@@ -109,6 +109,15 @@ const argv = cli({
 			description: 'Clean dist before bundling',
 			default: false,
 		},
+		license: {
+			type: (flagValue: string) => {
+				if (flagValue === '') {
+					return true;
+				}
+				return flagValue;
+			},
+			description: 'Generate licenses for bundled dependencies. Optionally specify output path (eg. --license, --license=NOTICES.txt)',
+		},
 	},
 
 	help: {

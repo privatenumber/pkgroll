@@ -354,6 +354,31 @@ Clean dist directory before bundling:
 pkgroll --clean-dist
 ```
 
+### License extraction
+Generate a file containing licenses for all bundled dependencies:
+```sh
+pkgroll --license
+```
+
+This collects license information from all `devDependencies` that are bundled into your package and writes them to a LICENSE file. This helps ensure compliance with open-source license requirements.
+
+#### Custom output path
+Specify a custom output file:
+```sh
+pkgroll --license=THIRD-PARTY-LICENSES.txt
+```
+
+#### Auto-detection
+When no path is specified, pkgroll looks for existing LICENSE files (`LICENSE`, `LICENSE.txt`, `LICENSE.md`, `LICENCE`, `LICENCE.txt`, `LICENCE.md`) in your project root. If none exist, it creates a `LICENSE` file.
+
+#### Content placement
+If the LICENSE file already has a `----------- BUNDLED DEPENDENCIES -----------` marker, everything from the marker to the end of the file is replaced with the updated licenses. This preserves your project's license text above the marker.
+
+If no marker is found, the bundled licenses (with the marker) are appended to the end of the file. Subsequent runs will find the marker and replace in-place.
+
+> [!NOTE]
+> License extraction is skipped in watch mode since it's typically only needed for final builds.
+
 ### Source maps
 Pass in the `--sourcemap` flag to emit source map files for both JavaScript and TypeScript declaration outputs:
 

@@ -14,6 +14,7 @@ export type Options = {
 		value: string;
 	}[];
 	sourcemap?: true | 'inline';
+	license?: true | string;
 };
 
 export const entrySymbol = Symbol('entry');

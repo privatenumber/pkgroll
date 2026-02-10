@@ -23,6 +23,7 @@ import { externalizeDependencies } from '../plugins/externalize-dependencies.js'
 import type { Options, Output } from '../types.js';
 import type { EntryPointValid } from '../../utils/get-build-entry-points/types.js';
 import { cjsAnnotateExports } from '../plugins/cjs-annotate-exports.js';
+import { licensePlugin } from '../plugins/license.js';
 
 export const getPkgConfig = (
 	options: Options,
@@ -91,6 +92,11 @@ export const getPkgConfig = (
 					: []
 			),
 			patchBinary(entryPoints),
+			...(
+				options.license
+					? [licensePlugin(options.license)]
+					: []
+			),
 		],
 		output: [] as unknown as Output,
 	} satisfies RollupOptions;

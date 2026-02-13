@@ -1,12 +1,12 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { execa } from 'execa';
 import { outdent } from 'outdent';
-import { pkgroll } from '../../utils.js';
-import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.ts';
 
-export default testSuite('imports as build targets', async ({ describe }, nodePath: string) => {
-	describe('basic imports', ({ test }) => {
+export const imports = (nodePath: string) => describe('imports as build targets', async () => {
+	describe('basic imports', () => {
 		test('simple # import', async () => {
 			const packagePath = 'node_modules/test-pkg';
 			const consumedPackage = {
@@ -140,7 +140,7 @@ export default testSuite('imports as build targets', async ({ describe }, nodePa
 		});
 	});
 
-	describe('wildcard imports - directory patterns', ({ test }) => {
+	describe('wildcard imports - directory patterns', () => {
 		test('simple directory wildcard', async () => {
 			const packagePath = 'node_modules/test-pkg';
 			const consumedPackage = {
@@ -329,7 +329,7 @@ export default testSuite('imports as build targets', async ({ describe }, nodePa
 		});
 	});
 
-	describe('wildcard imports - filename patterns', ({ test }) => {
+	describe('wildcard imports - filename patterns', () => {
 		test('filename prefix', async () => {
 			const packagePath = 'node_modules/test-pkg';
 			const consumedPackage = {
@@ -472,7 +472,7 @@ export default testSuite('imports as build targets', async ({ describe }, nodePa
 		});
 	});
 
-	describe('wildcard imports - multiple wildcards', ({ test }) => {
+	describe('wildcard imports - multiple wildcards', () => {
 		test('validates all wildcards capture same value', async () => {
 			const packagePath = 'node_modules/test-pkg';
 			const consumedPackage = {
@@ -519,7 +519,7 @@ export default testSuite('imports as build targets', async ({ describe }, nodePa
 		});
 	});
 
-	describe('edge cases', ({ test }) => {
+	describe('edge cases', () => {
 		test('monorepo: hoisted dependencies - # imports from dependencies are bundled', async () => {
 			const packagePath = 'packages/my-package';
 			const hoistedDepPath = 'node_modules/hoisted-dep';

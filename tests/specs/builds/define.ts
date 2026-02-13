@@ -1,9 +1,9 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
-import { createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { createPackageJson } from '../../fixtures.ts';
 
-export default testSuite('define', ({ test }, nodePath: string) => {
+export const define = (nodePath: string) => describe('define', () => {
 	test('dead code elimination', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({

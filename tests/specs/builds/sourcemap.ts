@@ -1,21 +1,21 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { execa } from 'execa';
 import outdent from 'outdent';
 import { TraceMap, originalPositionFor, type EncodedSourceMap } from '@jridgewell/trace-mapping';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	packageFixture, createPackageJson, installTypeScript, createTsconfigJson,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
 const readSourceMap = async (filePath: string): Promise<EncodedSourceMap> => {
 	const content = await fs.readFile(filePath, 'utf8');
 	return JSON.parse(content) as EncodedSourceMap;
 };
 
-export default testSuite('generate sourcemap', ({ test }, nodePath: string) => {
+export const sourcemap = (nodePath: string) => describe('generate sourcemap', () => {
 	test('separate files', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

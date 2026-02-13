@@ -1,10 +1,10 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import outdent from 'outdent';
-import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export default testSuite('package imports', ({ test }, nodePath: string) => {
+export const packageImports = (nodePath: string) => describe('package imports', () => {
 	test('imports', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

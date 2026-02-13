@@ -1,10 +1,10 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { outdent } from 'outdent';
-import { pkgroll } from '../../utils.js';
-import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.ts';
 
-export default testSuite('TypeScript', ({ test, describe }, nodePath: string) => {
+export const typescript = (nodePath: string) => describe('TypeScript', () => {
 	test('resolves .jsx -> .tsx', async () => {
 		await using fixture = await createFixture({
 			src: {
@@ -250,7 +250,7 @@ export default testSuite('TypeScript', ({ test, describe }, nodePath: string) =>
 		expect(content).toMatch('only-ts');
 	});
 
-	describe('custom tsconfig.json path', ({ test }) => {
+	describe('custom tsconfig.json path', () => {
 		test('respects compile target', async () => {
 			await using fixture = await createFixture({
 				src: {

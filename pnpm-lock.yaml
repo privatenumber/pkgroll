@@ -85,8 +85,8 @@ importers:
         specifier: ^1.24.3
         version: 1.24.4(@typescript-eslint/utils@8.47.0(eslint@9.39.1)(typescript@5.9.3))(typescript@5.9.3)
       manten:
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: 2.0.0-beta.2
+        version: 2.0.0-beta.2
       outdent:
         specifier: ^0.8.0
         version: 0.8.0
@@ -2154,8 +2154,9 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  manten@1.8.0:
-    resolution: {integrity: sha512-amJABzd7ldlheMd9UKQzlzyFeVL0rRoDNYwhWpPLfdhusfmKiM48R7rfvAKlbGzClx+XQq6RqVZuUkuGKkPORA==}
+  manten@2.0.0-beta.2:
+    resolution: {integrity: sha512-sr4epsS6WG7oikdmEE+53IMWCMex8DN/57JY0NLfb0b0rruwz61ai3X0gK0gntL3b632v1vSZseBv7aAA27qAw==}
+    engines: {node: '>=20.20.0'}
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
@@ -5156,7 +5157,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  manten@1.8.0:
+  manten@2.0.0-beta.2:
     dependencies:
       expect: 30.2.0
 

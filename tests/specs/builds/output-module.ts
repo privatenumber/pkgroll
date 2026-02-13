@@ -1,14 +1,14 @@
 import fs from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
 	fixtureDynamicImportUnresolvable,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
-export default testSuite('output: module', ({ test, describe }, nodePath: string) => {
+export const outputModule = (nodePath: string) => describe('output: module', () => {
 	test('{ type: module, field: main, srcExt: js, distExt: js }', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -248,7 +248,7 @@ export default testSuite('output: module', ({ test, describe }, nodePath: string
 		expect(content).toMatch('"development"');
 	});
 
-	describe('injects createRequire', ({ test }) => {
+	describe('injects createRequire', () => {
 		test('dynamic require should get a createRequire', async () => {
 			await using fixture = await createFixture({
 				'src/dynamic-require.ts': 'require((() => \'fs\')());',

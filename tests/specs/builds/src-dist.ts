@@ -1,14 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	packageFixture, fixtureFiles, installTypeScript, createPackageJson,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
-export default testSuite('legacy src & dist', ({ describe }, nodePath: string) => {
-	describe('change src', ({ test }) => {
+export const srcDist = (nodePath: string) => describe('legacy src & dist', () => {
+	describe('change src', () => {
 		test('nested directory - relative path', async () => {
 			const srcPath = 'custom-src/nested/src/';
 			await using fixture = await createFixture({
@@ -65,7 +65,7 @@ export default testSuite('legacy src & dist', ({ describe }, nodePath: string) =
 		});
 	});
 
-	describe('change dist', ({ test }) => {
+	describe('change dist', () => {
 		test('nested directory', async () => {
 			await using fixture = await createFixture({
 				...packageFixture({ installTypeScript: true }),
@@ -89,7 +89,7 @@ export default testSuite('legacy src & dist', ({ describe }, nodePath: string) =
 		});
 	});
 
-	describe('srcdist flag', ({ test }) => {
+	describe('srcdist flag', () => {
 		test('change src and dist', async () => {
 			await using fixture = await createFixture({
 				...packageFixture({ installTypeScript: true }),

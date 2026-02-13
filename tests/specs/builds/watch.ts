@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { on } from 'node:events';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { execaNode } from 'execa';
-import { packageFixture, createPackageJson } from '../../fixtures.js';
+import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
@@ -20,7 +20,7 @@ const waitForOutput = async (
 	}
 };
 
-export default testSuite('watch', ({ test }, nodePath: string) => {
+export const watch = (nodePath: string) => describe('watch', () => {
 	test('rebuilds on package.json change', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

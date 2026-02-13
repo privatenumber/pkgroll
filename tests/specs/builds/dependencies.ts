@@ -1,11 +1,11 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { outdent } from 'outdent';
 import { createFixture, type FileTree } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	installTypeScript,
 	createPackageJson,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
 const fixtureDependencyExportsMap = (entryFile: string): FileTree => ({
 	'package.json': createPackageJson({
@@ -79,7 +79,7 @@ const fixtureDependencyImportsMap: FileTree = {
 	},
 };
 
-export default testSuite('dependencies', ({ test }, nodePath: string) => {
+export const dependencies = (nodePath: string) => describe('dependencies', () => {
 	test('externalize dependencies', async () => {
 		await using fixture = await createFixture({
 			'src/dependency-external.js': `

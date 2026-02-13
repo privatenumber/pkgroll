@@ -1,13 +1,13 @@
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	installTypeScript,
 	createPackageJson,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
-export default testSuite('bundles real dependencies', ({ test }, nodePath: string) => {
+export const realDependencies = (nodePath: string) => describe('bundles real dependencies', () => {
 	test('type-fest types (a lot of d.ts files)', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({

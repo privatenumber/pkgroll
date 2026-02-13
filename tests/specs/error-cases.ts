@@ -1,12 +1,12 @@
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, expectMatchesInOrder } from '../utils.js';
+import { pkgroll, expectMatchesInOrder } from '../utils.ts';
 import {
 	packageFixture, createPackageJson, installTypeScript, createTsconfigJson,
-} from '../fixtures.js';
+} from '../fixtures.ts';
 
-export default testSuite('Error handling', ({ test }, nodePath: string) => {
+export const errorCases = (nodePath: string) => describe('Error handling', () => {
 	test('no package.json', async () => {
 		await using fixture = await createFixture(packageFixture());
 
@@ -138,18 +138,18 @@ export default testSuite('Error handling', ({ test }, nodePath: string) => {
 
 	test('dts error shows import trace (2 levels)', async () => {
 		/**
-		 * Tests that .d.ts build errors display import trace for debugging.
-		 *
-		 * Structure:
-		 *   index.ts → broken.ts (imports non-existent file)
-		 *
-		 * Expected error format (from rollup-plugin-import-trace):
-		 *   Error [RollupError]: Could not resolve "./does-not-exist.js" from "src/broken.ts"
-		 *
-		 *   Import trace:
-		 *     /path/to/src/index.ts
-		 *     ↳ /path/to/src/broken.ts
-		 */
+			 * Tests that .d.ts build errors display import trace for debugging.
+			 *
+			 * Structure:
+			 *   index.ts → broken.ts (imports non-existent file)
+			 *
+			 * Expected error format (from rollup-plugin-import-trace):
+			 *   Error [RollupError]: Could not resolve "./does-not-exist.js" from "src/broken.ts"
+			 *
+			 *   Import trace:
+			 *     /path/to/src/index.ts
+			 *     ↳ /path/to/src/broken.ts
+			 */
 		await using fixture = await createFixture({
 			...installTypeScript,
 			'package.json': createPackageJson({
@@ -190,22 +190,22 @@ export default testSuite('Error handling', ({ test }, nodePath: string) => {
 
 	test('dts error shows import trace (3 levels)', async () => {
 		/**
-		 * Tests deeper import traces show all intermediate files.
-		 *
-		 * Structure:
-		 *   index.ts → utils.ts → deep/broken.ts (imports non-existent file)
-		 *
-		 * Expected error format (from rollup-plugin-import-trace):
-		 *   Build failed
-		 *     File: /path/to/src/deep/broken.ts
-		 *
-		 *   Could not resolve "./missing-file.js" from "src/deep/broken.ts"
-		 *
-		 *   Import trace:
-		 *     /path/to/src/index.ts
-		 *     ↳ /path/to/src/utils.ts
-		 *     ↳ /path/to/src/deep/broken.ts
-		 */
+			 * Tests deeper import traces show all intermediate files.
+			 *
+			 * Structure:
+			 *   index.ts → utils.ts → deep/broken.ts (imports non-existent file)
+			 *
+			 * Expected error format (from rollup-plugin-import-trace):
+			 *   Build failed
+			 *     File: /path/to/src/deep/broken.ts
+			 *
+			 *   Could not resolve "./missing-file.js" from "src/deep/broken.ts"
+			 *
+			 *   Import trace:
+			 *     /path/to/src/index.ts
+			 *     ↳ /path/to/src/utils.ts
+			 *     ↳ /path/to/src/deep/broken.ts
+			 */
 		await using fixture = await createFixture({
 			...installTypeScript,
 			'package.json': createPackageJson({
@@ -245,12 +245,12 @@ export default testSuite('Error handling', ({ test }, nodePath: string) => {
 
 	test('dts error without import trace (entry point error)', async () => {
 		/**
-		 * When the error is in the entry point itself, no import trace is shown
-		 * (trace length would be 1, which is just the error file itself).
-		 *
-		 * Structure:
-		 *   index.ts (imports non-existent file directly)
-		 */
+			 * When the error is in the entry point itself, no import trace is shown
+			 * (trace length would be 1, which is just the error file itself).
+			 *
+			 * Structure:
+			 *   index.ts (imports non-existent file directly)
+			 */
 		await using fixture = await createFixture({
 			...installTypeScript,
 			'package.json': createPackageJson({
@@ -279,12 +279,12 @@ export default testSuite('Error handling', ({ test }, nodePath: string) => {
 
 	test('js/ts error shows import trace (2 levels)', async () => {
 		/**
-		 * Tests that JS/TS build errors also display import trace for debugging.
-		 * This verifies the import trace feature works beyond .d.ts builds.
-		 *
-		 * Structure:
-		 *   index.js → broken.js (imports non-existent file)
-		 */
+			 * Tests that JS/TS build errors also display import trace for debugging.
+			 * This verifies the import trace feature works beyond .d.ts builds.
+			 *
+			 * Structure:
+			 *   index.js → broken.js (imports non-existent file)
+			 */
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
 				main: './dist/index.js',

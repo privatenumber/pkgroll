@@ -1,11 +1,11 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { execa } from 'execa';
 import { outdent } from 'outdent';
-import { pkgroll } from '../../utils.js';
-import { createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { createPackageJson } from '../../fixtures.ts';
 
-export default testSuite('imports - non-# import handling', async ({ test }, nodePath: string) => {
+export const importsAlias = (nodePath: string) => describe('imports - non-# import handling', () => {
 	test('non-# imports are skipped', async () => {
 		const packagePath = 'node_modules/test-pkg';
 		const consumedPackage = {

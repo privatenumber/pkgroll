@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export default testSuite('output: commonjs & module', ({ test }, nodePath: string) => {
+export const outputDual = (nodePath: string) => describe('output: commonjs & module', () => {
 	test('dual', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

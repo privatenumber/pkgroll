@@ -1,10 +1,10 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
-import { createPackageJson, installTypeScript } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { createPackageJson, installTypeScript } from '../../fixtures.ts';
 
-export default testSuite('wildcard exports', ({ describe }, nodePath: string) => {
-	describe('directory wildcards', ({ test }) => {
+export const wildcardExports = (nodePath: string) => describe('wildcard exports', () => {
+	describe('directory wildcards', () => {
 		test('single directory segment', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -90,7 +90,7 @@ export default testSuite('wildcard exports', ({ describe }, nodePath: string) =>
 		});
 	});
 
-	describe('filename wildcards', ({ test }) => {
+	describe('filename wildcards', () => {
 		test('prefix pattern', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -174,7 +174,7 @@ export default testSuite('wildcard exports', ({ describe }, nodePath: string) =>
 		});
 	});
 
-	describe('multiple wildcards', ({ test }) => {
+	describe('multiple wildcards', () => {
 		test('validates repeated path segments', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -244,7 +244,7 @@ export default testSuite('wildcard exports', ({ describe }, nodePath: string) =>
 		});
 	});
 
-	describe('root-level patterns', ({ test }) => {
+	describe('root-level patterns', () => {
 		test('default src:dist mapping', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -370,7 +370,7 @@ export default testSuite('wildcard exports', ({ describe }, nodePath: string) =>
 		});
 	});
 
-	describe('export formats & conditions', ({ test }) => {
+	describe('export formats & conditions', () => {
 		test('multiple formats', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -482,7 +482,7 @@ export default testSuite('wildcard exports', ({ describe }, nodePath: string) =>
 		});
 	});
 
-	describe('validation & edge cases', ({ test }) => {
+	describe('validation & edge cases', () => {
 		test('warns on explicit export outside dist', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({

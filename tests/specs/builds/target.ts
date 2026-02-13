@@ -1,10 +1,10 @@
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson, createTsconfigJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { packageFixture, createPackageJson, createTsconfigJson } from '../../fixtures.ts';
 
-export default testSuite('target', ({ describe, test }, nodePath: string) => {
+export const target = (nodePath: string) => describe('target', () => {
 	test('transformation', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

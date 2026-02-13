@@ -1,16 +1,16 @@
 import path from 'node:path';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import outdent from 'outdent';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	packageFixture,
 	installTypeScript,
 	createPackageJson,
 	createTsconfigJson,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
-export default testSuite('types', ({ test }, nodePath: string) => {
+export const outputTypes = (nodePath: string) => describe('types', () => {
 	test('emits', async () => {
 		await using fixture = await createFixture({
 			...packageFixture({ installTypeScript: true }),

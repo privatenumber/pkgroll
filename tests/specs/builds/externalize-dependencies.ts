@@ -1,13 +1,15 @@
-import { testSuite, expect } from 'manten';
+import {
+	describe, test, expect, onTestFail,
+} from 'manten';
 import { createFixture } from 'fs-fixture';
 import { execaNode } from 'execa';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	installTypeScript,
 	createPackageJson,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
-export default testSuite('externalize-dependencies plugin', ({ test }, nodePath: string) => {
+export const externalizeDependencies = (nodePath: string) => describe('externalize-dependencies plugin', () => {
 	test('error if devDependency cannot be resolved', async () => {
 		await using fixture = await createFixture({
 			'src/index.js': 'import foo from "foo"',
@@ -398,7 +400,7 @@ export default testSuite('externalize-dependencies plugin', ({ test }, nodePath:
 		expect(contentTypes).toMatch('eslint');
 	});
 
-	test('add explicit extensions to externalized package imports', async ({ onTestFail }) => {
+	test('add explicit extensions to externalized package imports', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
 				type: 'module',
@@ -571,7 +573,7 @@ export default testSuite('externalize-dependencies plugin', ({ test }, nodePath:
 		expect(content).toMatch('\'pkg-with-subpaths/other\'');
 	});
 
-	test('import with double extension (.min.js) resolves correctly', async ({ onTestFail }) => {
+	test('import with double extension (.min.js) resolves correctly', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
 				type: 'module',
@@ -622,7 +624,7 @@ export default testSuite('externalize-dependencies plugin', ({ test }, nodePath:
 		expect(exitCode).toBe(0);
 	});
 
-	test('directory import resolves to index.js', async ({ onTestFail }) => {
+	test('directory import resolves to index.js', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
 				type: 'module',
@@ -675,7 +677,7 @@ export default testSuite('externalize-dependencies plugin', ({ test }, nodePath:
 		expect(exitCode).toBe(0);
 	});
 
-	test('hoisted dependency without exports gets bundled (not externalized)', async ({ onTestFail }) => {
+	test('hoisted dependency without exports gets bundled (not externalized)', async () => {
 		await using fixture = await createFixture({
 			project: {
 				'package.json': createPackageJson({

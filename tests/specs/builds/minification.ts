@@ -1,10 +1,10 @@
 import { pathToFileURL } from 'node:url';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
-import { packageFixture, createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export default testSuite('minification', ({ test }, nodePath: string) => {
+export const minification = (nodePath: string) => describe('minification', () => {
 	test('minification', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

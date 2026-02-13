@@ -1,10 +1,10 @@
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
-import { createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.ts';
+import { createPackageJson } from '../../fixtures.ts';
 
-export default testSuite('license', ({ describe }, nodePath: string) => {
-	describe('auto-detect LICENSE file', ({ test }) => {
+export const license = (nodePath: string) => describe('license', () => {
+	describe('auto-detect LICENSE file', () => {
 		test('creates LICENSE if none exists', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -122,7 +122,7 @@ export default testSuite('license', ({ describe }, nodePath: string) => {
 		});
 	});
 
-	describe('custom output path', ({ test }) => {
+	describe('custom output path', () => {
 		test('writes to specified path', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -239,7 +239,7 @@ export default testSuite('license', ({ describe }, nodePath: string) => {
 		});
 	});
 
-	describe('marker replacement', ({ test }) => {
+	describe('marker replacement', () => {
 		test('replaces content from marker to end', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -468,7 +468,7 @@ Old content
 		});
 	});
 
-	describe('no bundled dependencies', ({ test }) => {
+	describe('no bundled dependencies', () => {
 		test('writes empty dependencies message', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -517,7 +517,7 @@ Old content
 		});
 	});
 
-	describe('license content', ({ test }) => {
+	describe('license content', () => {
 		test('includes full license text', async () => {
 			const licenseText = `MIT License
 
@@ -645,7 +645,7 @@ in the Software without restriction.`;
 		});
 	});
 
-	describe('dependency filtering', ({ test }) => {
+	describe('dependency filtering', () => {
 		test('excludes externalized dependencies', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -808,7 +808,7 @@ in the Software without restriction.`;
 		});
 	});
 
-	describe('multiple dependencies', ({ test }) => {
+	describe('multiple dependencies', () => {
 		test('sorts dependencies alphabetically', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({

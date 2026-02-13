@@ -1,13 +1,13 @@
 import fs from 'node:fs/promises';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll } from '../../utils.js';
+import { pkgroll } from '../../utils.ts';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
 	fixtureDynamicImportUnresolvable,
-} from '../../fixtures.js';
+} from '../../fixtures.ts';
 
-export default testSuite('output: commonjs', ({ test, describe }, nodePath: string) => {
+export const outputCommonjs = (nodePath: string) => describe('output: commonjs', () => {
 	test('{ type: commonjs, field: main, srcExt: js, distExt: js }', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -226,7 +226,7 @@ export default testSuite('output: commonjs', ({ test, describe }, nodePath: stri
 		expect(content).toMatch('import(');
 	});
 
-	describe('preserves cjs-module-lexer compatibility for node', ({ test }) => {
+	describe('preserves cjs-module-lexer compatibility for node', () => {
 		test('exports', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({

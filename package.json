@@ -72,7 +72,7 @@
 		"get-tsconfig": "^4.13.0",
 		"kolorist": "^1.8.0",
 		"lintroll": "^1.24.3",
-		"manten": "^1.8.0",
+		"manten": "2.0.0-beta.2",
 		"outdent": "^0.8.0",
 		"react": "^19.2.0",
 		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",

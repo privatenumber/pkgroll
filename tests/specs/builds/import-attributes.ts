@@ -1,16 +1,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { on } from 'node:events';
-import { testSuite, expect } from 'manten';
+import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { execa, execaNode } from 'execa';
-import { createPackageJson } from '../../fixtures.js';
-import { pkgroll } from '../../utils.js';
+import { createPackageJson } from '../../fixtures.ts';
+import { pkgroll } from '../../utils.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
-export default testSuite('import attributes', ({ describe }, nodePath: string) => {
-	describe('type: "text"', ({ test }) => {
+export const importAttributes = (nodePath: string) => describe('import attributes', () => {
+	describe('type: "text"', () => {
 		test('ESM: imports file as string', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -120,7 +120,7 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 		});
 	});
 
-	describe('type: "bytes"', ({ test }) => {
+	describe('type: "bytes"', () => {
 		// Proposal: https://github.com/tc39/proposal-import-bytes
 		test('ESM: imports file as Uint8Array', async () => {
 			await using fixture = await createFixture({
@@ -235,7 +235,7 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 		});
 	});
 
-	describe('edge cases', ({ test }) => {
+	describe('edge cases', () => {
 		test('empty text file', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -349,7 +349,7 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 		});
 	});
 
-	describe('any file extension', ({ test }) => {
+	describe('any file extension', () => {
 		// Per spec, file extensions are irrelevant for import attributes:
 		// - proposal-import-text: host-defined, no extension restrictions
 		// - proposal-import-bytes: "The file extension will be ignored."
@@ -430,7 +430,7 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 		}
 	});
 
-	describe('watch mode', ({ test }) => {
+	describe('watch mode', () => {
 		test('rebuilds when imported text file changes', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({

@@ -273,6 +273,44 @@ export default testSuite('types', ({ test }, nodePath: string) => {
 		expect(nestedDts).toMatch('declare function sayGoodbye');
 	});
 
+	test('mixed dts extensions from different sources does not emit extra files', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				exports: {
+					'.': {
+						types: './dist/index.d.ts',
+						default: './dist/index.js',
+					},
+					'./utils': {
+						types: './dist/utils.d.mts',
+						default: './dist/utils.mjs',
+					},
+				},
+			}),
+			src: {
+				'index.ts': 'export const main = "main";',
+				'utils.ts': 'export const util = "util";',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		// Requested files exist
+		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
+		expect(await fixture.exists('dist/utils.d.mts')).toBe(true);
+
+		// No extra dts files from cross-format rendering
+		expect(await fixture.exists('dist/utils.d.ts')).toBe(false);
+		expect(await fixture.exists('dist/index.d.mts')).toBe(false);
+	});
+
 	test('emits multiple - different extension', async () => {
 		await using fixture = await createFixture({
 			...packageFixture({ installTypeScript: true }),

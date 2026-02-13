@@ -7,10 +7,8 @@ import { type Options, type OutputWithOptions, entrySymbol } from './types.js';
 import { getPkgConfig } from './configs/pkg.js';
 import { getDtsConfig } from './configs/dts.js';
 
-type RollupConfigs = {
-	dts?: Awaited<ReturnType<typeof getDtsConfig>>;
-	pkg?: ReturnType<typeof getPkgConfig>;
-};
+type DtsConfig = Awaited<ReturnType<typeof getDtsConfig>>;
+type PkgConfig = ReturnType<typeof getPkgConfig>;
 
 const getCommonPath = (paths: string[]): string => {
 	if (paths.length === 0) { return ''; }
@@ -67,7 +65,17 @@ export const getRollupConfigs = async (
 	}
 	const srcdistPairs = srcdistPairsInput as SrcDistPair[];
 
-	const configs: RollupConfigs = Object.create(null);
+	let dtsConfig: DtsConfig | undefined;
+
+	/**
+	 * Separate Rollup builds per output format to prevent format-incompatible
+	 * entries from interfering with each other during rendering.
+	 *
+	 * For example, an ESM entry with top-level await would cause a CJS output
+	 * to fail even if the CJS output doesn't include that entry — because Rollup
+	 * renders all inputs before filterUnnecessaryOutputs can remove them.
+	 */
+	const pkgConfigs = new Map<string, PkgConfig>();
 
 	for (const entry of entryPoints) {
 		const {
@@ -82,18 +90,15 @@ export const getRollupConfigs = async (
 		entry.inputNames = [inputName];
 
 		if (exportEntry.format === 'types') {
-			let config = configs.dts;
-
-			if (!config) {
-				config = await getDtsConfig(flags, packageJson, tsconfig);
-				configs.dts = config;
+			if (!dtsConfig) {
+				dtsConfig = await getDtsConfig(flags, packageJson, tsconfig);
 			}
 
-			if (!config.input[inputName]) {
-				config.input[inputName] = sourcePath;
+			if (!dtsConfig.input[inputName]) {
+				dtsConfig.input[inputName] = sourcePath;
 			}
 
-			const outputs = config.output;
+			const outputs = dtsConfig.output;
 
 			if (outputs[distExtension]) {
 				outputs[distExtension][entrySymbol].inputNames!.push(inputName);
@@ -116,7 +121,8 @@ export const getRollupConfigs = async (
 			continue;
 		}
 
-		let config = configs.pkg;
+		const key = `${exportEntry.format}-${distExtension}`;
+		let config = pkgConfigs.get(key);
 		if (!config) {
 			// Use the first dist directory for shared assets (chunks, natives)
 			const firstDistDirectory = srcdistPairs[0].dist;
@@ -128,7 +134,7 @@ export const getRollupConfigs = async (
 				tsconfig,
 				firstDistDirectory,
 			);
-			configs.pkg = config;
+			pkgConfigs.set(key, config);
 		}
 
 		if (!config.input[inputName]) {
@@ -137,7 +143,6 @@ export const getRollupConfigs = async (
 
 		const outputs = config.output;
 
-		const key = `${exportEntry.format}-${distExtension}`;
 		if (outputs[key]) {
 			outputs[key][entrySymbol].inputNames!.push(inputName);
 		} else {
@@ -162,5 +167,9 @@ export const getRollupConfigs = async (
 		}
 	}
 
-	return Object.values(configs);
+	const rollupConfigs: (DtsConfig | PkgConfig)[] = [...pkgConfigs.values()];
+	if (dtsConfig) {
+		rollupConfigs.push(dtsConfig);
+	}
+	return rollupConfigs;
 };

@@ -68,14 +68,6 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 		expect(content).toMatch('export {');
 	});
 
-	/**
-	 * This test generates an extra index.cjs, because the rollup
-	 * config generator finds that they can be build in the same config.
-	 *
-	 * This actually seems more performant because only one build is procuced
-	 * instead of two just to remove one file. If this is problematic,
-	 * we can consider deleting or intercepting file emission.
-	 */
 	test('conditions', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -106,6 +98,9 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 
 		const utilsCjs = await fixture.readFile('dist/utils.cjs', 'utf8');
 		expect(utilsCjs).toMatch('exports.sayHello =');
+
+		// No extra index.cjs generated (separate builds per format)
+		expect(await fixture.exists('dist/index.cjs')).toBe(false);
 	});
 
 	test('conditions - types', async () => {
@@ -237,6 +232,35 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 		await fixture.exists('dist/index.node.d.ts');
 		await fixture.exists('dist/nested/index.node.js');
 		await fixture.exists('dist/nested/index.node.d.ts');
+	});
+
+	test('top-level await in ESM does not break separate CJS export', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./mjs': './dist/mjs.mjs',
+					'./cjs': './dist/cjs.cjs',
+				},
+			}),
+			src: {
+				'mjs.ts': 'await import("node:fs")',
+				'cjs.ts': 'export const cjs = "cjs";',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const esmContent = await fixture.readFile('dist/mjs.mjs', 'utf8');
+		expect(esmContent).toMatch('await');
+
+		const cjsContent = await fixture.readFile('dist/cjs.cjs', 'utf8');
+		expect(cjsContent).toMatch('cjs');
 	});
 
 	test('publishConfig', async () => {

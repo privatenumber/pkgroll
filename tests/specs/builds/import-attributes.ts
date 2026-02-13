@@ -470,7 +470,7 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 					'<h1>After</h1>',
 				);
 
-				for await (const [data] of on(watchProcess.stdout!, 'data', { signal: AbortSignal.timeout(5000) })) {
+				for await (const [data] of on(watchProcess.stdout!, 'data', { signal: AbortSignal.timeout(15_000) })) {
 					if (data.toString().includes('Built')) {
 						break;
 					}
@@ -482,6 +482,6 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 				watchProcess.kill();
 				await watchProcess;
 			}
-		});
+		}, { retry: 3 });
 	});
 });

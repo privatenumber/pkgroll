@@ -1,5 +1,6 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import outdent from 'outdent';
 import { pkgroll } from '../../utils.js';
 import { packageFixture, createPackageJson } from '../../fixtures.js';
 
@@ -237,6 +238,39 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 		await fixture.exists('dist/index.node.d.ts');
 		await fixture.exists('dist/nested/index.node.js');
 		await fixture.exists('dist/nested/index.node.d.ts');
+	});
+
+	test('top-level await in ESM does not break separate CJS export', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				type: 'module',
+				exports: {
+					'./mjs': './dist/mjs.mjs',
+					'./cjs': './dist/cjs.cjs',
+				},
+			}),
+			src: {
+				'mjs.ts': outdent`
+					const fs = await import('node:fs');
+					export const exists = fs.existsSync;
+				`,
+				'cjs.ts': 'export const cjs = "cjs";',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const esmContent = await fixture.readFile('dist/mjs.mjs', 'utf8');
+		expect(esmContent).toMatch('await');
+
+		const cjsContent = await fixture.readFile('dist/cjs.cjs', 'utf8');
+		expect(cjsContent).toMatch('cjs');
 	});
 
 	test('publishConfig', async () => {

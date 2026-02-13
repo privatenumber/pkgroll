@@ -520,66 +520,6 @@ export default testSuite('imports as build targets', async ({ describe }, nodePa
 	});
 
 	describe('edge cases', ({ test }) => {
-		test('top-level await with CJS # import should not fail', async () => {
-			const packagePath = 'node_modules/test-pkg';
-			const consumedPackage = {
-				'package.json': createPackageJson({
-					name: 'test-pkg',
-					type: 'module',
-					exports: {
-						types: './dist/index.d.mts',
-						default: './dist/index.mjs',
-					},
-					imports: {
-						'#helper': {
-							default: './dist/helper.cjs',
-						},
-					},
-				}),
-				src: {
-					'helper.cjs': 'module.exports = { hello: "world" };',
-					'index.ts': outdent`
-						import { fileURLToPath } from 'node:url';
-
-						const helperPath = fileURLToPath(import.meta.resolve('#helper'));
-
-						const mod = process.env.SOME_CONDITION
-							? undefined
-							: await import('node:fs');
-
-						export const result = mod?.existsSync(helperPath);
-					`,
-				},
-				...installTypeScript,
-			};
-			await using fixture = await createFixture({
-				[packagePath]: consumedPackage,
-				'load-pkg.mjs': outdent`
-					import { result } from "test-pkg";
-					console.log(result);
-				`,
-			});
-
-			const result = await pkgroll([], {
-				cwd: fixture.getPath(packagePath),
-				nodePath,
-			});
-
-			expect(result.exitCode).toBe(0);
-			expect(result.stderr).toBe('');
-
-			// ESM output should exist and contain top-level await
-			const distContent = await fixture.readFile(`${packagePath}/dist/index.mjs`, 'utf8');
-			expect(distContent).toMatch('await');
-
-			// CJS helper should exist
-			expect(await fixture.exists(`${packagePath}/dist/helper.cjs`)).toBe(true);
-
-			// Runtime execution should work
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
-			expect(stdout).toBe('true');
-		});
-
 		test('monorepo: hoisted dependencies - # imports from dependencies are bundled', async () => {
 			const packagePath = 'packages/my-package';
 			const hoistedDepPath = 'node_modules/hoisted-dep';

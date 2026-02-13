@@ -295,6 +295,30 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 			expect(lines[1]).toBe('0');
 		});
 
+		test('warns on conflicting attributes for same file', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.mjs',
+				}),
+				'src/index.js': `
+					import text from "./file.txt" with { type: "text" };
+					import bytes from "./file.txt" with { type: "bytes" };
+					console.log(text);
+					console.log(bytes);
+				`,
+				'src/file.txt': 'hello',
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toMatch('import attributes');
+		});
+
 		test('file path with spaces', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({

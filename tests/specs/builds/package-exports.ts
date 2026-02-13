@@ -68,14 +68,6 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 		expect(content).toMatch('export {');
 	});
 
-	/**
-	 * This test generates an extra index.cjs, because the rollup
-	 * config generator finds that they can be build in the same config.
-	 *
-	 * This actually seems more performant because only one build is procuced
-	 * instead of two just to remove one file. If this is problematic,
-	 * we can consider deleting or intercepting file emission.
-	 */
 	test('conditions', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -106,6 +98,9 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 
 		const utilsCjs = await fixture.readFile('dist/utils.cjs', 'utf8');
 		expect(utilsCjs).toMatch('exports.sayHello =');
+
+		// No extra index.cjs generated (separate builds per format)
+		expect(await fixture.exists('dist/index.cjs')).toBe(false);
 	});
 
 	test('conditions - types', async () => {

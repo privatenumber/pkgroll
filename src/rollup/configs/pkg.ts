@@ -68,8 +68,8 @@ export const getPkgConfig = (
 			externalPkgImports(),
 			resolveImplicitExternals(),
 			externalizeDependencies(packageJson),
-			resolveJsToTs(),
 			importAttributes(),
+			resolveJsToTs(),
 			nodeResolve({
 				extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 				exportConditions: options.exportCondition,

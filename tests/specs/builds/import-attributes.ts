@@ -349,6 +349,87 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 		});
 	});
 
+	describe('any file extension', ({ test }) => {
+		// Per spec, file extensions are irrelevant for import attributes:
+		// - proposal-import-text: host-defined, no extension restrictions
+		// - proposal-import-bytes: "The file extension will be ignored."
+		const extensions = [
+			'.js',
+			'.mjs',
+			'.cjs',
+			'.ts',
+			'.mts',
+			'.cts',
+			'.tsx',
+			'.jsx',
+			'.txt',
+			'.html',
+			'.bin',
+			'.wasm',
+		];
+
+		for (const extension of extensions) {
+			test(`type: "text" with ${extension}`, async () => {
+				const fileName = `data${extension}`;
+				await using fixture = await createFixture({
+					'package.json': createPackageJson({
+						type: 'module',
+						main: './dist/index.mjs',
+					}),
+					'src/index.js': `
+						import text from "./${fileName}" with { type: "text" };
+						console.log(text);
+					`,
+					[`src/${fileName}`]: 'file content',
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+
+				const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+					cwd: fixture.path,
+				});
+
+				expect(stdout).toBe('file content');
+			});
+
+			test(`type: "bytes" with ${extension}`, async () => {
+				const fileName = `data${extension}`;
+				await using fixture = await createFixture({
+					'package.json': createPackageJson({
+						type: 'module',
+						main: './dist/index.mjs',
+					}),
+					'src/index.js': `
+						import bytes from "./${fileName}" with { type: "bytes" };
+						console.log(bytes instanceof Uint8Array);
+						console.log(bytes.length);
+					`,
+					[`src/${fileName}`]: Buffer.from([0xCA, 0xFE]),
+				});
+
+				const pkgrollProcess = await pkgroll([], {
+					cwd: fixture.path,
+					nodePath,
+				});
+
+				expect(pkgrollProcess.exitCode).toBe(0);
+
+				const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+					cwd: fixture.path,
+				});
+
+				const lines = stdout.split('\n');
+				expect(lines[0]).toBe('true');
+				expect(lines[1]).toBe('2');
+			});
+		}
+	});
+
 	describe('watch mode', ({ test }) => {
 		test('rebuilds when imported text file changes', async () => {
 			await using fixture = await createFixture({

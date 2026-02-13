@@ -432,6 +432,9 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 
 	describe('watch mode', ({ test }) => {
 		test('rebuilds when imported text file changes', async () => {
+			const debug = (...args: unknown[]) => console.error('[watch-debug]', Date.now(), ...args);
+
+			debug('creating fixture');
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
 					type: 'module',
@@ -444,6 +447,9 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 				'src/page.html': '<h1>Before</h1>',
 			});
 
+			debug('fixture created at', fixture.path);
+			debug('starting watch process');
+
 			const watchProcess = execaNode(
 				pkgrollBinPath,
 				['--watch'],
@@ -455,9 +461,19 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 				},
 			);
 
+			// Log ALL stdout/stderr from the watch process
+			watchProcess.stdout!.on('data', (data: Buffer) => {
+				debug('stdout:', data.toString().trim());
+			});
+			watchProcess.stderr!.on('data', (data: Buffer) => {
+				debug('stderr:', data.toString().trim());
+			});
+
 			try {
+				debug('waiting for initial build');
 				for await (const [data] of on(watchProcess.stdout!, 'data', { signal: AbortSignal.timeout(15_000) })) {
 					if (data.toString().includes('Built')) {
+						debug('initial build complete');
 						break;
 					}
 				}
@@ -465,13 +481,17 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 				const initial = await fixture.readFile('dist/index.mjs', 'utf8');
 				expect(initial).toMatch('<h1>Before</h1>');
 
+				debug('writing new content to page.html');
 				await fs.writeFile(
 					path.join(fixture.path, 'src/page.html'),
 					'<h1>After</h1>',
 				);
+				debug('file write complete, waiting for rebuild');
 
 				for await (const [data] of on(watchProcess.stdout!, 'data', { signal: AbortSignal.timeout(15_000) })) {
+					debug('received stdout data while waiting for rebuild:', data.toString().trim());
 					if (data.toString().includes('Built')) {
+						debug('rebuild complete');
 						break;
 					}
 				}
@@ -479,8 +499,10 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 				const updated = await fixture.readFile('dist/index.mjs', 'utf8');
 				expect(updated).toMatch('<h1>After</h1>');
 			} finally {
+				debug('killing watch process');
 				watchProcess.kill();
 				await watchProcess;
+				debug('watch process exited');
 			}
 		}, { retry: 3 });
 	});

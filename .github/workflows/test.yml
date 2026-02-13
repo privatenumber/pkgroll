@@ -8,10 +8,8 @@ on:
 jobs:
   test:
     name: Test
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    # DEBUG: narrowed to Windows-only for watch test investigation
+    runs-on: windows-latest
     timeout-minutes: 10
 
     steps:
@@ -39,13 +37,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Lint
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: pnpm lint
-
-      - name: Type check
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: pnpm type-check
-
+      # DEBUG: skip lint/type-check, isolate watch tests only
       - name: Test
         run: pnpm test
+        env:
+          TESTONLY: watch

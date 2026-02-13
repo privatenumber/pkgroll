@@ -41,6 +41,8 @@ export const importAttributes = (): Plugin => {
 				return null;
 			}
 
+			// DEBUG: log addWatchFile for CI investigation
+			console.error('[import-attributes-debug]', Date.now(), 'addWatchFile:', id);
 			this.addWatchFile(id);
 
 			if (type === 'text') {

@@ -29,11 +29,13 @@ export const importAttributes = (): Plugin => ({
 		const { attributes } = this.getModuleInfo(id)!;
 
 		if (attributes.type === 'text') {
+			this.addWatchFile(id);
 			const content = await fs.readFile(id, 'utf8');
 			return `export default ${JSON.stringify(content)}`;
 		}
 
 		if (attributes.type === 'bytes') {
+			this.addWatchFile(id);
 			const content = await fs.readFile(id);
 			return `export default new Uint8Array([${content.join(',')}])`;
 		}

@@ -243,17 +243,13 @@ export default testSuite('package exports', ({ test }, nodePath: string) => {
 	test('top-level await in ESM does not break separate CJS export', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
-				type: 'module',
 				exports: {
 					'./mjs': './dist/mjs.mjs',
 					'./cjs': './dist/cjs.cjs',
 				},
 			}),
 			src: {
-				'mjs.ts': outdent`
-					const fs = await import('node:fs');
-					export const exists = fs.existsSync;
-				`,
+				'mjs.ts': 'await import("node:fs")',
 				'cjs.ts': 'export const cjs = "cjs";',
 			},
 		});

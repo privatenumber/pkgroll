@@ -1,8 +1,13 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { on } from 'node:events';
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execa } from 'execa';
-import { pkgroll } from '../../utils.js';
+import { execa, execaNode } from 'execa';
 import { createPackageJson } from '../../fixtures.js';
+import { pkgroll } from '../../utils.js';
+
+const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
 export default testSuite('import attributes', ({ describe }, nodePath: string) => {
 	describe('type: "text"', ({ test }) => {
@@ -198,6 +203,61 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 			const lines = stdout.split('\n');
 			expect(lines[0]).toBe('true');
 			expect(lines[1]).toBe('3');
+		});
+	});
+
+	describe('watch mode', ({ test }) => {
+		test('rebuilds when imported text file changes', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.mjs',
+				}),
+				'src/index.js': `
+					import html from "./page.html" with { type: "text" };
+					console.log(html);
+				`,
+				'src/page.html': '<h1>Before</h1>',
+			});
+
+			const watchProcess = execaNode(
+				pkgrollBinPath,
+				['--watch'],
+				{
+					cwd: fixture.path,
+					env: { NODE_PATH: '' },
+					reject: false,
+					nodePath,
+				},
+			);
+
+			try {
+				for await (const [data] of on(watchProcess.stdout!, 'data', { signal: AbortSignal.timeout(15_000) })) {
+					if (data.toString().includes('Built')) {
+						break;
+					}
+				}
+
+				const initial = await fixture.readFile('dist/index.mjs', 'utf8');
+				expect(initial).toMatch('<h1>Before</h1>');
+
+				await fs.writeFile(
+					path.join(fixture.path, 'src/page.html'),
+					'<h1>After</h1>',
+				);
+
+				for await (const [data] of on(watchProcess.stdout!, 'data', { signal: AbortSignal.timeout(5000) })) {
+					if (data.toString().includes('Built')) {
+						break;
+					}
+				}
+
+				const updated = await fixture.readFile('dist/index.mjs', 'utf8');
+				expect(updated).toMatch('<h1>After</h1>');
+			} finally {
+				watchProcess.kill();
+				await watchProcess;
+			}
 		});
 	});
 });

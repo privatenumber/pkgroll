@@ -209,34 +209,22 @@ const generateRollupConfigs = async () => {
 	if (argv.flags.watch) {
 		log('Watch initialized');
 
-		// DEBUG: verbose logging for CI investigation
-		const debugLog = (...args: unknown[]) => console.error('[pkgroll-watch-debug]', Date.now(), ...args);
-		debugLog('watch mode starting, platform:', process.platform, 'cwd:', cwd);
-
 		let watchers: ReturnType<typeof watch>[] = [];
 
 		const startWatchers = async () => {
-			debugLog('startWatchers called');
 			const rollupConfigs = await generateRollupConfigs();
-			debugLog('rollup configs generated, count:', rollupConfigs.length);
-
-			watchers = rollupConfigs.map((rollupConfig, configIndex) => {
+			watchers = rollupConfigs.map((rollupConfig) => {
 				const watcher = watch(rollupConfig);
-				debugLog(`watcher ${configIndex} created, inputs:`, Object.keys(rollupConfig.input));
 
 				watcher.on('event', async (event) => {
-					debugLog(`watcher ${configIndex} event:`, event.code);
-
 					if (event.code === 'BUNDLE_START') {
 						const inputFiles = Array.isArray(event.input)
 							? event.input
 							: Object.values(event.input!);
-						debugLog(`watcher ${configIndex} BUNDLE_START:`, inputFiles);
 						log('Building', ...inputFiles.map(formatPath));
 					}
 
 					if (event.code === 'BUNDLE_END') {
-						debugLog(`watcher ${configIndex} BUNDLE_END, writing outputs`);
 						try {
 							await Promise.all(rollupConfig.output.map(
 								outputOption => event.result.write(outputOption),
@@ -245,35 +233,25 @@ const generateRollupConfigs = async () => {
 							const inputFiles = Array.isArray(event.input)
 								? event.input
 								: Object.values(event.input!);
-							debugLog(`watcher ${configIndex} write complete, logging Built`);
 							log('Built', ...inputFiles.map(formatPath));
-							debugLog(`watcher ${configIndex} Built logged`);
 						} finally {
 							await event.result.close();
 						}
 					}
 
 					if (event.code === 'ERROR') {
-						debugLog(`watcher ${configIndex} ERROR:`, event.error.message);
 						log('Error:', event.error.message);
 						await event.result?.close();
 					}
 				});
 
-				watcher.on('change', (id, change) => {
-					debugLog(`watcher ${configIndex} CHANGE detected:`, id, 'event:', change.event);
-				});
-
 				return watcher;
 			});
-			debugLog('all watchers started');
 		};
 
 		const closeWatchers = async () => {
-			debugLog('closeWatchers called');
 			await Promise.all(watchers.map(watcher => watcher.close()));
 			watchers = [];
-			debugLog('all watchers closed');
 		};
 
 		await startWatchers();
@@ -284,20 +262,14 @@ const generateRollupConfigs = async () => {
 		 * matches how Rollup CLI handles config file changes internally.
 		 */
 		let debounceTimer: ReturnType<typeof setTimeout>;
-		const pkgJsonPath = path.join(cwd, 'package.json');
-		debugLog('setting up fs.watch on', pkgJsonPath);
-		fs.watch(pkgJsonPath, (eventType, filename) => {
-			debugLog('fs.watch fired: eventType=', eventType, 'filename=', filename);
+		fs.watch(path.join(cwd, 'package.json'), () => {
 			clearTimeout(debounceTimer);
 			debounceTimer = setTimeout(async () => {
 				log('package.json changed, restarting...');
-				debugLog('debounce timer fired, restarting watchers');
 				try {
 					await closeWatchers();
 					await startWatchers();
-					debugLog('watchers restarted successfully');
 				} catch (error) {
-					debugLog('error restarting watchers:', (error as Error).message);
 					log('Error:', (error as Error).message);
 				}
 			}, 100);

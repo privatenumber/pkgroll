@@ -25,6 +25,7 @@ export default testSuite('builds', ({ runTestSuite }, nodePath: string) => {
 	runTestSuite(import('./clean-dist.js'), nodePath);
 	runTestSuite(import('./license.js'), nodePath);
 	runTestSuite(import('./package-yaml.js'), nodePath);
+	runTestSuite(import('./import-attributes.js'), nodePath);
 	runTestSuite(import('./watch.js'), nodePath);
 }, {
 	parallel: process.platform === 'win32' ? 2 : 'auto',

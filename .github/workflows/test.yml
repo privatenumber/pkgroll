@@ -1,13 +1,12 @@
 name: Test
 on:
   push:
-    branches: [master, develop]
   pull_request:
-    branches: [master, develop, next]
 
 jobs:
   test:
     name: Test
+    if: github.event_name == 'pull_request' || github.repository_owner == 'privatenumber'
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]

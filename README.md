@@ -325,13 +325,13 @@ _Pkgroll_ supports [import attributes](https://github.com/tc39/proposal-import-a
 
 ```js
 // Import file contents as a string (https://github.com/tc39/proposal-import-text)
-import html from "./template.html" with { type: "text" }
+import html from './template.html' with { type: 'text' }
 
 // Import file contents as a Uint8Array (https://github.com/tc39/proposal-import-bytes)
-import bytes from "./icon.png" with { type: "bytes" }
+import bytes from './icon.png' with { type: 'bytes' }
 
 // Also works with dynamic import
-const { default: data } = await import("./data.bin", { with: { type: "bytes" } })
+const { default: data } = await import('./data.bin', { with: { type: 'bytes' } })
 ```
 
 The file contents are inlined into the bundle at build time, so no extra files are needed at runtime.

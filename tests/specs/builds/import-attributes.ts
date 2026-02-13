@@ -316,7 +316,9 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 			});
 
 			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toMatch('import attributes');
+			expect(pkgrollProcess.stderr).toMatch(
+				'tried to import "./file.txt" with "type": "bytes" attributes, but it was already imported elsewhere with "type": "text" attributes. Please ensure that import attributes for the same module are always consistent.',
+			);
 		});
 
 		test('file path with spaces', async () => {

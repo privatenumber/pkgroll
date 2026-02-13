@@ -23,6 +23,7 @@ export const esbuildTransform = (
 					 * https://esbuild.github.io/try/#dAAwLjI1LjAAe3RhcmdldDogWydlczIwMTcnXX0AY29uc29sZS5sb2coaW1wb3J0Lm1ldGEudXJsKQ
 					 */
 					'import-meta': true,
+					'import-attributes': true,
 				},
 
 				loader: 'default',

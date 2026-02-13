@@ -8,38 +8,52 @@ import type { Plugin } from 'rollup';
 // - const bytes = await import("./photo.png", { with: { type: "bytes" } })
 //
 // Proposals:
-// - https://github.com/tc39/proposal-import-attributes
-// - https://github.com/tc39/proposal-import-bytes
-export const importAttributes = (): Plugin => ({
-	name: 'import-attributes',
+// - https://github.com/tc39/proposal-import-attributes (with syntax, Stage 4)
+// - https://github.com/tc39/proposal-import-text (type: "text", Stage 2)
+// - https://github.com/tc39/proposal-import-bytes (type: "bytes", Stage 2.7)
+//
+// Note: The import-bytes proposal specifies Uint8Array backed by an immutable ArrayBuffer.
+// We produce a mutable Uint8Array because ArrayBuffer.prototype.transferToImmutable()
+// is not yet available in stable runtimes (proposal at Stage 2.7).
+export const importAttributes = (): Plugin => {
+	const attributeTypes = new Map<string, string>();
 
-	async resolveId(source, importer, { attributes }) {
-		if (attributes.type !== 'text' && attributes.type !== 'bytes') {
-			return null;
-		}
+	return {
+		name: 'import-attributes',
 
-		if (!importer || (!source.startsWith('./') && !source.startsWith('../'))) {
-			return null;
-		}
+		async resolveId(source, importer, { attributes }) {
+			if (attributes.type !== 'text' && attributes.type !== 'bytes') {
+				return null;
+			}
 
-		return path.resolve(path.dirname(importer), source);
-	},
+			if (!importer || (!source.startsWith('./') && !source.startsWith('../'))) {
+				return null;
+			}
 
-	async load(id) {
-		const { attributes } = this.getModuleInfo(id)!;
+			const resolved = path.resolve(path.dirname(importer), source);
+			attributeTypes.set(resolved, attributes.type);
+			return resolved;
+		},
 
-		if (attributes.type === 'text') {
+		async load(id) {
+			const type = attributeTypes.get(id);
+			if (!type) {
+				return null;
+			}
+
 			this.addWatchFile(id);
-			const content = await fs.readFile(id, 'utf8');
-			return `export default ${JSON.stringify(content)}`;
-		}
 
-		if (attributes.type === 'bytes') {
-			this.addWatchFile(id);
-			const content = await fs.readFile(id);
-			return `export default new Uint8Array([${content.join(',')}])`;
-		}
+			if (type === 'text') {
+				const content = await fs.readFile(id, 'utf8');
+				return `export default ${JSON.stringify(content)}`;
+			}
 
-		return null;
-	},
-});
+			if (type === 'bytes') {
+				const content = await fs.readFile(id);
+				return `export default new Uint8Array([${content.join(',')}])`;
+			}
+
+			return null;
+		},
+	};
+};

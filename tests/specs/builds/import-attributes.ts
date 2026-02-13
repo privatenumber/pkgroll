@@ -61,6 +61,35 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 			expect(content).toMatch('<h1>Hello World</h1>');
 		});
 
+		test('dynamic import with type: "text"', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.mjs',
+				}),
+				'src/index.js': `
+					const { default: html } = await import("./page.html", { with: { type: "text" } });
+					console.log(typeof html);
+					console.log(html);
+				`,
+				'src/page.html': '<h1>Dynamic</h1>',
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+
+			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+				cwd: fixture.path,
+			});
+
+			expect(stdout).toMatch('string');
+			expect(stdout).toMatch('<h1>Dynamic</h1>');
+		});
+
 		test('runtime: text content is accessible as string', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({
@@ -203,6 +232,94 @@ export default testSuite('import attributes', ({ describe }, nodePath: string) =
 			const lines = stdout.split('\n');
 			expect(lines[0]).toBe('true');
 			expect(lines[1]).toBe('3');
+		});
+	});
+
+	describe('edge cases', ({ test }) => {
+		test('empty text file', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.mjs',
+				}),
+				'src/index.js': `
+					import text from "./empty.txt" with { type: "text" };
+					console.log(typeof text);
+					console.log(JSON.stringify(text));
+				`,
+				'src/empty.txt': '',
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+
+			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+				cwd: fixture.path,
+			});
+
+			expect(stdout).toMatch('string');
+			expect(stdout).toMatch('""');
+		});
+
+		test('empty binary file', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.mjs',
+				}),
+				'src/index.js': `
+					import bytes from "./empty.bin" with { type: "bytes" };
+					console.log(bytes instanceof Uint8Array);
+					console.log(bytes.length);
+				`,
+				'src/empty.bin': Buffer.alloc(0),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+
+			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+				cwd: fixture.path,
+			});
+
+			const lines = stdout.split('\n');
+			expect(lines[0]).toBe('true');
+			expect(lines[1]).toBe('0');
+		});
+
+		test('file path with spaces', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					type: 'module',
+					main: './dist/index.mjs',
+				}),
+				'src/index.js': `
+					import html from "./my page.html" with { type: "text" };
+					console.log(html);
+				`,
+				'src/my page.html': '<h1>Spaced</h1>',
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+
+			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+				cwd: fixture.path,
+			});
+
+			expect(stdout).toBe('<h1>Spaced</h1>');
 		});
 	});
 

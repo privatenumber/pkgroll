@@ -17,6 +17,7 @@ import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
 import { stripHashbang } from '../plugins/strip-hashbang.js';
 import { esmInjectCreateRequire } from '../plugins/esm-inject-create-require.js';
 import { nativeModules } from '../plugins/native-modules.js';
+import { importAttributes } from '../plugins/import-attributes.js';
 import { externalPkgImports } from '../plugins/external-pkg-imports.js';
 import { resolveImplicitExternals } from '../plugins/resolve-implicit-externals.js';
 import { externalizeDependencies } from '../plugins/externalize-dependencies.js';
@@ -68,6 +69,7 @@ export const getPkgConfig = (
 			resolveImplicitExternals(),
 			externalizeDependencies(packageJson),
 			resolveJsToTs(),
+			importAttributes(),
 			nodeResolve({
 				extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
 				exportConditions: options.exportCondition,

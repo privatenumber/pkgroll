@@ -1,6 +1,5 @@
 import { testSuite, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import outdent from 'outdent';
 import { pkgroll } from '../../utils.js';
 import { packageFixture, createPackageJson } from '../../fixtures.js';
 

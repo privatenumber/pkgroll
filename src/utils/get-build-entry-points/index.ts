@@ -4,10 +4,12 @@ import { applyPublishConfig } from './apply-publish-config.js';
 import { getPkgEntryPoints } from './get-pkg-entry-points.js';
 import type { CliEntry } from './cli-input.js';
 import { getFileType } from './utils.js';
-import type { BuildOutput, EntryPoint, ObjectPath } from './types.js';
+import type { BuildOutput, EntryPoint, EntryPointError, ObjectPath } from './types.js';
 import { getSourcePath } from './get-source-path.js';
 import { expandBuildOutputWildcards } from './expand-exports-wildcards.js';
 import { parseDotPath } from './parse-dot-path.js';
+
+type ExpandedEntry = BuildOutput | EntryPointError<BuildOutput>;
 
 const matchesPathPrefix = (
 	sourcePath: ObjectPath,
@@ -18,6 +20,20 @@ const matchesPathPrefix = (
 	}
 	return filterSegments.every(
 		(segment, index) => String(sourcePath[index]) === segment,
+	);
+};
+
+const matchesFilter = (
+	entry: ExpandedEntry,
+	parsedFilters: string[][],
+) => {
+	const buildOutput = 'error' in entry ? entry.exportEntry : entry;
+	const { source } = buildOutput;
+	if (source === 'cli') {
+		return true;
+	}
+	return parsedFilters.some(
+		filterSegments => matchesPathPrefix(source.path, filterSegments),
 	);
 };
 
@@ -32,7 +48,7 @@ export const getBuildEntryPoints = async (
 	const packageType = packageJson.type ?? 'commonjs';
 
 	const skipPackageJson = packageJsonFilters?.includes('false');
-	let packageExports: BuildOutput[] = [];
+	let packageExports: ExpandedEntry[] = [];
 
 	if (!skipPackageJson) {
 		// Expand wildcard entries in BuildOutput[]
@@ -45,18 +61,9 @@ export const getBuildEntryPoints = async (
 		const filters = packageJsonFilters?.filter(filter => filter !== 'false');
 		if (filters && filters.length > 0) {
 			const parsedFilters = filters.map(parseDotPath);
-			packageExports = packageExports.filter((entry) => {
-				if ('error' in entry) {
-					return false;
-				}
-				const { source } = entry;
-				if (source === 'cli') {
-					return true;
-				}
-				return parsedFilters.some(
-					filterSegments => matchesPathPrefix(source.path, filterSegments),
-				);
-			});
+			packageExports = packageExports.filter(
+				entry => matchesFilter(entry, parsedFilters),
+			);
 		}
 	}
 

@@ -118,6 +118,40 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 		expect(await fixture.exists('dist/index.mjs')).toBe(false);
 	});
 
+	test('preserves wildcard expansion errors for filtered-in entries', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				exports: {
+					// Malformed wildcard: missing file extension triggers an error
+					'./components/*': './dist/components/*',
+					'.': {
+						types: './dist/index.d.ts',
+					},
+				},
+			}),
+			src: {
+				'index.ts': 'export const a = 1;',
+				components: {
+					'button.ts': 'export const Button = "button";',
+				},
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			['--packagejson=exports'],
+			{ cwd: fixture.path, nodePath },
+		);
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+
+		// The wildcard error warning should be preserved (not silently dropped)
+		expect(pkgrollProcess.stderr).toMatch('Wildcard pattern must include a file extension');
+
+		// Valid filtered entry still builds
+		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
+	});
+
 	test('multiple --packagejson filters', async () => {
 		await using fixture = await createFixture({
 			...installTypeScript,

@@ -427,6 +427,37 @@ This enables "Go to Definition" in IDEs to navigate directly to the original `.t
 
 Using `declarationMap` only generates `.d.ts.map` files (not `.js.map`), which is useful if you only need source maps for type definitions.
 
+### Filtering package.json entry points
+
+By default, pkgroll reads all entry points from `package.json` (`main`, `types`, `exports`, `bin`, etc.). Use the `--packagejson` flag to control which entries are processed.
+
+This is useful when your `package.json` has entry points that reference non-JS files (e.g. CSS modules) that would cause errors during type declaration bundling, or when you only want to build a subset of outputs.
+
+Skip all `package.json` entry points (use with `--input`):
+```sh
+pkgroll --packagejson=false -i dist/index.d.mts
+```
+
+Only build specific entries by dot-path:
+```sh
+# Only build the top-level "types" entry
+pkgroll --packagejson=types
+
+# Only build entries under "exports"
+pkgroll --packagejson=exports
+
+# Multiple filters
+pkgroll --packagejson=types --packagejson=bin
+```
+
+For nested paths with special characters (`.`, `./`), use quoted segments:
+```sh
+# Only build exports["."].types
+pkgroll --packagejson=exports.".".types
+```
+
+Paths use **prefix matching** — `--packagejson=exports` matches all entries under `exports`.
+
 ## Dev vs Prod config
 
 In some cases, it makes sense to use different `package.json` field values for the published environment. You can achieve this by using the [`publishConfig`](https://pnpm.io/package_json#publishconfig) field (extended by pnpm). This allows you to override specific fields during publication with a clean separation of concerns.

@@ -51,6 +51,9 @@ importers:
       '@types/node':
         specifier: ^24.10.0
         version: 24.10.1
+      '@types/picomatch':
+        specifier: ^4.0.2
+        version: 4.0.2
       '@types/react':
         specifier: ^19.2.2
         version: 19.2.6
@@ -90,6 +93,9 @@ importers:
       outdent:
         specifier: ^0.8.0
         version: 0.8.0
+      picomatch:
+        specifier: ^4.0.3
+        version: 4.0.3
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -847,6 +853,9 @@ packages:
 
   '@types/node@24.10.1':
     resolution: {integrity: sha512-GNWcUTRBgIRJD5zj+Tq0fKOJ5XZajIiBroOF0yvj2bSU1WvNdYS/dn9UxwsujGW4JX06dnHyjV2y9rRaybH0iQ==}
+
+  '@types/picomatch@4.0.2':
+    resolution: {integrity: sha512-qHHxQ+P9PysNEGbALT8f8YOSHW0KJu6l2xU8DYY0fu/EmGxXdVnuTLvFUvBgPJMSqXq29SYHveejeAha+4AYgA==}
 
   '@types/react@19.2.6':
     resolution: {integrity: sha512-p/jUvulfgU7oKtj6Xpk8cA2Y1xKTtICGpJYeJXz2YVO2UcvjQgeRMLDGfDeqeRW2Ta+0QNFwcc8X3GH8SxZz6w==}
@@ -3571,6 +3580,8 @@ snapshots:
   '@types/node@24.10.1':
     dependencies:
       undici-types: 7.16.0
+
+  '@types/picomatch@4.0.2': {}
 
   '@types/react@19.2.6':
     dependencies:

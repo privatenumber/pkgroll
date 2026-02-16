@@ -519,6 +519,42 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 		expect(types).toMatch('.data');
 	});
 
+	test('bundles types from adjacent .d.ts files (e.g. css modules)', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				types: './dist/index.d.ts',
+			}),
+			src: {
+				'index.ts': outdent`
+				import styles from './styles.module.css';
+				export function getClass(): string {
+					return styles.container;
+				}
+				`,
+				'styles.module.css': '.container { color: red; }',
+				'styles.module.css.d.ts': outdent`
+				declare const styles: {
+					readonly container: string;
+				};
+				export default styles;
+				`,
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+			nodePath,
+		});
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.d.ts', 'utf8');
+		expect(content).toMatch('getClass');
+		expect(content).toMatch('string');
+	});
+
 	test('custom tsconfig.json path', async () => {
 		await using fixture = await createFixture({
 			...packageFixture({

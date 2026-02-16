@@ -104,6 +104,10 @@ const argv = cli({
 			},
 			description: 'Sourcemap generation. Provide `inline` option for inline sourcemap (eg. --sourcemap, --sourcemap=inline)',
 		},
+		packagejson: {
+			type: [String],
+			description: 'Filter package.json entry points by glob pattern on output path (eg. --packagejson=\'*.d.ts\'). Use --packagejson=false to skip all.',
+		},
 		cleanDist: {
 			type: Boolean,
 			description: 'Clean dist before bundling',
@@ -167,7 +171,15 @@ if (tsconfigTarget) {
 
 const generateRollupConfigs = async () => {
 	const { packageJson } = await readPackage(cwd);
-	const buildEntryPoints = await getBuildEntryPoints(srcDistPairs, packageJson, argv.flags.input);
+	const packageJsonFilters = argv.flags.packagejson.length > 0
+		? argv.flags.packagejson
+		: undefined;
+	const buildEntryPoints = await getBuildEntryPoints(
+		srcDistPairs,
+		packageJson,
+		argv.flags.input,
+		packageJsonFilters,
+	);
 
 	for (const entryPoint of buildEntryPoints) {
 		if ('error' in entryPoint) {

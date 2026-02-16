@@ -1,41 +1,15 @@
 import type { PackageJson } from 'type-fest';
+import picomatch from 'picomatch';
 import type { SrcDistPairInput } from '../../types.js';
 import { applyPublishConfig } from './apply-publish-config.js';
 import { getPkgEntryPoints } from './get-pkg-entry-points.js';
 import type { CliEntry } from './cli-input.js';
 import { getFileType } from './utils.js';
-import type { BuildOutput, EntryPoint, EntryPointError, ObjectPath } from './types.js';
+import type { BuildOutput, EntryPoint, EntryPointError } from './types.js';
 import { getSourcePath } from './get-source-path.js';
 import { expandBuildOutputWildcards } from './expand-exports-wildcards.js';
-import { parseDotPath } from './parse-dot-path.js';
 
 type ExpandedEntry = BuildOutput | EntryPointError<BuildOutput>;
-
-const matchesPathPrefix = (
-	sourcePath: ObjectPath,
-	filterSegments: string[],
-) => {
-	if (filterSegments.length > sourcePath.length) {
-		return false;
-	}
-	return filterSegments.every(
-		(segment, index) => String(sourcePath[index]) === segment,
-	);
-};
-
-const matchesFilter = (
-	entry: ExpandedEntry,
-	parsedFilters: string[][],
-) => {
-	const buildOutput = 'error' in entry ? entry.exportEntry : entry;
-	const { source } = buildOutput;
-	if (source === 'cli') {
-		return true;
-	}
-	return parsedFilters.some(
-		filterSegments => matchesPathPrefix(source.path, filterSegments),
-	);
-};
 
 export const getBuildEntryPoints = async (
 	srcdist: SrcDistPairInput[],
@@ -57,13 +31,18 @@ export const getBuildEntryPoints = async (
 			srcdist,
 		);
 
-		// Filter by dot-path prefixes if specified
+		// Filter by glob patterns against output paths
 		const filters = packageJsonFilters?.filter(filter => filter !== 'false');
 		if (filters && filters.length > 0) {
-			const parsedFilters = filters.map(parseDotPath);
-			packageExports = packageExports.filter(
-				entry => matchesFilter(entry, parsedFilters),
+			// matchBase only applies to patterns without slashes (basename-only)
+			const matchers = filters.map(
+				filter => picomatch(filter, filter.includes('/') ? {} : { matchBase: true }),
 			);
+			packageExports = packageExports.filter((entry) => {
+				const buildOutput = 'error' in entry ? entry.exportEntry : entry;
+				const outputPath = buildOutput.outputPath.replace(/^\.\//, '');
+				return matchers.some(isMatch => isMatch(outputPath));
+			});
 		}
 	}
 

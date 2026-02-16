@@ -429,7 +429,7 @@ Using `declarationMap` only generates `.d.ts.map` files (not `.js.map`), which i
 
 ### Filtering package.json entry points
 
-By default, pkgroll reads all entry points from `package.json` (`main`, `types`, `exports`, `bin`, etc.). Use the `--packagejson` flag to control which entries are processed.
+By default, pkgroll reads all entry points from `package.json` (`main`, `types`, `exports`, `bin`, etc.). Use the `--packagejson` flag to filter which entries are built by matching against their output paths.
 
 This is useful when your `package.json` has entry points that reference non-JS files (e.g. CSS modules) that would cause errors during type declaration bundling, or when you only want to build a subset of outputs.
 
@@ -438,25 +438,22 @@ Skip all `package.json` entry points (use with `--input`):
 pkgroll --packagejson=false -i dist/index.d.mts
 ```
 
-Only build specific entries by dot-path:
+Filter by glob pattern on output paths:
 ```sh
-# Only build the top-level "types" entry
-pkgroll --packagejson=types
+# Only build type declarations
+pkgroll --packagejson='*.d.ts'
 
-# Only build entries under "exports"
-pkgroll --packagejson=exports
+# Only build ESM outputs
+pkgroll --packagejson='*.mjs'
 
-# Multiple filters
-pkgroll --packagejson=types --packagejson=bin
+# Multiple patterns
+pkgroll --packagejson='*.d.ts' --packagejson='*.mjs'
+
+# Match specific files by path
+pkgroll --packagejson='dist/utils.*'
 ```
 
-For nested paths with special characters (`.`, `./`), use quoted segments:
-```sh
-# Only build exports["."].types
-pkgroll --packagejson=exports.".".types
-```
-
-Paths use **prefix matching** — `--packagejson=exports` matches all entries under `exports`.
+Patterns without slashes match against the file basename (e.g. `*.d.ts` matches `dist/index.d.ts`). Patterns with slashes match against the full output path.
 
 ## Dev vs Prod config
 

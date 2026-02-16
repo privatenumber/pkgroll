@@ -106,7 +106,7 @@ const argv = cli({
 		},
 		packagejson: {
 			type: [String],
-			description: 'Filter package.json entry points by dot-path (eg. --packagejson=exports.".".types). Use --packagejson=false to skip all.',
+			description: 'Filter package.json entry points by glob pattern on output path (eg. --packagejson=\'*.d.ts\'). Use --packagejson=false to skip all.',
 		},
 		cleanDist: {
 			type: Boolean,

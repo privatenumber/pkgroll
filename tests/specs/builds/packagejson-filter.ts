@@ -33,63 +33,7 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 		expect(await fixture.exists('dist/index.js')).toBe(false);
 	});
 
-	test('--packagejson=types only builds types entry', async () => {
-		await using fixture = await createFixture({
-			...installTypeScript,
-			'package.json': createPackageJson({
-				main: './dist/index.js',
-				types: './dist/index.d.ts',
-			}),
-			src: {
-				'index.ts': 'export const a = 1;',
-			},
-		});
-
-		const pkgrollProcess = await pkgroll(
-			['--packagejson=types'],
-			{ cwd: fixture.path, nodePath },
-		);
-
-		expect(pkgrollProcess.exitCode).toBe(0);
-		expect(pkgrollProcess.stderr).toBe('');
-
-		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
-		expect(await fixture.exists('dist/index.js')).toBe(false);
-	});
-
-	test('--packagejson=exports filters to exports only', async () => {
-		await using fixture = await createFixture({
-			...installTypeScript,
-			'package.json': createPackageJson({
-				main: './dist/main.js',
-				exports: {
-					types: './dist/index.d.ts',
-					import: './dist/index.mjs',
-				},
-			}),
-			src: {
-				'index.ts': 'export const a = 1;',
-				'main.ts': 'export const b = 2;',
-			},
-		});
-
-		const pkgrollProcess = await pkgroll(
-			['--packagejson=exports'],
-			{ cwd: fixture.path, nodePath },
-		);
-
-		expect(pkgrollProcess.exitCode).toBe(0);
-		expect(pkgrollProcess.stderr).toBe('');
-
-		// Exports entries built
-		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
-		expect(await fixture.exists('dist/index.mjs')).toBe(true);
-
-		// main entry skipped
-		expect(await fixture.exists('dist/main.js')).toBe(false);
-	});
-
-	test('--packagejson with quoted segments filters nested exports', async () => {
+	test('*.d.ts matches only type declaration outputs', async () => {
 		await using fixture = await createFixture({
 			...installTypeScript,
 			'package.json': createPackageJson({
@@ -106,15 +50,112 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 		});
 
 		const pkgrollProcess = await pkgroll(
-			['--packagejson=exports.".".types'],
+			['--packagejson=*.d.ts'],
 			{ cwd: fixture.path, nodePath },
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
-		// Only types built
 		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
+		expect(await fixture.exists('dist/index.mjs')).toBe(false);
+	});
+
+	test('*.mjs matches only ESM outputs', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				exports: {
+					'.': {
+						types: './dist/index.d.ts',
+						import: './dist/index.mjs',
+						require: './dist/index.cjs',
+					},
+				},
+			}),
+			src: {
+				'index.ts': 'export const a = 1;',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			['--packagejson=*.mjs'],
+			{ cwd: fixture.path, nodePath },
+		);
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		expect(await fixture.exists('dist/index.mjs')).toBe(true);
+		expect(await fixture.exists('dist/index.d.ts')).toBe(false);
+		expect(await fixture.exists('dist/index.cjs')).toBe(false);
+	});
+
+	test('multiple glob patterns', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				exports: {
+					'.': {
+						types: './dist/index.d.ts',
+						import: './dist/index.mjs',
+						require: './dist/index.cjs',
+					},
+				},
+			}),
+			src: {
+				'index.ts': 'export const a = 1;',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			['--packagejson=*.d.ts', '--packagejson=*.mjs'],
+			{ cwd: fixture.path, nodePath },
+		);
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
+		expect(await fixture.exists('dist/index.mjs')).toBe(true);
+		expect(await fixture.exists('dist/index.cjs')).toBe(false);
+	});
+
+	test('full path glob pattern', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript,
+			'package.json': createPackageJson({
+				exports: {
+					'.': {
+						types: './dist/index.d.ts',
+						import: './dist/index.mjs',
+					},
+					'./utils': {
+						types: './dist/utils.d.ts',
+						import: './dist/utils.mjs',
+					},
+				},
+			}),
+			src: {
+				'index.ts': 'export const a = 1;',
+				'utils.ts': 'export const b = 2;',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			['--packagejson=dist/utils.*'],
+			{ cwd: fixture.path, nodePath },
+		);
+
+		expect(pkgrollProcess.exitCode).toBe(0);
+		expect(pkgrollProcess.stderr).toBe('');
+
+		// Only utils outputs built
+		expect(await fixture.exists('dist/utils.d.ts')).toBe(true);
+		expect(await fixture.exists('dist/utils.mjs')).toBe(true);
+
+		// index outputs skipped
+		expect(await fixture.exists('dist/index.d.ts')).toBe(false);
 		expect(await fixture.exists('dist/index.mjs')).toBe(false);
 	});
 
@@ -138,51 +179,19 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			},
 		});
 
+		// Use a pattern that matches everything — the malformed wildcard error
+		// should still surface as a warning, not be silently dropped
 		const pkgrollProcess = await pkgroll(
-			['--packagejson=exports'],
+			['--packagejson=dist/**'],
 			{ cwd: fixture.path, nodePath },
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
 
-		// The wildcard error warning should be preserved (not silently dropped)
+		// The wildcard error warning should be preserved
 		expect(pkgrollProcess.stderr).toMatch('Wildcard pattern must include a file extension');
 
 		// Valid filtered entry still builds
 		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
-	});
-
-	test('multiple --packagejson filters', async () => {
-		await using fixture = await createFixture({
-			...installTypeScript,
-			'package.json': createPackageJson({
-				main: './dist/main.js',
-				types: './dist/index.d.ts',
-				bin: './dist/cli.js',
-			}),
-			src: {
-				'index.ts': 'export const a = 1;',
-				'main.ts': 'export const b = 2;',
-				'cli.ts': outdent`
-				#!/usr/bin/env node
-				console.log('hello');
-				`,
-			},
-		});
-
-		const pkgrollProcess = await pkgroll(
-			['--packagejson=types', '--packagejson=bin'],
-			{ cwd: fixture.path, nodePath },
-		);
-
-		expect(pkgrollProcess.exitCode).toBe(0);
-		expect(pkgrollProcess.stderr).toBe('');
-
-		// types and bin built
-		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
-		expect(await fixture.exists('dist/cli.js')).toBe(true);
-
-		// main skipped
-		expect(await fixture.exists('dist/main.js')).toBe(false);
 	});
 });

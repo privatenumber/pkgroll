@@ -25,6 +25,7 @@ import { license } from './license.ts';
 import { packageYaml } from './package-yaml.ts';
 import { importAttributes } from './import-attributes.ts';
 import { watch } from './watch.ts';
+import { packagejsonFilter } from './packagejson-filter.ts';
 
 export const builds = (nodePath: string) => describe('builds', () => {
 	outputCommonjs(nodePath);
@@ -53,6 +54,7 @@ export const builds = (nodePath: string) => describe('builds', () => {
 	packageYaml(nodePath);
 	importAttributes(nodePath);
 	watch(nodePath);
+	packagejsonFilter(nodePath);
 }, {
 	parallel: process.platform === 'win32' ? 2 : 'auto',
 });

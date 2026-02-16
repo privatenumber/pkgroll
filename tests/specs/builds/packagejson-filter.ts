@@ -1,6 +1,5 @@
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import outdent from 'outdent';
 import { pkgroll } from '../../utils.ts';
 import {
 	installTypeScript,
@@ -22,7 +21,10 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 		const pkgrollProcess = await pkgroll(
 			['--packagejson=false', '-i', 'dist/index.d.ts'],
-			{ cwd: fixture.path, nodePath },
+			{
+				cwd: fixture.path,
+				nodePath,
+			},
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
@@ -51,7 +53,10 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 		const pkgrollProcess = await pkgroll(
 			['--packagejson=*.d.ts'],
-			{ cwd: fixture.path, nodePath },
+			{
+				cwd: fixture.path,
+				nodePath,
+			},
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
@@ -80,7 +85,10 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 		const pkgrollProcess = await pkgroll(
 			['--packagejson=*.mjs'],
-			{ cwd: fixture.path, nodePath },
+			{
+				cwd: fixture.path,
+				nodePath,
+			},
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
@@ -110,7 +118,10 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 		const pkgrollProcess = await pkgroll(
 			['--packagejson=*.d.ts', '--packagejson=*.mjs'],
-			{ cwd: fixture.path, nodePath },
+			{
+				cwd: fixture.path,
+				nodePath,
+			},
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
@@ -144,7 +155,10 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 		const pkgrollProcess = await pkgroll(
 			['--packagejson=dist/utils.*'],
-			{ cwd: fixture.path, nodePath },
+			{
+				cwd: fixture.path,
+				nodePath,
+			},
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);
@@ -183,7 +197,10 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 		// should still surface as a warning, not be silently dropped
 		const pkgrollProcess = await pkgroll(
 			['--packagejson=dist/**'],
-			{ cwd: fixture.path, nodePath },
+			{
+				cwd: fixture.path,
+				nodePath,
+			},
 		);
 
 		expect(pkgrollProcess.exitCode).toBe(0);

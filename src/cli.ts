@@ -174,7 +174,12 @@ const generateRollupConfigs = async () => {
 	const packageJsonFilters = argv.flags.packagejson.length > 0
 		? argv.flags.packagejson
 		: undefined;
-	const buildEntryPoints = await getBuildEntryPoints(srcDistPairs, packageJson, argv.flags.input, packageJsonFilters);
+	const buildEntryPoints = await getBuildEntryPoints(
+		srcDistPairs,
+		packageJson,
+		argv.flags.input,
+		packageJsonFilters,
+	);
 
 	for (const entryPoint of buildEntryPoints) {
 		if ('error' in entryPoint) {

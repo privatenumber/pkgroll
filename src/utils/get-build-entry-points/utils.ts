@@ -1,4 +1,4 @@
-import type { PackageType } from './types.js';
+import type { PackageType } from './types.ts';
 
 export const getFileType = (
 	filePath: string,

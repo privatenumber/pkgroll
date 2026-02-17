@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { dim } from 'kolorist';
-import { normalizePath } from './normalize-path.js';
+import { normalizePath } from './normalize-path.ts';
 
 const currentTime = () => (new Date()).toLocaleTimeString();
 

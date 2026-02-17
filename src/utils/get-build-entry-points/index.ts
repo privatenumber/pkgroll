@@ -1,13 +1,13 @@
 import type { PackageJson } from 'type-fest';
 import picomatch from 'picomatch';
-import type { SrcDistPairInput } from '../../types.js';
-import { applyPublishConfig } from './apply-publish-config.js';
-import { getPkgEntryPoints } from './get-pkg-entry-points.js';
-import type { CliEntry } from './cli-input.js';
-import { getFileType } from './utils.js';
-import type { BuildOutput, EntryPoint, EntryPointError } from './types.js';
-import { getSourcePath } from './get-source-path.js';
-import { expandBuildOutputWildcards } from './expand-exports-wildcards.js';
+import type { SrcDistPairInput } from '../../types.ts';
+import { applyPublishConfig } from './apply-publish-config.ts';
+import { getPkgEntryPoints } from './get-pkg-entry-points.ts';
+import type { CliEntry } from './cli-input.ts';
+import { getFileType } from './utils.ts';
+import type { BuildOutput, EntryPoint, EntryPointError } from './types.ts';
+import { getSourcePath } from './get-source-path.ts';
+import { expandBuildOutputWildcards } from './expand-exports-wildcards.ts';
 
 type ExpandedEntry = BuildOutput | EntryPointError<BuildOutput>;
 

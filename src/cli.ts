@@ -3,21 +3,21 @@ import path from 'node:path';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { patchErrorWithTrace } from 'rollup-plugin-import-trace';
-import { version } from '../package.json';
-import { readPackage } from './utils/read-package.js';
-import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.js';
-import { getAliases } from './utils/parse-package-json/get-aliases.js';
-import { normalizePath } from './utils/normalize-path.js';
-import { getBuildEntryPoints } from './utils/get-build-entry-points/index.js';
-import { getRollupConfigs } from './rollup/get-rollup-configs.js';
-import { getTsconfig } from './utils/get-tsconfig.js';
-import { log, formatPath } from './utils/log.js';
-import { cleanDist } from './utils/clean-dist.js';
-import { prettyPath } from './utils/property-needs-quotes.js';
-import type { EntryPointValid } from './utils/get-build-entry-points/types.js';
-import type { SrcDistPairInput } from './types.js';
-import { entrySymbol } from './rollup/types.js';
-import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-outputs.js';
+import ownPackageJson from '../package.json' with { type: 'json' };
+import { readPackage } from './utils/read-package.ts';
+import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.ts';
+import { getAliases } from './utils/parse-package-json/get-aliases.ts';
+import { normalizePath } from './utils/normalize-path.ts';
+import { getBuildEntryPoints } from './utils/get-build-entry-points/index.ts';
+import { getRollupConfigs } from './rollup/get-rollup-configs.ts';
+import { getTsconfig } from './utils/get-tsconfig.ts';
+import { log, formatPath } from './utils/log.ts';
+import { cleanDist } from './utils/clean-dist.ts';
+import { prettyPath } from './utils/property-needs-quotes.ts';
+import type { EntryPointValid } from './utils/get-build-entry-points/types.ts';
+import type { SrcDistPairInput } from './types.ts';
+import { entrySymbol } from './rollup/types.ts';
+import { filterUnnecessaryOutputs } from './rollup/plugins/filter-unnecessary-outputs.ts';
 
 const { stringify } = JSON;
 
@@ -32,7 +32,7 @@ const keyValue = (flagValue: string) => {
 const argv = cli({
 	name: 'pkgroll',
 
-	version,
+	version: ownPackageJson.version,
 
 	flags: {
 		input: {

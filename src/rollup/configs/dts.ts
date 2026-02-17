@@ -2,12 +2,12 @@ import type { RollupOptions, Plugin } from 'rollup';
 import type { TsConfigResult } from 'get-tsconfig';
 import type { PackageJson } from 'type-fest';
 import { importTrace } from 'rollup-plugin-import-trace';
-import { nodeBuiltins } from '../plugins/node-builtins.js';
-import { resolveJsToTs } from '../plugins/resolve-js-to-ts.js';
-import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.js';
-import { externalPkgImports } from '../plugins/external-pkg-imports.js';
-import { externalizeDependencies } from '../plugins/externalize-dependencies.js';
-import type { Options, Output } from '../types.js';
+import { nodeBuiltins } from '../plugins/node-builtins.ts';
+import { resolveJsToTs } from '../plugins/resolve-js-to-ts.ts';
+import { resolveTsconfigPaths } from '../plugins/resolve-tsconfig-paths.ts';
+import { externalPkgImports } from '../plugins/external-pkg-imports.ts';
+import { externalizeDependencies } from '../plugins/externalize-dependencies.ts';
+import type { Options, Output } from '../types.ts';
 
 export const getDtsConfig = async (
 	options: Options,

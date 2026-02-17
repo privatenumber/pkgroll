@@ -1,11 +1,11 @@
 import type { PackageJson } from 'type-fest';
 import type { TsConfigResult } from 'get-tsconfig';
-import type { AliasMap, SrcDistPair, SrcDistPairInput } from '../types.js';
-import type { EntryPointValid } from '../utils/get-build-entry-points/types.js';
-import { normalizePath } from '../utils/normalize-path.js';
-import { type Options, type OutputWithOptions, entrySymbol } from './types.js';
-import { getPkgConfig } from './configs/pkg.js';
-import { getDtsConfig } from './configs/dts.js';
+import type { AliasMap, SrcDistPair, SrcDistPairInput } from '../types.ts';
+import type { EntryPointValid } from '../utils/get-build-entry-points/types.ts';
+import { normalizePath } from '../utils/normalize-path.ts';
+import { type Options, type OutputWithOptions, entrySymbol } from './types.ts';
+import { getPkgConfig } from './configs/pkg.ts';
+import { getDtsConfig } from './configs/dts.ts';
 
 type DtsConfig = Awaited<ReturnType<typeof getDtsConfig>>;
 type PkgConfig = ReturnType<typeof getPkgConfig>;

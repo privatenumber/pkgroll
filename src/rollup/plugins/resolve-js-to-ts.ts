@@ -1,5 +1,5 @@
 import type { Plugin } from 'rollup';
-import { isFromNodeModules } from '../../utils/import-specifier.js';
+import { isFromNodeModules } from '../../utils/import-specifier.ts';
 
 /**
  * Plugin to resolve JS extensions to TypeScript equivalents

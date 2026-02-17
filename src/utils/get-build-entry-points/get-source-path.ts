@@ -1,7 +1,7 @@
 import path from 'node:path/posix';
-import { fsExists } from '../fs-exists.js';
-import type { SrcDistPairInput } from '../../types.js';
-import type { BuildOutput, EntryPoint } from './types.js';
+import { fsExists } from '../fs-exists.ts';
+import type { SrcDistPairInput } from '../../types.ts';
+import type { BuildOutput, EntryPoint } from './types.ts';
 
 const tryExtensions = async (
 	pathWithoutExtension: string,

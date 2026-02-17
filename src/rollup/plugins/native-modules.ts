@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { Plugin } from 'rollup';
-import { slash } from '../../utils/normalize-path.js';
+import { slash } from '../../utils/normalize-path.ts';
 
 const PREFIX = '\0natives:';
 

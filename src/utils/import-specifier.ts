@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { slash } from './normalize-path.js';
+import { slash } from './normalize-path.ts';
 
 /**
  * Parse import specifier into package name and subpath

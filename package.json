@@ -27,8 +27,8 @@
 	"bin": "./dist/cli.mjs",
 	"packageManager": "pnpm@10.20.0",
 	"scripts": {
-		"build": "tsx src/cli.ts --minify --target node18",
-		"test": "pnpm build && tsx tests/index.ts",
+		"build": "node src/cli.ts --minify --target node18",
+		"test": "pnpm build && node tests/index.ts",
 		"lint": "lintroll --cache --node --ignore-pattern tests/fixture-package .",
 		"type-check": "tsc",
 		"prepack": "pnpm build && clean-pkg-json"
@@ -78,7 +78,6 @@
 		"picomatch": "^4.0.3",
 		"react": "^19.2.0",
 		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
-		"tsx": "^4.20.6",
 		"type-fest": "^5.2.0",
 		"typescript": "^5.9.3"
 	}

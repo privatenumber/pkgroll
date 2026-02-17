@@ -2,13 +2,13 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import type { Plugin } from 'rollup';
 import { up } from 'empathic/find';
-import { fsExists } from '../../utils/fs-exists.js';
-import { slash } from '../../utils/normalize-path.js';
+import { fsExists } from '../../utils/fs-exists.ts';
+import { slash } from '../../utils/normalize-path.ts';
 import {
 	parseSpecifier,
 	isBareSpecifier,
-} from '../../utils/import-specifier.js';
-import { readPackageJson } from '../../utils/read-package.js';
+} from '../../utils/import-specifier.ts';
+import { readPackageJson } from '../../utils/read-package.ts';
 
 /**
  * Try to resolve a file with implicit extensions (.js, .json)

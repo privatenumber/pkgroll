@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import type { Plugin } from 'rollup';
 import type { PackageJson } from 'type-fest';
-import { slash } from '../../utils/normalize-path.js';
+import { slash } from '../../utils/normalize-path.ts';
 import {
 	parseSpecifier,
 	isBareSpecifier,
 	isFromNodeModules,
-} from '../../utils/import-specifier.js';
+} from '../../utils/import-specifier.ts';
 
 const typesPrefix = '@types/';
 

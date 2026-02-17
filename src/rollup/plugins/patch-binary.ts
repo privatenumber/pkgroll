@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path/posix';
 import type { Plugin, SourceMapInput } from 'rollup';
 import MagicString from 'magic-string';
-import type { EntryPointValid } from '../../utils/get-build-entry-points/types.js';
-import { normalizePath } from '../../utils/normalize-path.js';
+import type { EntryPointValid } from '../../utils/get-build-entry-points/types.ts';
+import { normalizePath } from '../../utils/normalize-path.ts';
 
 export const patchBinary = (
 	entryPoints: EntryPointValid[],

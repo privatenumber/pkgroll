@@ -1,7 +1,7 @@
 import path from 'node:path';
-import type { SrcDistPairInput } from '../../types.js';
-import { getDirectoryFiles } from '../get-directory-files.js';
-import type { BuildOutput, EntryPointError } from './types.js';
+import type { SrcDistPairInput } from '../../types.ts';
+import { getDirectoryFiles } from '../get-directory-files.ts';
+import type { BuildOutput, EntryPointError } from './types.ts';
 
 const extensionPattern = /\.[^./]+$/;
 

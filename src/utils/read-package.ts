@@ -2,8 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { PackageJson } from 'type-fest';
 import { parse as yamlParse } from 'yaml';
-import { fsExists } from './fs-exists.js';
-import { formatPath } from './log.js';
+import { fsExists } from './fs-exists.ts';
+import { formatPath } from './log.ts';
 
 const readPackageYaml = async (
 	packageYamlPath: string,

@@ -1,4 +1,4 @@
-import { normalizePath } from '../normalize-path.js';
+import { normalizePath } from '../normalize-path.ts';
 
 export type CliEntry = {
 	type: 'legacy';

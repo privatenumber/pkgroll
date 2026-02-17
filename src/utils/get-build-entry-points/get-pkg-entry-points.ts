@@ -1,9 +1,9 @@
 import type { PackageJson } from 'type-fest';
-import { normalizePath } from '../normalize-path.js';
+import { normalizePath } from '../normalize-path.ts';
 import type {
 	PackageType, BuildOutput, ObjectPath, PackageMapType,
-} from './types.js';
-import { getFileType, isPath } from './utils.js';
+} from './types.ts';
+import { getFileType, isPath } from './utils.ts';
 
 const getConditions = (
 	fromPath: ObjectPath,

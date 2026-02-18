@@ -4,42 +4,144 @@ import { pkgroll } from '../../utils.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
 export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', () => {
-	test('should not transform bare specifier with wildcard exports', async () => {
-		await using fixture = await createFixture({
-			'package.json': createPackageJson({
-				main: './dist/index.mjs',
-				devDependencies: {
-					'dep-wildcard': '*',
-				},
-			}),
+	describe('relative imports (source code)', () => {
+		test('./file.js resolves to ./file.ts', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+				}),
+				'src/index.ts': `
+					import { value } from './utils.js';
+					export { value };
+				`,
+				'src/utils.ts': 'export const value = "from-ts";',
+			});
 
-			'src/index.ts': `
-				import { value } from 'dep-wildcard/utils.js';
-				export { value };
-			`,
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
 
-			'node_modules/dep-wildcard': {
-				'package.json': JSON.stringify({
-					name: 'dep-wildcard',
-					type: 'module',
-					exports: {
-						'./*.js': './dist/*.js',
-						'./*': './dist/*.js',
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('from-ts');
+		});
+	});
+
+	describe('bare specifiers (package imports)', () => {
+		test('wildcard exports - should resolve .js through exports map', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+					devDependencies: {
+						'dep-wildcard': '*',
 					},
 				}),
-				'dist/utils.js': 'export const value = "hello";',
-			},
+
+				'src/index.ts': `
+					import { value } from 'dep-wildcard/utils.js';
+					export { value };
+				`,
+
+				'node_modules/dep-wildcard': {
+					'package.json': JSON.stringify({
+						name: 'dep-wildcard',
+						type: 'module',
+						exports: {
+							'./*.js': './dist/*.js',
+							'./*': './dist/*.js',
+						},
+					}),
+					'dist/utils.js': 'export const value = "hello";',
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('hello');
 		});
 
-		const pkgrollProcess = await pkgroll([], {
-			cwd: fixture.path,
-			nodePath,
+		test('dep ships both .js and .ts - should prefer .js', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+					devDependencies: {
+						'dep-both': '*',
+					},
+				}),
+
+				'src/index.ts': `
+					import { value } from 'dep-both/file.js';
+					export { value };
+				`,
+
+				'node_modules/dep-both': {
+					'package.json': JSON.stringify({
+						name: 'dep-both',
+						type: 'module',
+						main: './index.js',
+					}),
+					'file.js': 'export const value = "compiled-js";',
+					'file.ts': 'export const value: string = "source-ts";',
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('compiled-js');
+			expect(content).not.toMatch('source-ts');
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
-		expect(pkgrollProcess.stderr).toBe('');
+		test('dep ships only .ts - should fallback to .ts', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+					devDependencies: {
+						'dep-ts-only': '*',
+					},
+				}),
 
-		const content = await fixture.readFile('dist/index.mjs', 'utf8');
-		expect(content).toMatch('hello');
+				'src/index.ts': `
+					import { value } from 'dep-ts-only/file.js';
+					export { value };
+				`,
+
+				'node_modules/dep-ts-only': {
+					'package.json': JSON.stringify({
+						name: 'dep-ts-only',
+						type: 'module',
+						main: './index.js',
+					}),
+					'file.ts': 'export const value: string = "only-ts";',
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('only-ts');
+		});
 	});
 });

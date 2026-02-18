@@ -26,6 +26,7 @@ import { packageYaml } from './package-yaml.ts';
 import { importAttributes } from './import-attributes.ts';
 import { watch } from './watch.ts';
 import { packagejsonFilter } from './packagejson-filter.ts';
+import { resolveJsToTs } from './resolve-js-to-ts.ts';
 
 export const builds = (nodePath: string) => describe('builds', () => {
 	outputCommonjs(nodePath);
@@ -55,6 +56,7 @@ export const builds = (nodePath: string) => describe('builds', () => {
 	importAttributes(nodePath);
 	watch(nodePath);
 	packagejsonFilter(nodePath);
+	resolveJsToTs(nodePath);
 }, {
 	parallel: process.platform === 'win32' ? 2 : 'auto',
 });

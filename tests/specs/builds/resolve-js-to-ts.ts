@@ -60,9 +60,7 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
 			expect(content).toMatch('tsx-component');
 		});
-	});
 
-	describe('.jsx → .ts fallback', () => {
 		// esbuild: rewrittenFileExtensions ".jsx" → [".ts", ".tsx"] — tries .ts first
 		// https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1724-L1727
 		// TypeScript: tryAddingExtensions case .Jsx → .tsx || .ts
@@ -89,45 +87,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
 			expect(content).toMatch('from-ts-via-jsx');
-		});
-
-		// Same rewriting applies to bare specifiers resolved through node_modules
-		// esbuild: rewrittenFileExtensions ".jsx" → [".ts", ".tsx"]
-		// https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1727
-		test('bare specifier .jsx resolves to .ts when .tsx does not exist', async () => {
-			await using fixture = await createFixture({
-				'package.json': createPackageJson({
-					main: './dist/index.mjs',
-					devDependencies: {
-						'dep-jsx-ts': '*',
-					},
-				}),
-
-				'src/index.ts': `
-					import { value } from 'dep-jsx-ts/utils.jsx';
-					export { value };
-				`,
-
-				'node_modules/dep-jsx-ts': {
-					'package.json': createPackageJson({
-						name: 'dep-jsx-ts',
-						type: 'module',
-						main: './index.js',
-					}),
-					'utils.ts': 'export const value = "bare-ts-via-jsx";',
-				},
-			});
-
-			const pkgrollProcess = await pkgroll([], {
-				cwd: fixture.path,
-				nodePath,
-			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
-			expect(pkgrollProcess.stderr).toBe('');
-
-			const content = await fixture.readFile('dist/index.mjs', 'utf8');
-			expect(content).toMatch('bare-ts-via-jsx');
 		});
 	});
 
@@ -376,6 +335,44 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
 			expect(content).toMatch('tsx-only');
+		});
+
+		// esbuild: rewrittenFileExtensions ".jsx" → [".ts", ".tsx"]
+		// https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1724-L1727
+		test('bare specifier .jsx resolves to .ts when .tsx does not exist', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+					devDependencies: {
+						'dep-jsx-ts': '*',
+					},
+				}),
+
+				'src/index.ts': `
+					import { value } from 'dep-jsx-ts/utils.jsx';
+					export { value };
+				`,
+
+				'node_modules/dep-jsx-ts': {
+					'package.json': createPackageJson({
+						name: 'dep-jsx-ts',
+						type: 'module',
+						main: './index.js',
+					}),
+					'utils.ts': 'export const value = "bare-ts-via-jsx";',
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('bare-ts-via-jsx');
 		});
 	});
 });

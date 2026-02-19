@@ -45,7 +45,7 @@
 		"cjs-module-lexer": "^2.1.1",
 		"esbuild": "^0.26.0",
 		"magic-string": "^0.30.21",
-		"rollup": "^4.53.1",
+		"rollup": "^4.57.1",
 		"rollup-plugin-import-trace": "^1.0.0",
 		"rollup-pluginutils": "^2.8.2",
 		"yaml": "^2.8.1"

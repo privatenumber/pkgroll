@@ -70,6 +70,83 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 			expect(content).toMatch('hello');
 		});
 
+		test('scoped package with wildcard exports', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+					devDependencies: {
+						'@scope/dep-wildcard': '*',
+					},
+				}),
+
+				'src/index.ts': `
+					import { value } from '@scope/dep-wildcard/utils.js';
+					export { value };
+				`,
+
+				'node_modules/@scope/dep-wildcard': {
+					'package.json': createPackageJson({
+						name: '@scope/dep-wildcard',
+						type: 'module',
+						exports: {
+							'./*.js': './dist/*.js',
+							'./*': './dist/*.js',
+						},
+					}),
+					'dist/utils.js': 'export const value = "scoped-hello";',
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('scoped-hello');
+		});
+
+		test('.mjs bare specifier with wildcard exports', async () => {
+			await using fixture = await createFixture({
+				'package.json': createPackageJson({
+					main: './dist/index.mjs',
+					devDependencies: {
+						'dep-mjs': '*',
+					},
+				}),
+
+				'src/index.ts': `
+					import { value } from 'dep-mjs/utils.mjs';
+					export { value };
+				`,
+
+				'node_modules/dep-mjs': {
+					'package.json': createPackageJson({
+						name: 'dep-mjs',
+						type: 'module',
+						exports: {
+							'./*': './dist/*',
+						},
+					}),
+					'dist/utils.mjs': 'export const value = "from-mjs";',
+				},
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('from-mjs');
+		});
+
 		test('dep ships both .js and .ts - should prefer .js', async () => {
 			await using fixture = await createFixture({
 				'package.json': createPackageJson({

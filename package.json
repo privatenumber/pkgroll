@@ -72,7 +72,7 @@
 		"get-node": "^15.0.4",
 		"get-tsconfig": "^4.13.0",
 		"kolorist": "^1.8.0",
-		"lintroll": "^1.24.3",
+		"lintroll": "^1.29.1",
 		"manten": "2.0.0-beta.2",
 		"outdent": "^0.8.0",
 		"picomatch": "^4.0.3",

@@ -25,7 +25,7 @@
 	],
 	"type": "module",
 	"bin": "./dist/cli.mjs",
-	"packageManager": "pnpm@10.20.0",
+	"packageManager": "pnpm@10.30.0",
 	"scripts": {
 		"build": "node src/cli.ts --minify --target node18",
 		"test": "pnpm build && node tests/index.ts",

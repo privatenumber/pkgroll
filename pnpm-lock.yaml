@@ -36,8 +36,8 @@ importers:
         specifier: ^4.53.5
         version: 4.57.1
       rollup-plugin-import-trace:
-        specifier: ^1.0.0
-        version: 1.0.0(rollup@4.57.1)
+        specifier: ^1.0.1
+        version: 1.0.1(rollup@4.57.1)
       rollup-pluginutils:
         specifier: ^2.8.2
         version: 2.8.2
@@ -101,7 +101,7 @@ importers:
         version: 19.2.4
       rollup-plugin-dts:
         specifier: github:privatenumber/rollup-plugin-dts#npm/master
-        version: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/9e7198c5261bfc8d5f74a196138f8e5de21d70b0(rollup@4.57.1)(typescript@5.9.3)
+        version: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/10f5be68cc720070b6cf4e22cdd422d88fb22f67(rollup@4.57.1)(typescript@5.9.3)
       type-fest:
         specifier: ^5.4.4
         version: 5.4.4
@@ -2716,16 +2716,16 @@ packages:
     resolution: {integrity: sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/9e7198c5261bfc8d5f74a196138f8e5de21d70b0:
-    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/9e7198c5261bfc8d5f74a196138f8e5de21d70b0}
+  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/10f5be68cc720070b6cf4e22cdd422d88fb22f67:
+    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/10f5be68cc720070b6cf4e22cdd422d88fb22f67}
     version: 6.3.0
     engines: {node: '>=16'}
     peerDependencies:
       rollup: ^3.29.4 || ^4
       typescript: ^4.5 || ^5.0
 
-  rollup-plugin-import-trace@1.0.0:
-    resolution: {integrity: sha512-byUjwhEc42qnbcTOZ7E0cDDNidkKkN4VwoW5dknA/61F0c60v2l2ktPraUH4+ehhZ/L/yS/Exry/q8gz0hEZOQ==}
+  rollup-plugin-import-trace@1.0.1:
+    resolution: {integrity: sha512-dWOKrdYba2BXDJh82kkuM4pAR3M6r7WFp6vbVxAgvLfug2WniMFAg2uZ5sNQ/8CoQWo5l2N5EXDG8+QClKk1YQ==}
     engines: {node: '>=20.20.0'}
     peerDependencies:
       rollup: ^3.0.0 || ^4.0.0
@@ -6047,7 +6047,7 @@ snapshots:
 
   reusify@1.1.0: {}
 
-  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/9e7198c5261bfc8d5f74a196138f8e5de21d70b0(rollup@4.57.1)(typescript@5.9.3):
+  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/10f5be68cc720070b6cf4e22cdd422d88fb22f67(rollup@4.57.1)(typescript@5.9.3):
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -6058,7 +6058,7 @@ snapshots:
     optionalDependencies:
       '@babel/code-frame': 7.29.0
 
-  rollup-plugin-import-trace@1.0.0(rollup@4.57.1):
+  rollup-plugin-import-trace@1.0.1(rollup@4.57.1):
     optionalDependencies:
       rollup: 4.57.1
 

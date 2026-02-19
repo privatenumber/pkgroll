@@ -103,8 +103,8 @@ importers:
         specifier: github:privatenumber/rollup-plugin-dts#npm/master
         version: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/9e7198c5261bfc8d5f74a196138f8e5de21d70b0(rollup@4.53.3)(typescript@5.9.3)
       type-fest:
-        specifier: ^5.2.0
-        version: 5.2.0
+        specifier: ^5.4.4
+        version: 5.4.4
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -2834,8 +2834,8 @@ packages:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
 
-  type-fest@5.2.0:
-    resolution: {integrity: sha512-xxCJm+Bckc6kQBknN7i9fnP/xobQRsRQxR01CztFkp/h++yfVxUUcmMgfR2HttJx/dpWjS9ubVuyspJv24Q9DA==}
+  type-fest@5.4.4:
+    resolution: {integrity: sha512-JnTrzGu+zPV3aXIUhnyWJj4z/wigMsdYajGLIYakqyOW1nPllzXEJee0QQbHj+CTIQtXGlAjuK0UY+2xTyjVAw==}
     engines: {node: '>=20'}
 
   type-flag@3.0.0:
@@ -6091,7 +6091,7 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
 
-  type-fest@5.2.0:
+  type-fest@5.4.4:
     dependencies:
       tagged-tag: 1.0.0
 

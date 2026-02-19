@@ -78,7 +78,7 @@
 		"picomatch": "^4.0.3",
 		"react": "^19.2.0",
 		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
-		"type-fest": "^5.2.0",
+		"type-fest": "^5.4.4",
 		"typescript": "^5.9.3"
 	}
 }

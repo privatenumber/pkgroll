@@ -17,13 +17,18 @@ import {
  * Transforming the specifier before exports map resolution can cause
  * wildcard patterns to capture the wrong value (e.g. .ts.js).
  *
- * Matches esbuild's rewrittenFileExtensions map:
- * https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1723-L1730
+ * Extension map based on:
+ * - esbuild rewrittenFileExtensions: https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1723-L1730
+ * - TypeScript tryAddingExtensions: https://github.com/microsoft/TypeScript/blob/main/src/compiler/moduleNameResolver.ts#L2159-L2176
+ *
+ * For .jsx, esbuild tries [.ts, .tsx] while TypeScript tries [.tsx, .ts].
+ * We follow TypeScript's order: .jsx implies JSX, so .tsx is the closer match.
  */
 export const resolveJsToTs = (): Plugin => {
 	const jsExtension = /\.(?:[mc]?js|jsx)$/;
 
-	// Matches esbuild's rewrittenFileExtensions
+	// Based on esbuild's rewrittenFileExtensions and TypeScript's tryAddingExtensions.
+	// .jsx order follows TypeScript (prefers .tsx) over esbuild (prefers .ts).
 	const tsExtensions: Record<string, string[]> = {
 		'.js': ['.ts', '.tsx'],
 		'.jsx': ['.tsx', '.ts'],

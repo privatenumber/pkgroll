@@ -46,7 +46,7 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 				`,
 
 				'node_modules/dep-wildcard': {
-					'package.json': JSON.stringify({
+					'package.json': createPackageJson({
 						name: 'dep-wildcard',
 						type: 'module',
 						exports: {
@@ -85,7 +85,7 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 				`,
 
 				'node_modules/dep-both': {
-					'package.json': JSON.stringify({
+					'package.json': createPackageJson({
 						name: 'dep-both',
 						type: 'module',
 						main: './index.js',
@@ -123,7 +123,7 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 				`,
 
 				'node_modules/dep-ts-only': {
-					'package.json': JSON.stringify({
+					'package.json': createPackageJson({
 						name: 'dep-ts-only',
 						type: 'module',
 						main: './index.js',

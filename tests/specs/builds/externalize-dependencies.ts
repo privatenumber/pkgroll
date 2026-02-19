@@ -28,7 +28,13 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		});
 
 		expect(pkgrollProcess.exitCode).toBe(1);
-		expect(pkgrollProcess.stderr).toMatch('Could not resolve "foo" even though it\'s declared in package.json. Try re-installing node_modules.');
+
+		const errorMessage = 'Could not resolve "foo" even though it\'s declared in package.json. Try re-installing node_modules.';
+		expect(pkgrollProcess.stderr).toMatch(errorMessage);
+
+		// Should appear once (from Rollup's handler, not duplicated)
+		const occurrences = (pkgrollProcess.stderr as string).split(errorMessage).length - 1;
+		expect(occurrences).toBe(1);
 	});
 
 	test('warn if unlisted dependency in source', async () => {

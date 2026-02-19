@@ -42,13 +42,13 @@
 		"@rollup/plugin-dynamic-import-vars": "^2.1.5",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.3",
-		"cjs-module-lexer": "^2.1.1",
+		"cjs-module-lexer": "^2.2.0",
 		"esbuild": "^0.26.0",
 		"magic-string": "^0.30.21",
-		"rollup": "^4.53.1",
+		"rollup": "^4.53.5",
 		"rollup-plugin-import-trace": "^1.0.0",
 		"rollup-pluginutils": "^2.8.2",
-		"yaml": "^2.8.1"
+		"yaml": "^2.8.2"
 	},
 	"peerDependencies": {
 		"typescript": "^4.1 || ^5.0"
@@ -60,25 +60,25 @@
 	},
 	"devDependencies": {
 		"@jridgewell/trace-mapping": "^0.3.31",
-		"@types/node": "^24.10.0",
+		"@types/node": "^24.10.13",
 		"@types/picomatch": "^4.0.2",
-		"@types/react": "^19.2.2",
+		"@types/react": "^19.2.14",
 		"clean-pkg-json": "^1.3.0",
-		"cleye": "^2.0.0",
+		"cleye": "^2.0.1",
 		"empathic": "^2.0.0",
 		"estree-walker": "^3.0.3",
-		"execa": "9.6.0",
-		"fs-fixture": "^2.10.1",
+		"execa": "9.6.1",
+		"fs-fixture": "^2.10.2",
 		"get-node": "^15.0.4",
-		"get-tsconfig": "^4.13.0",
+		"get-tsconfig": "^4.13.6",
 		"kolorist": "^1.8.0",
-		"lintroll": "^1.24.3",
+		"lintroll": "^1.24.4",
 		"manten": "2.0.0-beta.2",
 		"outdent": "^0.8.0",
 		"picomatch": "^4.0.3",
-		"react": "^19.2.0",
+		"react": "^19.2.4",
 		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
-		"type-fest": "^5.2.0",
+		"type-fest": "^5.4.4",
 		"typescript": "^5.9.3"
 	}
 }

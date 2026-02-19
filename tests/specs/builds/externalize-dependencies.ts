@@ -33,7 +33,7 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		expect(pkgrollProcess.stderr).toMatch(errorMessage);
 
 		// Should appear once (from Rollup's handler, not duplicated)
-		const occurrences = pkgrollProcess.stderr.split(errorMessage).length - 1;
+		const occurrences = (pkgrollProcess.stderr as string).split(errorMessage).length - 1;
 		expect(occurrences).toBe(1);
 	});
 

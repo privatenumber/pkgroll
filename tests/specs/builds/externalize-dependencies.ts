@@ -32,7 +32,7 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		const errorMessage = 'Could not resolve "foo" even though it\'s declared in package.json. Try re-installing node_modules.';
 		expect(pkgrollProcess.stderr).toMatch(errorMessage);
 
-		// Error message should appear only once (from Rollup's error handler, not duplicated by console.error)
+		// Should appear once (from Rollup's handler, not duplicated)
 		const occurrences = pkgrollProcess.stderr.split(errorMessage).length - 1;
 		expect(occurrences).toBe(1);
 	});

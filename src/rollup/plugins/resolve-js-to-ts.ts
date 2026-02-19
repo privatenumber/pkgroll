@@ -43,20 +43,23 @@ export const resolveJsToTs = (): Plugin => {
 				return null;
 			}
 
-			const ext = id.match(jsExtension)![0];
-			const rewrites = tsExtensions[ext];
+			const extension = id.match(jsExtension)![0];
+			const rewrites = tsExtensions[extension];
 			if (!rewrites) {
 				return null;
 			}
 
-			const base = id.slice(0, -ext.length);
-			const resolveOptions = { ...options, skipSelf: true };
+			const base = id.slice(0, -extension.length);
+			const resolveOptions = {
+				...options,
+				skipSelf: true,
+			};
 
 			// For source code relative imports: try TS extensions in order
 			if (!isBareSpecifier(id) && !isFromNodeModules(importer)) {
-				for (const tsExt of rewrites) {
+				for (const tsExtension of rewrites) {
 					const resolved = await this.resolve(
-						base + tsExt,
+						base + tsExtension,
 						importer,
 						resolveOptions,
 					);
@@ -74,10 +77,10 @@ export const resolveJsToTs = (): Plugin => {
 				return jsResolved;
 			}
 
-			for (const tsExt of rewrites) {
+			for (const tsExtension of rewrites) {
 				try {
 					const resolved = await this.resolve(
-						base + tsExt,
+						base + tsExtension,
 						importer,
 						resolveOptions,
 					);

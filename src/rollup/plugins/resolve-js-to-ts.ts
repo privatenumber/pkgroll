@@ -8,73 +8,80 @@ import {
  * Plugin to resolve JS extensions to TypeScript equivalents
  *
  * Resolution order depends on context:
- * - Source code relative imports: Try .ts before .js (prefer TypeScript source)
- * - Bare specifiers (package imports): Try .js first, fallback to .ts
- * - node_modules relative imports: Try .js first, fallback to .ts
+ * - Source code relative imports: Try TS extensions (prefer TypeScript source)
+ * - Bare specifiers (package imports): Try .js first, fallback to TS extensions
+ * - node_modules relative imports: Try .js first, fallback to TS extensions
  *
  * Bare specifiers must try .js first because the .js extension refers to
  * the actual compiled file in the package, not a TypeScript convention.
  * Transforming the specifier before exports map resolution can cause
  * wildcard patterns to capture the wrong value (e.g. .ts.js).
  *
- * This matches esbuild's behavior where .js → .ts rewriting is always
- * a last-resort fallback applied on the resolved path, not the specifier.
- *
- * See:
- * - esbuild resolver.go loadAsFile (lines 1816-1840): literal path first, .ts last
- * - esbuild resolver.go exports map (lines 2651-2670): .ts only if file missing
- * - esbuild CHANGELOG v0.18.0: prefer .js over .ts in node_modules
+ * Matches esbuild's rewrittenFileExtensions map:
+ * https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1723-L1730
  */
 export const resolveJsToTs = (): Plugin => {
-	const isJs = /\.(?:[mc]?js|jsx)$/;
+	const jsExtension = /\.(?:[mc]?js|jsx)$/;
+
+	// Matches esbuild's rewrittenFileExtensions
+	const tsExtensions: Record<string, string[]> = {
+		'.js': ['.ts', '.tsx'],
+		'.jsx': ['.tsx', '.ts'],
+		'.mjs': ['.mts'],
+		'.cjs': ['.cts'],
+	};
 
 	return {
 		name: 'resolve-js-to-ts',
 		async resolveId(id, importer, options) {
-			if (
-				importer
-				&& isJs.test(id)
-			) {
-				// For source code relative imports: try .ts first
-				// In TypeScript convention, ./file.js means ./file.ts
-				if (!isBareSpecifier(id) && !isFromNodeModules(importer)) {
-					const tsId = id.replace(/js(x?)$/, 'ts$1');
+			if (!importer || !jsExtension.test(id)) {
+				return null;
+			}
 
-					// skipSelf prevents infinite recursion if .ts doesn't exist
-					return this.resolve(tsId, importer, {
-						...options,
-						skipSelf: true,
-					});
+			const ext = id.match(jsExtension)![0];
+			const rewrites = tsExtensions[ext];
+			if (!rewrites) {
+				return null;
+			}
+
+			const base = id.slice(0, -ext.length);
+			const resolveOptions = { ...options, skipSelf: true };
+
+			// For source code relative imports: try TS extensions in order
+			if (!isBareSpecifier(id) && !isFromNodeModules(importer)) {
+				for (const tsExt of rewrites) {
+					const resolved = await this.resolve(
+						base + tsExt,
+						importer,
+						resolveOptions,
+					);
+					if (resolved) {
+						return resolved;
+					}
 				}
+				return null;
+			}
 
-				// For bare specifiers and node_modules imports:
-				// try .js first, only use .ts if .js doesn't resolve
-				const jsResolved = await this.resolve(
-					id,
-					importer,
-					{
-						...options,
-						skipSelf: true,
-					},
-				);
+			// For bare specifiers and node_modules imports:
+			// try .js first, only use TS extensions if .js doesn't resolve
+			const jsResolved = await this.resolve(id, importer, resolveOptions);
+			if (jsResolved) {
+				return jsResolved;
+			}
 
-				if (jsResolved) {
-					return jsResolved;
-				}
-
-				// .js doesn't resolve, try .ts as fallback
-				const tsId = id.replace(/js(x?)$/, 'ts$1');
-				const tsResolved = await this.resolve(
-					tsId,
-					importer,
-					{
-						...options,
-						skipSelf: true,
-					},
-				);
-
-				if (tsResolved) {
-					return tsResolved;
+			for (const tsExt of rewrites) {
+				try {
+					const resolved = await this.resolve(
+						base + tsExt,
+						importer,
+						resolveOptions,
+					);
+					if (resolved) {
+						return resolved;
+					}
+				} catch {
+					// externalizeDependencies throws for unresolvable devDep
+					// bare specifiers — continue to try the next extension
 				}
 			}
 

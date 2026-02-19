@@ -139,9 +139,7 @@ export const externalizeDependencies = (
 
 				// If unresolvable, error
 				if (!resolved) {
-					const errorMessage = `Could not resolve "${id}" even though it's declared in package.json. Try re-installing node_modules.`;
-					console.error(errorMessage);
-					throw new Error(errorMessage);
+					throw new Error(`Could not resolve "${id}" even though it's declared in package.json. Try re-installing node_modules.`);
 				}
 
 				// Check if @types package is externalized while runtime package will be bundled

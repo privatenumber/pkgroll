@@ -38,14 +38,14 @@
 	},
 	"dependencies": {
 		"@rollup/plugin-alias": "^6.0.0",
-		"@rollup/plugin-commonjs": "^29.0.1",
+		"@rollup/plugin-commonjs": "^29.0.2",
 		"@rollup/plugin-dynamic-import-vars": "^2.1.5",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.3",
 		"cjs-module-lexer": "^2.2.0",
 		"esbuild": "^0.26.0",
 		"magic-string": "^0.30.21",
-		"rollup": "^4.53.5",
+		"rollup": "^4.60.4",
 		"rollup-plugin-import-trace": "^1.0.1",
 		"rollup-pluginutils": "^2.8.2",
 		"yaml": "^2.8.2"

@@ -90,7 +90,7 @@ export const cjsAnnotateExports = (): Plugin => {
 
 					return {
 						code: magicString.toString(),
-						map: magicString.generateMap({ hires: true }),
+						map: magicString.generateMap({ hires: true }).toString(),
 					};
 				}
 			},

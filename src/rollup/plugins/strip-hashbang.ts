@@ -15,7 +15,7 @@ export const stripHashbang = (): Plugin => ({
 
 		return {
 			code: transformed.toString(),
-			map: transformed.generateMap({ hires: true }),
+			map: transformed.generateMap({ hires: true }).toString(),
 		};
 	},
 });

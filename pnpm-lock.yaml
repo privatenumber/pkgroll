@@ -30,8 +30,8 @@ importers:
         specifier: ^0.28.2
         version: 0.28.2
       magic-string:
-        specifier: ^0.30.21
-        version: 0.30.21
+        specifier: ^1.2.2
+        version: 1.2.2
       rollup:
         specifier: ^4.62.5
         version: 4.62.5
@@ -2313,6 +2313,9 @@ packages:
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
+  magic-string@1.2.2:
+    resolution: {integrity: sha512-veT/+7iXrXzT39XnEN4lOxtNl72dMgJ8Lp+5Bd6YcMSWpb0n0MjBM8Uuooi6jgJr8dhUW2swQgBmoZVMni5SVg==}
 
   manten@2.0.2:
     resolution: {integrity: sha512-gmqvUV+nlWOyP6ZwqnHPzpCfrlhn9gPA/eJOgUJfy2JTPiEF9jKmUHFd8cSRhadpl0b23Odp2ejfeFL77FRG0Q==}
@@ -5466,6 +5469,10 @@ snapshots:
       yallist: 3.1.1
 
   magic-string@0.30.21:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+
+  magic-string@1.2.2:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 

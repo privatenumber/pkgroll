@@ -68,7 +68,7 @@
 		"@types/picomatch": "^4.0.3",
 		"@types/react": "^19.2.18",
 		"@typescript/typescript6": "^6",
-		"clean-pkg-json": "^1.4.2",
+		"clean-pkg-json": "^2.0.0",
 		"cleye": "^2.6.0",
 		"empathic": "^2.0.1",
 		"estree-walker": "^3.0.3",

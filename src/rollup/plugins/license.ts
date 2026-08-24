@@ -190,7 +190,7 @@ const formatDependency = (dependency: DependencyInfo): string => {
 			.trim()
 			.replaceAll(/\r\n?/g, '\n')
 			.split('\n')
-			.map(line => `> ${line}`)
+			.map(line => (line ? `> ${line}` : '>'))
 			.join('\n');
 		lines.push('', quotedText);
 	}

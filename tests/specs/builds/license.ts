@@ -565,6 +565,7 @@ in the Software without restriction.`;
 			expect(content).toMatch('Repository: https://github.com/test/test-dep');
 			// License text should be quoted
 			expect(content).toMatch('> MIT License');
+			expect(content).toMatch('>\n> Copyright (c) 2024 Test Author');
 			expect(content).toMatch('> Copyright (c) 2024 Test Author');
 		});
 

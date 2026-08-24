@@ -9,6 +9,14 @@ import { externalPkgImports } from '../plugins/external-pkg-imports.ts';
 import { externalizeDependencies } from '../plugins/externalize-dependencies.ts';
 import type { Options, Output } from '../types.ts';
 
+// TypeScript 7 has no compiler API, so declaration bundling uses this TypeScript 6 enum value:
+// https://github.com/microsoft/TypeScript/blob/v6.0.3/src/compiler/types.ts#L7619
+const moduleKindPreserve = 200;
+
+// TypeScript 7 has no compiler API, so declaration bundling uses this TypeScript 6 enum value:
+// https://github.com/microsoft/TypeScript/blob/v6.0.3/src/compiler/types.ts#L7345
+const moduleResolutionKindBundler = 100;
+
 export const getDtsConfig = async (
 	options: Options,
 	packageJson: PackageJson,
@@ -18,6 +26,7 @@ export const getDtsConfig = async (
 		import('rollup-plugin-dts'),
 		import('../../utils/local-typescript-loader.js'),
 	]);
+	const hasCompilerApi = typeof ts.default.createProgram === 'function';
 	return {
 
 		/**
@@ -61,8 +70,10 @@ export const getDtsConfig = async (
 				compilerOptions: {
 					composite: false,
 					preserveSymlinks: false,
-					module: ts.default.ModuleKind.Preserve,
-					moduleResolution: ts.default.ModuleResolutionKind.Bundler,
+					module: hasCompilerApi ? ts.default.ModuleKind.Preserve : moduleKindPreserve,
+					moduleResolution: hasCompilerApi
+						? ts.default.ModuleResolutionKind.Bundler
+						: moduleResolutionKindBundler,
 				},
 				tsconfig: tsconfig?.path,
 

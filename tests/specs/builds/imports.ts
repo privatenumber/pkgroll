@@ -104,7 +104,7 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 					'utils.ts': 'export const helper = (): string => "util";',
 					'index.ts': 'export { helper } from "#utils";',
 				},
-				...installTypeScript,
+				...installTypeScript(),
 			};
 
 			await using fixture = await createFixture({

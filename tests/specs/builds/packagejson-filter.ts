@@ -9,7 +9,7 @@ import {
 export const packagejsonFilter = (nodePath: string) => describe('--packagejson filter', () => {
 	test('--packagejson=false skips all package.json entries', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				main: './dist/index.js',
 				types: './dist/index.d.ts',
@@ -37,7 +37,7 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 	test('*.d.ts matches only type declaration outputs', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'.': {
@@ -68,7 +68,7 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 	test('*.mjs matches only ESM outputs', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'.': {
@@ -101,7 +101,7 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 	test('multiple glob patterns', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'.': {
@@ -134,7 +134,7 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 	test('full path glob pattern', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'.': {
@@ -175,7 +175,7 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 
 	test('preserves wildcard expansion errors for filtered-in entries', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					// Malformed wildcard: missing file extension triggers an error

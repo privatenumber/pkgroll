@@ -132,7 +132,7 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			export const b: typeB;
 			`,
 
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {
@@ -159,7 +159,7 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 				'index.d.ts': 'declare const A: { b: number }; export { A }',
 			},
 			'src/index.d.ts': 'export { A } from "react"',
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {
@@ -194,7 +194,7 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 				},
 			},
 			'src/index.ts': 'export { A } from "react"',
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {
@@ -232,7 +232,7 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 				},
 			},
 			'src/index.ts': 'export { A } from "react"',
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {

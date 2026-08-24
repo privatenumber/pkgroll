@@ -151,7 +151,7 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			 *     ↳ /path/to/src/broken.ts
 			 */
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',
@@ -207,7 +207,7 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			 *     ↳ /path/to/src/deep/broken.ts
 			 */
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',
@@ -252,7 +252,7 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			 *   index.ts (imports non-existent file directly)
 			 */
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',

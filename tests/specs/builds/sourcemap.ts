@@ -109,7 +109,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 
 	test('dts sourcemap sources paths are relative to chunk directory', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'.': {
@@ -161,7 +161,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 
 	test('dts sourcemap file field is basename only', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'./nested': {
@@ -197,7 +197,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 		// https://github.com/microsoft/TypeScript/blob/b19a9da2a3b8f2a720d314d01258dd2bdc110fef/src/services/sourcemaps.ts#L226
 		// If present, Go-to-Definition silently fails
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',
@@ -232,7 +232,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 	test('dts sourcemap chains to original .ts sources', async () => {
 		// Verify the sourcemap points to original .ts files, not intermediate .d.ts
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',
@@ -278,7 +278,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 		// Verify per-identifier precision, not just per-line
 		// Clicking on "id" should map to column > 0 in source
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',
@@ -331,7 +331,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 		// Verify sourcemaps work for .mts inputs (ESM TypeScript)
 		// The plugin must handle .mts → .d.ts path conversion correctly
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',
@@ -386,7 +386,7 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 		// Verify that declarationMap: true in tsconfig enables .d.ts sourcemaps
 		// even without --sourcemap flag
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					types: './dist/index.d.ts',

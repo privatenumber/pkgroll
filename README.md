@@ -32,6 +32,9 @@ Write your code in TypeScript/ESM and run `pkgroll` to get ESM/CommonJS/.d.ts ou
 npm install --save-dev pkgroll
 ```
 
+> [!NOTE]
+> TypeScript 7 does not include the compiler API needed to bundle declaration files. Install `@typescript/typescript6` alongside TypeScript 7; pkgroll uses it only for declaration bundling.
+
 ## Quick setup
 1. Setup your project with source files in `src` and output in `dist` (configurable).
 

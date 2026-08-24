@@ -390,7 +390,7 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			node_modules: {
 				'@types/eslint/index.d.ts': 'export const Linter: any;',
 			},
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {
@@ -770,7 +770,7 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 				'@types/eslint__js/index.d.ts': 'export const ESLintJS: any;',
 				'@types/confusing-browser-globals/index.d.ts': 'export const globals: any;',
 			},
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {

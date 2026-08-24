@@ -365,7 +365,7 @@ Repository: privatenumber/resolve-pkg-maps
 
 ---------------------------------------
 
-## rollup-plugin-dts@6.3.0
+## rollup-plugin-dts@6.5.1
 License: LGPL-3.0-only
 By: Arpad Borsos
 Repository: git+https://github.com/Swatinem/rollup-plugin-dts.git

@@ -74,7 +74,7 @@ export const outputDual = (nodePath: string) => describe('output: commonjs & mod
 	// TODO: index-b.d.ts should not be emitted (it should be converted to a chunk)
 	// test('no unnecessary d.ts chunk', async () => {
 	// 	const fixture = await createFixture({
-	// 		...installTypeScript,
+	// 		...installTypeScript(),
 	// 		src: {
 	// 			'index-a.ts': 'export * from "./chunk-a.js"',
 	// 			'chunk-a.ts': 'export const a = 1;',

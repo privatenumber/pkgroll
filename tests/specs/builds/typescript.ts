@@ -104,7 +104,7 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 	test('resolves paths', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			src: {
 				'index.ts': outdent`
 				import * as foo from '@foo/index.js';

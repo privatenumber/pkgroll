@@ -8,9 +8,9 @@ export const createPackageJson = (packageJson: PackageJson) => JSON.stringify(pa
 export const createTsconfigJson = (tsconfigJson: TsConfigJson) => JSON.stringify(tsconfigJson);
 export const createPackageYaml = (packageJson: PackageJson) => yamlStringify(packageJson);
 
-export const installTypeScript: FileTree = {
-	'node_modules/typescript': ({ symlink }) => symlink(path.resolve('node_modules/typescript'), 'dir'),
-};
+export const installTypeScript = (packageName = 'typescript'): FileTree => ({
+	'node_modules/typescript': ({ symlink }) => symlink(path.resolve('node_modules', packageName), 'dir'),
+});
 
 export const installReact: FileTree = {
 	'node_modules/react': ({ symlink }) => symlink(path.resolve('node_modules/react'), 'dir'),
@@ -173,7 +173,7 @@ export const fixtureFiles = {
 
 export const packageFixture = (options: Options = {}): FileTree => ({
 	src: fixtureFiles,
-	...(options.installTypeScript ? installTypeScript : {}),
+	...(options.installTypeScript ? installTypeScript() : {}),
 	...(options.installReact ? installReact : {}),
 });
 

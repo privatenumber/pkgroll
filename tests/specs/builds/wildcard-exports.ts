@@ -383,7 +383,7 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 					},
 				}),
 				'src/plugins/validator.ts': 'export const validator = (x: string) => x',
-				...installTypeScript,
+				...installTypeScript(),
 			});
 
 			const result = await pkgroll([], {
@@ -412,7 +412,7 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 					},
 				}),
 				'src/types/schema.ts': 'export type Schema = { id: string }',
-				...installTypeScript,
+				...installTypeScript(),
 			});
 
 			const result = await pkgroll([], {

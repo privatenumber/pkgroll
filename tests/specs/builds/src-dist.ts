@@ -18,7 +18,7 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 					types: './dist/nested/index.d.ts',
 				}),
 				[srcPath]: fixtureFiles,
-				...installTypeScript,
+				...installTypeScript(),
 			});
 
 			const pkgrollProcess = await pkgroll(
@@ -45,7 +45,7 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 					types: './dist/nested/index.d.ts',
 				}),
 				[srcPath]: fixtureFiles,
-				...installTypeScript,
+				...installTypeScript(),
 			});
 
 			const pkgrollProcess = await pkgroll(
@@ -122,7 +122,7 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				}),
 				'src-a': fixtureFiles,
 				'src-b': fixtureFiles,
-				...installTypeScript,
+				...installTypeScript(),
 			});
 
 			const pkgrollProcess = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
@@ -151,7 +151,7 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				'src-b': {
 					'index.ts': 'export * from "../src-a/chunk.js"; export const b = 2;',
 				},
-				...installTypeScript,
+				...installTypeScript(),
 			});
 
 			const pkgrollProcess = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {

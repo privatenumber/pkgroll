@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import { execa } from 'execa';
 import outdent from 'outdent';
 import { pkgroll } from '../../utils.ts';
 import {
@@ -38,6 +39,70 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
 		expect(content).toMatch('declare function');
+	});
+
+	for (const packageName of ['typescript4', 'typescript5'] as const) {
+		test(`emits with ${packageName}`, async () => {
+			await using fixture = await createFixture({
+				...packageFixture(),
+				...installTypeScript(packageName),
+				'package.json': createPackageJson({
+					types: './dist/utils.d.ts',
+				}),
+			});
+
+			const pkgrollProcess = await pkgroll([], {
+				cwd: fixture.path,
+				nodePath,
+			});
+
+			expect(pkgrollProcess.exitCode).toBe(0);
+			expect(pkgrollProcess.stderr).toBe('');
+
+			const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
+			expect(content).toMatch('declare function');
+		});
+	}
+
+	test('uses the compatibility compiler when TypeScript has no compiler API', async () => {
+		await using fixture = await createFixture({
+			consumer: {
+				'package.json': createPackageJson({
+					private: true,
+					types: './dist/index.d.ts',
+					devDependencies: {
+						pkgroll: 'file:../pkgroll',
+						typescript: `file:${path.resolve('node_modules/typescript7')}`,
+					},
+				}),
+				src: {
+					'index.ts': 'export type Value = string;',
+				},
+			},
+		});
+
+		await Promise.all([
+			fixture.cp('dist', 'pkgroll/dist', { recursive: true }),
+			fixture.cp('package.json', 'pkgroll/package.json'),
+		]);
+
+		const consumerPath = fixture.getPath('consumer');
+		await execa('pnpm', ['install', '--ignore-workspace'], { cwd: consumerPath });
+		const failedBuild = await execa(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
+			cwd: consumerPath,
+			reject: false,
+		});
+		expect(failedBuild.exitCode).toBe(1);
+		expect(failedBuild.stderr).toMatch('does not ship a compiler API');
+		expect(failedBuild.stderr).toMatch('@typescript/typescript6');
+
+		await execa('pnpm', ['add', '--save-dev', '--ignore-workspace', `file:${path.resolve('node_modules/@typescript/typescript6')}`], {
+			cwd: consumerPath,
+		});
+		const successfulBuild = await execa(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
+			cwd: consumerPath,
+		});
+		expect(successfulBuild.stderr).toBe('');
 	});
 
 	test('{ srcExt: mts, distExt: d.ts }', async () => {
@@ -275,7 +340,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 	test('mixed dts extensions from different sources does not emit extra files', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				exports: {
 					'.': {
@@ -353,7 +418,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 	// https://github.com/privatenumber/pkgroll/issues/79
 	test('nested dotted namespace', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				types: './dist/index.d.ts',
 			}),
@@ -402,7 +467,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 	test('composite monorepos', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			packages: {
 				one: {
 					'package.json': createPackageJson({
@@ -481,7 +546,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 	test('symlinks', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				types: './dist/index.d.ts',
 				peerDependencies: {
@@ -521,7 +586,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 	test('bundles types from adjacent .d.ts files (e.g. css modules)', async () => {
 		await using fixture = await createFixture({
-			...installTypeScript,
+			...installTypeScript(),
 			'package.json': createPackageJson({
 				types: './dist/index.d.ts',
 			}),

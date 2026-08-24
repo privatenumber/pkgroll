@@ -18,7 +18,7 @@ export const realDependencies = (nodePath: string) => describe('bundles real dep
 			}),
 			'src/index.ts': 'export type { PackageJson } from "type-fest"',
 			'node_modules/type-fest': ({ symlink }) => symlink(path.resolve('node_modules/type-fest'), 'dir'),
-			...installTypeScript,
+			...installTypeScript(),
 		});
 
 		const pkgrollProcess = await pkgroll([], {

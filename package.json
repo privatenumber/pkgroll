@@ -38,11 +38,11 @@
 	},
 	"dependencies": {
 		"@rollup/plugin-alias": "^6.0.0",
-		"@rollup/plugin-commonjs": "^29.0.2",
+		"@rollup/plugin-commonjs": "^29.0.3",
 		"@rollup/plugin-dynamic-import-vars": "^2.1.5",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.3",
-		"cjs-module-lexer": "^2.2.0",
+		"cjs-module-lexer": "^2.2.1",
 		"esbuild": "^0.28.2",
 		"magic-string": "^0.30.21",
 		"rollup": "^4.62.5",

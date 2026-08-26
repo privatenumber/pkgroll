@@ -95,13 +95,13 @@ importers:
         version: 0.8.0
       picomatch:
         specifier: ^4.0.3
-        version: 4.0.3
+        version: 4.0.4
       react:
         specifier: ^19.2.4
         version: 19.2.4
       rollup-plugin-dts:
         specifier: github:privatenumber/rollup-plugin-dts#npm/master
-        version: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/09653b867c006cc5a4c82c11903f1c3566a59c1c(rollup@4.57.1)(typescript@5.9.3)
+        version: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/6f105c40cfc79695efebc60395f9daf5d92ccd6e(rollup@4.57.1)(typescript@5.9.3)
       type-fest:
         specifier: ^5.4.4
         version: 5.4.4
@@ -114,9 +114,13 @@ packages:
   '@altano/repository-tools@2.0.1':
     resolution: {integrity: sha512-YE/52CkFtb+YtHPgbWPai7oo5N9AKnMuP5LM+i2AG7G1H2jdYBCO1iDnkDE3dZ3C1MIgckaF+d5PNRulgt0bdw==}
 
-  '@babel/code-frame@7.29.0':
-    resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
+  '@babel/code-frame@7.29.7':
+    resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
     engines: {node: '>=6.9.0'}
+
+  '@babel/code-frame@8.0.0':
+    resolution: {integrity: sha512-dYYg153EyN2Ekbqw2zAsbd6/JR+9N2SEoC7YV2GyyqMM7x9bLDTjBD6XBhSMLH0wtIVyJj03jWNriQhaN+eoCw==}
+    engines: {node: ^22.18.0 || >=24.11.0}
 
   '@babel/compat-data@7.29.0':
     resolution: {integrity: sha512-T1NCJqT/j9+cn8fvkt7jtwbLBfLC/1y1c7NtCeXFRgzGTsafi68MRv8yzkYSapBnFA6L3U2VSc02ciDzoAJhJg==}
@@ -152,9 +156,13 @@ packages:
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/helper-validator-identifier@7.28.5':
-    resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
+  '@babel/helper-validator-identifier@7.29.7':
+    resolution: {integrity: sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==}
     engines: {node: '>=6.9.0'}
+
+  '@babel/helper-validator-identifier@8.0.4':
+    resolution: {integrity: sha512-4wFaiLd0bVo4cIoTXI3zKI038NIWE/cr3jvBjejOVYVxV/m8Ltav1USiGzG1fmS5J2RhgEOgXNNK46cRPnRsrg==}
+    engines: {node: ^22.18.0 || >=24.11.0}
 
   '@babel/helper-validator-option@7.27.1':
     resolution: {integrity: sha512-YvjJow9FxbhFFKDSuFnVCe2WxXk1zWc22fFePVNEaWJEu8IrZVlda6N0uHwzZrUM1il7NC9Mlp4MaJYbYd9JSg==}
@@ -1670,6 +1678,7 @@ packages:
   eslint@9.39.2:
     resolution: {integrity: sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -2183,6 +2192,9 @@ packages:
     resolution: {integrity: sha512-QKNsM0o3Xe6ISQU869e+DhG+4CK/48aHYdJZGlFQVTjnbvgpcKyxpzk29fGiO7i/J8VENZ+d2iGnSsvmuHywlA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
+  js-tokens@10.0.0:
+    resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -2591,12 +2603,12 @@ packages:
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
-  picomatch@2.3.1:
-    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
+  picomatch@2.3.2:
+    resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
-  picomatch@4.0.3:
-    resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
+  picomatch@4.0.4:
+    resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
 
   pluralize@8.0.0:
@@ -2716,13 +2728,17 @@ packages:
     resolution: {integrity: sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/09653b867c006cc5a4c82c11903f1c3566a59c1c:
-    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/09653b867c006cc5a4c82c11903f1c3566a59c1c}
-    version: 6.3.0
-    engines: {node: '>=16'}
+  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/6f105c40cfc79695efebc60395f9daf5d92ccd6e:
+    resolution: {tarball: https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/6f105c40cfc79695efebc60395f9daf5d92ccd6e}
+    version: 6.5.1
+    engines: {node: '>=20'}
     peerDependencies:
-      rollup: ^3.29.4 || ^4
-      typescript: ^4.5 || ^5.0 || ^6.0
+      '@typescript/typescript6': ^6
+      rollup: ^3 || ^4
+      typescript: ^4.5 || ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      '@typescript/typescript6':
+        optional: true
 
   rollup-plugin-import-trace@1.0.1:
     resolution: {integrity: sha512-dWOKrdYba2BXDJh82kkuM4pAR3M6r7WFp6vbVxAgvLfug2WniMFAg2uZ5sNQ/8CoQWo5l2N5EXDG8+QClKk1YQ==}
@@ -3158,17 +3174,23 @@ snapshots:
 
   '@altano/repository-tools@2.0.1': {}
 
-  '@babel/code-frame@7.29.0':
+  '@babel/code-frame@7.29.7':
     dependencies:
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.29.7
       js-tokens: 4.0.0
       picocolors: 1.1.1
+
+  '@babel/code-frame@8.0.0':
+    dependencies:
+      '@babel/helper-validator-identifier': 8.0.4
+      js-tokens: 10.0.0
+    optional: true
 
   '@babel/compat-data@7.29.0': {}
 
   '@babel/core@7.29.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.29.1
       '@babel/helper-compilation-targets': 7.28.6
       '@babel/helper-module-transforms': 7.28.6(@babel/core@7.29.0)
@@ -3215,14 +3237,17 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.0
       '@babel/helper-module-imports': 7.28.6
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.29.7
       '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-string-parser@7.27.1': {}
 
-  '@babel/helper-validator-identifier@7.28.5': {}
+  '@babel/helper-validator-identifier@7.29.7': {}
+
+  '@babel/helper-validator-identifier@8.0.4':
+    optional: true
 
   '@babel/helper-validator-option@7.27.1': {}
 
@@ -3237,13 +3262,13 @@ snapshots:
 
   '@babel/template@7.28.6':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/parser': 7.29.0
       '@babel/types': 7.29.0
 
   '@babel/traverse@7.29.0':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.29.1
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.0
@@ -3256,7 +3281,7 @@ snapshots:
   '@babel/types@7.29.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.29.7
 
   '@emnapi/core@1.8.1':
     dependencies:
@@ -3583,10 +3608,10 @@ snapshots:
       '@rollup/pluginutils': 5.3.0(rollup@4.57.1)
       commondir: 1.0.1
       estree-walker: 2.0.2
-      fdir: 6.5.0(picomatch@4.0.3)
+      fdir: 6.5.0(picomatch@4.0.4)
       is-reference: 1.2.1
       magic-string: 0.30.21
-      picomatch: 4.0.3
+      picomatch: 4.0.4
     optionalDependencies:
       rollup: 4.57.1
 
@@ -3620,7 +3645,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.3
+      picomatch: 4.0.4
     optionalDependencies:
       rollup: 4.57.1
 
@@ -3715,7 +3740,7 @@ snapshots:
       eslint-visitor-keys: 4.2.1
       espree: 10.4.0
       estraverse: 5.3.0
-      picomatch: 4.0.3
+      picomatch: 4.0.4
 
   '@szmarczak/http-timer@5.0.1':
     dependencies:
@@ -4643,7 +4668,7 @@ snapshots:
 
   eslint-plugin-unicorn@62.0.0(eslint@9.39.2):
     dependencies:
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.29.7
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.2)
       '@eslint/plugin-kit': 0.4.1
       change-case: 5.4.4
@@ -4838,9 +4863,9 @@ snapshots:
     dependencies:
       format: 0.2.2
 
-  fdir@6.5.0(picomatch@4.0.3):
+  fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
-      picomatch: 4.0.3
+      picomatch: 4.0.4
 
   fetch-node-website@9.0.1:
     dependencies:
@@ -5267,7 +5292,7 @@ snapshots:
 
   jest-message-util@30.2.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@jest/types': 30.2.0
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -5292,7 +5317,10 @@ snapshots:
       chalk: 4.1.2
       ci-info: 4.4.0
       graceful-fs: 4.2.11
-      picomatch: 4.0.3
+      picomatch: 4.0.4
+
+  js-tokens@10.0.0:
+    optional: true
 
   js-tokens@4.0.0: {}
 
@@ -5743,7 +5771,7 @@ snapshots:
   micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
-      picomatch: 2.3.1
+      picomatch: 2.3.2
 
   mimic-function@5.0.1: {}
 
@@ -5916,9 +5944,9 @@ snapshots:
 
   picocolors@1.1.1: {}
 
-  picomatch@2.3.1: {}
+  picomatch@2.3.2: {}
 
-  picomatch@4.0.3: {}
+  picomatch@4.0.4: {}
 
   pluralize@8.0.0: {}
 
@@ -6047,7 +6075,7 @@ snapshots:
 
   reusify@1.1.0: {}
 
-  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/09653b867c006cc5a4c82c11903f1c3566a59c1c(rollup@4.57.1)(typescript@5.9.3):
+  rollup-plugin-dts@https://codeload.github.com/privatenumber/rollup-plugin-dts/tar.gz/6f105c40cfc79695efebc60395f9daf5d92ccd6e(rollup@4.57.1)(typescript@5.9.3):
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -6056,7 +6084,7 @@ snapshots:
       rollup: 4.57.1
       typescript: 5.9.3
     optionalDependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 8.0.0
 
   rollup-plugin-import-trace@1.0.1(rollup@4.57.1):
     optionalDependencies:
@@ -6369,8 +6397,8 @@ snapshots:
 
   tinyglobby@0.2.15:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.3)
-      picomatch: 4.0.3
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
 
   tmp-promise@3.0.3:
     dependencies:
@@ -6388,7 +6416,7 @@ snapshots:
 
   ts-declaration-location@1.0.7(typescript@5.9.3):
     dependencies:
-      picomatch: 4.0.3
+      picomatch: 4.0.4
       typescript: 5.9.3
 
   tslib@2.8.1:

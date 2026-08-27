@@ -3,6 +3,7 @@ import path from 'node:path';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
 import { patchErrorWithTrace } from 'rollup-plugin-import-trace';
+import { onExit } from 'signal-exit';
 import ownPackageJson from '../package.json' with { type: 'json' };
 import { readPackage } from './utils/read-package.ts';
 import { parseCliInputFlag } from './utils/get-build-entry-points/cli-input.ts';
@@ -206,6 +207,12 @@ const generateRollupConfigs = async () => {
 	);
 };
 
+const exitWithError = (error: unknown) => {
+	patchErrorWithTrace(error);
+	console.error('Error:', error instanceof Error ? error.message : String(error));
+	process.exit(1);
+};
+
 (async () => {
 	if (argv.flags.cleanDist) {
 		/**
@@ -221,10 +228,16 @@ const generateRollupConfigs = async () => {
 	if (argv.flags.watch) {
 		log('Watch initialized');
 
+		let closing = false;
 		let watchers: ReturnType<typeof watch>[] = [];
+		let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
 		const startWatchers = async () => {
 			const rollupConfigs = await generateRollupConfigs();
+			if (closing) {
+				return;
+			}
+
 			watchers = rollupConfigs.map((rollupConfig) => {
 				const watcher = watch(rollupConfig);
 
@@ -262,8 +275,9 @@ const generateRollupConfigs = async () => {
 		};
 
 		const closeWatchers = async () => {
-			await Promise.all(watchers.map(watcher => watcher.close()));
+			const activeWatchers = watchers;
 			watchers = [];
+			await Promise.all(activeWatchers.map(watcher => watcher.close()));
 		};
 
 		await startWatchers();
@@ -273,18 +287,39 @@ const generateRollupConfigs = async () => {
 		 * pick up new entry points. Using fs.watch to close and restart
 		 * matches how Rollup CLI handles config file changes internally.
 		 */
-		let debounceTimer: ReturnType<typeof setTimeout>;
-		fs.watch(path.join(cwd, 'package.json'), () => {
+		const packageJsonWatcher = fs.watch(path.join(cwd, 'package.json'), () => {
 			clearTimeout(debounceTimer);
 			debounceTimer = setTimeout(async () => {
+				if (closing) {
+					return;
+				}
+
 				log('package.json changed, restarting...');
 				try {
 					await closeWatchers();
+					if (closing) {
+						return;
+					}
+
 					await startWatchers();
 				} catch (error) {
 					log('Error:', (error as Error).message);
 				}
 			}, 100);
+		});
+
+		onExit((exitCode) => {
+			if (closing) {
+				return true;
+			}
+
+			closing = true;
+			clearTimeout(debounceTimer);
+			packageJsonWatcher.close();
+			closeWatchers().then(() => {
+				process.exitCode = typeof exitCode === 'number' ? exitCode : 0;
+			}).catch(exitWithError);
+			return true;
 		});
 	} else {
 		const rollupConfigs = await generateRollupConfigs();
@@ -308,7 +343,5 @@ const generateRollupConfigs = async () => {
 		);
 	}
 })().catch((error) => {
-	patchErrorWithTrace(error);
-	console.error('Error:', error instanceof Error ? error.message : String(error));
-	process.exit(1);
+	exitWithError(error);
 });

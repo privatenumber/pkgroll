@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		// Node 18
-		"target": "ES2022",
+		// Node 24
+		"target": "ES2024",
 		"moduleDetection": "force",
 		"module": "Preserve",
 		"types": [

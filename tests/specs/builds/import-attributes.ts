@@ -2,9 +2,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import spawn, { type SubprocessError } from 'nano-spawn';
+import spawn from 'nano-spawn';
 import { createPackageJson } from '../../fixtures.ts';
-import { pkgroll, waitForOutput } from '../../utils.ts';
+import { killSubprocess, pkgroll, waitForOutput } from '../../utils.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
@@ -420,11 +420,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/page.html': '<h1>Before</h1>',
 			});
 
-			const controller = new AbortController();
 			const watchProcess = spawn(nodePath, [pkgrollBinPath, '--watch'], {
 				cwd: fixture.path,
 				env: { NODE_PATH: '' },
-				signal: controller.signal,
 			});
 
 			try {
@@ -445,8 +443,7 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				const updated = await fixture.readFile('dist/index.mjs', 'utf8');
 				expect(updated).toMatch('<h1>After</h1>');
 			} finally {
-				controller.abort();
-				await watchProcess.catch(error => error as SubprocessError);
+				await killSubprocess(watchProcess);
 			}
 		}, { retry: 3 });
 	});

@@ -30,7 +30,7 @@
 		"build": "node src/cli.ts --minify --target node18",
 		"test": "pnpm build && node tests/index.ts",
 		"lint": "lintroll --cache --node --ignore-pattern tests/fixture-package .",
-		"type-check": "tsc && tsc --project tsconfig.test.json",
+		"type-check": "tsc",
 		"prepack": "pnpm build && clean-pkg-json"
 	},
 	"engines": {

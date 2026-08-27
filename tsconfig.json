@@ -14,4 +14,7 @@
 		"skipLibCheck": true,
 		"erasableSyntaxOnly": true,
 	},
+	"include": [
+		"src",
+	],
 }

@@ -4,7 +4,7 @@ import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import spawn from 'nano-spawn';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
-import { waitForChildProcessClose, waitForOutput } from '../../utils.ts';
+import { killSubprocess, waitForOutput } from '../../utils.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
@@ -45,15 +45,7 @@ export const watch = (nodePath: string) => describe('watch', () => {
 			const utilsContent = await fixture.readFile('dist/utils.mjs', 'utf8');
 			expect(utilsContent).toMatch('export');
 		} finally {
-			const childProcess = await watchProcess.nodeChildProcess;
-			const close = waitForChildProcessClose(childProcess);
-			childProcess.kill();
-			await close;
-			if (process.platform === 'win32') {
-				await watchProcess.catch(() => undefined);
-			} else {
-				await watchProcess;
-			}
+			await killSubprocess(watchProcess);
 		}
 	});
 });

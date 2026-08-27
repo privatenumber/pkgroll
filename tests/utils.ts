@@ -1,5 +1,4 @@
 import path from 'node:path';
-import type { ChildProcess } from 'node:child_process';
 import { on } from 'node:events';
 import spawn, {
 	SubprocessError,
@@ -30,13 +29,14 @@ export const node = (
 
 export const pnpm = (commandArguments: string[], options?: Options) => spawn('pnpm', commandArguments, options);
 
-export const waitForChildProcessClose = (
-	childProcess: ChildProcess,
-) => new Promise<void>((resolve) => {
-	childProcess.once('close', () => {
-		resolve();
-	});
-});
+export const killSubprocess = async (subprocess: Subprocess) => {
+	const childProcess = await subprocess.nodeChildProcess;
+	const close = Promise.withResolvers<void>();
+	childProcess.once('close', close.resolve);
+	childProcess.kill();
+	await close.promise;
+	await (process.platform === 'win32' ? subprocess.catch(() => undefined) : subprocess);
+};
 
 export const expectError: (
 	result: Result | SubprocessError,

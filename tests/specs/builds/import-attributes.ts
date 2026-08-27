@@ -4,7 +4,7 @@ import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import spawn from 'nano-spawn';
 import { createPackageJson } from '../../fixtures.ts';
-import { pkgroll, waitForChildProcessClose, waitForOutput } from '../../utils.ts';
+import { killSubprocess, pkgroll, waitForOutput } from '../../utils.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
@@ -443,15 +443,7 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				const updated = await fixture.readFile('dist/index.mjs', 'utf8');
 				expect(updated).toMatch('<h1>After</h1>');
 			} finally {
-				const childProcess = await watchProcess.nodeChildProcess;
-				const close = waitForChildProcessClose(childProcess);
-				childProcess.kill();
-				await close;
-				if (process.platform === 'win32') {
-					await watchProcess.catch(() => undefined);
-				} else {
-					await watchProcess;
-				}
+				await killSubprocess(watchProcess);
 			}
 		}, { retry: 3 });
 	});

@@ -316,8 +316,8 @@ const exitWithError = (error: unknown) => {
 			closing = true;
 			clearTimeout(debounceTimer);
 			packageJsonWatcher.close();
-			Promise.resolve(closeWatchers()).finally(() => {
-				process.exit(typeof exitCode === 'number' ? exitCode : 0);
+			closeWatchers().then(() => {
+				process.exitCode = typeof exitCode === 'number' ? exitCode : 0;
 			}).catch(exitWithError);
 			return true;
 		});

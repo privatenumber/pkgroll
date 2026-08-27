@@ -7,7 +7,7 @@ import {
 	fixtureDynamicImportUnresolvable,
 } from '../../fixtures.ts';
 
-export const outputCommonjs = (nodePath: string) => describe('output: commonjs', () => {
+export const outputCommonjs = () => describe('output: commonjs', () => {
 	test('{ type: commonjs, field: main, srcExt: js, distExt: js }', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -18,7 +18,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -37,7 +36,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -56,7 +54,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -75,7 +72,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -95,7 +91,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -114,7 +109,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -141,7 +135,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -162,7 +155,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -181,7 +173,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -207,7 +198,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toContain('[plugin rollup-plugin-dynamic-import-variables]');
@@ -234,7 +224,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
@@ -257,7 +246,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
@@ -280,7 +268,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 
 			await pkgroll(['--minify'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');

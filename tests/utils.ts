@@ -7,6 +7,7 @@ import spawn, {
 	type Subprocess,
 } from 'nano-spawn';
 import { expect } from 'manten';
+import { node } from './utils/with-node.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
@@ -21,11 +22,6 @@ export const expectMatchesInOrder = (
 		lastIndex += match!.index! + match![0].length;
 	}
 };
-
-export const node = (
-	commandArguments: string[],
-	options?: Options,
-) => spawn(process.execPath, commandArguments, options);
 
 export const pnpm = (commandArguments: string[], options?: Options) => spawn('pnpm', commandArguments, options);
 
@@ -46,8 +42,8 @@ export const expectError: (
 
 export const pkgroll = async (
 	cliArguments: string[],
-	{ nodePath, ...options }: Options & { nodePath: string },
-) => await spawn(nodePath, [pkgrollBinPath, ...cliArguments], {
+	options: Options,
+) => await node([pkgrollBinPath, ...cliArguments], {
 	...options,
 	env: {
 		...options.env,

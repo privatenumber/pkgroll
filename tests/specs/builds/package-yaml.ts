@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { createPackageYaml, packageFixture } from '../../fixtures.ts';
 
-export const packageYaml = (nodePath: string) => describe('package.yaml support', () => {
+export const packageYaml = () => describe('package.yaml support', () => {
 	test('reads package.yaml correctly', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -15,7 +15,6 @@ export const packageYaml = (nodePath: string) => describe('package.yaml support'
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

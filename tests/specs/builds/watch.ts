@@ -2,13 +2,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import spawn from 'nano-spawn';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 import { killSubprocess, waitForOutput } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
-export const watch = (nodePath: string) => describe('watch', () => {
+export const watch = () => describe('watch', () => {
 	test('rebuilds on package.json change', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -17,7 +17,7 @@ export const watch = (nodePath: string) => describe('watch', () => {
 			}),
 		});
 
-		const watchProcess = spawn(nodePath, [pkgrollBinPath, '--watch'], {
+		const watchProcess = node([pkgrollBinPath, '--watch'], {
 			cwd: fixture.path,
 			env: { NODE_PATH: '' },
 		});

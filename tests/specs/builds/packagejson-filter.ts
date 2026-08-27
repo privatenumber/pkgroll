@@ -6,7 +6,7 @@ import {
 	createPackageJson,
 } from '../../fixtures.ts';
 
-export const packagejsonFilter = (nodePath: string) => describe('--packagejson filter', () => {
+export const packagejsonFilter = () => describe('--packagejson filter', () => {
 	test('--packagejson=false skips all package.json entries', async () => {
 		await using fixture = await createFixture({
 			...installTypeScript(),
@@ -23,7 +23,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			['--packagejson=false', '-i', 'dist/index.d.ts'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -54,7 +53,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			['--packagejson=*.d.ts'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -85,7 +83,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			['--packagejson=*.mjs'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -117,7 +114,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			['--packagejson=*.d.ts', '--packagejson=*.mjs'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -153,7 +149,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			['--packagejson=dist/utils.*'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -194,7 +189,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			['--packagejson=dist/**'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 

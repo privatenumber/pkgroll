@@ -2,13 +2,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import spawn from 'nano-spawn';
 import { createPackageJson } from '../../fixtures.ts';
 import { killSubprocess, pkgroll, waitForOutput } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
 
-export const importAttributes = (nodePath: string) => describe('import attributes', () => {
+export const importAttributes = () => describe('import attributes', () => {
 	describe('type: "text"', () => {
 		test('ESM: imports file as string', async () => {
 			await using fixture = await createFixture({
@@ -25,7 +25,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -49,7 +48,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -74,10 +72,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -101,10 +98,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -130,7 +126,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -154,7 +149,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -180,10 +174,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -209,10 +202,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -239,10 +231,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -266,10 +257,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -295,7 +285,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toMatch(
@@ -318,10 +307,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 			await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
-			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await node(['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -365,10 +353,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 				await pkgroll([], {
 					cwd: fixture.path,
-					nodePath,
 				});
 
-				const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+				const { stdout } = await node(['dist/index.mjs'], {
 					cwd: fixture.path,
 				});
 
@@ -392,10 +379,9 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 
 				await pkgroll([], {
 					cwd: fixture.path,
-					nodePath,
 				});
 
-				const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
+				const { stdout } = await node(['dist/index.mjs'], {
 					cwd: fixture.path,
 				});
 
@@ -420,7 +406,7 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/page.html': '<h1>Before</h1>',
 			});
 
-			const watchProcess = spawn(nodePath, [pkgrollBinPath, '--watch'], {
+			const watchProcess = node([pkgrollBinPath, '--watch'], {
 				cwd: fixture.path,
 				env: { NODE_PATH: '' },
 			});

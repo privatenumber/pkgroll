@@ -4,7 +4,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson, createTsconfigJson } from '../../fixtures.ts';
 
-export const target = (nodePath: string) => describe('target', () => {
+export const target = () => describe('target', () => {
 	test('transformation', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -15,7 +15,6 @@ export const target = (nodePath: string) => describe('target', () => {
 
 		const pkgrollProcess = await pkgroll(['--target', 'es2015'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -45,7 +44,6 @@ export const target = (nodePath: string) => describe('target', () => {
 
 			const pkgrollProcess = await pkgroll(['--target', 'node12.19'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -78,7 +76,6 @@ export const target = (nodePath: string) => describe('target', () => {
 
 			const pkgrollProcess = await pkgroll(['--target', 'node14.18'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');

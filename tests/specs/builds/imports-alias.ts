@@ -1,10 +1,11 @@
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { outdent } from 'outdent';
-import { node, pkgroll } from '../../utils.ts';
+import { pkgroll } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
-export const importsAlias = (nodePath: string) => describe('imports - non-# import handling', () => {
+export const importsAlias = () => describe('imports - non-# import handling', () => {
 	test('non-# imports are skipped', async () => {
 		const packagePath = 'node_modules/test-pkg';
 		const consumedPackage = {
@@ -32,7 +33,6 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 
 		const result = await pkgroll([], {
 			cwd: fixture.getPath(packagePath),
-			nodePath,
 		});
 
 		expect(result.stderr).toBe('');
@@ -76,7 +76,6 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 
 		const result = await pkgroll([], {
 			cwd: fixture.getPath(packagePath),
-			nodePath,
 		});
 
 		expect(result.stderr).toBe('');
@@ -124,7 +123,6 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 
 		const result = await pkgroll([], {
 			cwd: fixture.getPath(packagePath),
-			nodePath,
 		});
 
 		expect(result.stderr).toBe('');

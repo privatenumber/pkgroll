@@ -5,7 +5,7 @@ import outdent from 'outdent';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const bin = (nodePath: string) => describe('bin', () => {
+export const bin = () => describe('bin', () => {
 	test('supports single path', async () => {
 		await using fixture = await createFixture({
 			src: {
@@ -21,7 +21,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -53,7 +52,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -72,7 +70,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -94,7 +91,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -116,7 +112,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -140,7 +135,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -159,7 +153,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -192,7 +185,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -227,7 +219,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');

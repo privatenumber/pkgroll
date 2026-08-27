@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
-export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', () => {
+export const resolveJsToTs = () => describe('resolve-js-to-ts', () => {
 	describe('relative imports (source code)', () => {
 		// esbuild: rewrittenFileExtensions ".js" → [".ts", ".tsx"]
 		// https://github.com/evanw/esbuild/blob/main/internal/resolver/resolver.go#L1723-L1730
@@ -23,7 +23,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -50,7 +49,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -77,7 +75,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -121,7 +118,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -159,7 +155,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -200,7 +195,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -240,7 +234,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -280,7 +273,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -319,7 +311,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -356,7 +347,6 @@ export const resolveJsToTs = (nodePath: string) => describe('resolve-js-to-ts', 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');

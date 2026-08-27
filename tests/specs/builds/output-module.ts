@@ -8,7 +8,7 @@ import {
 	fixtureDynamicImportUnresolvable,
 } from '../../fixtures.ts';
 
-export const outputModule = (nodePath: string) => describe('output: module', () => {
+export const outputModule = () => describe('output: module', () => {
 	test('{ type: module, field: main, srcExt: js, distExt: js }', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -20,7 +20,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -39,7 +38,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -58,7 +56,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -77,7 +74,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -104,7 +100,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -125,7 +120,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -144,7 +138,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -164,7 +157,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -184,7 +176,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll(['--minify'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -207,7 +198,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -226,7 +216,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development', '--minify'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -248,7 +237,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -271,7 +259,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -292,7 +279,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -312,7 +298,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -333,7 +318,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -359,7 +343,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toContain('[plugin rollup-plugin-dynamic-import-variables]');
@@ -379,7 +362,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 
 		await pkgroll(['--target=es2017'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');

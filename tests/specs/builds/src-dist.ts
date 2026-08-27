@@ -7,7 +7,7 @@ import {
 	packageFixture, fixtureFiles, installTypeScript, createPackageJson,
 } from '../../fixtures.ts';
 
-export const srcDist = (nodePath: string) => describe('legacy src & dist', () => {
+export const srcDist = () => describe('legacy src & dist', () => {
 	describe('change src', () => {
 		test('nested directory - relative path', async () => {
 			const srcPath = 'custom-src/nested/src/';
@@ -25,7 +25,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				['--src', srcPath],
 				{
 					cwd: fixture.path,
-					nodePath,
 				},
 			);
 			expect(pkgrollProcess.stderr).toBe('');
@@ -51,7 +50,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				['--src', fixture.getPath(srcPath)],
 				{
 					cwd: fixture.path,
-					nodePath,
 				},
 			);
 
@@ -76,7 +74,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 
 			const pkgrollProcess = await pkgroll(['--dist', '.'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 			expect(pkgrollProcess.stderr).toBe('');
 
@@ -99,7 +96,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 
 			const pkgrollProcess = await pkgroll(['--srcdist', 'src:.'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 			expect(pkgrollProcess.stderr).toBe('');
 
@@ -123,7 +119,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 
 			const pkgrollProcess = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 			expect(pkgrollProcess.stderr).toBe('');
 
@@ -151,7 +146,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 
 			const pkgrollProcess = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 			expect(pkgrollProcess.stderr).toBe('');
 
@@ -186,7 +180,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 
 			const pkgrollProcess = await pkgroll(['--srcdist', 'src/a:a', '--srcdist', 'src/b:b'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 			expect(pkgrollProcess.stderr).toBe('');
 

@@ -5,7 +5,7 @@ import { outdent } from 'outdent';
 import { pkgroll, expectError } from '../../utils.ts';
 import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.ts';
 
-export const typescript = (nodePath: string) => describe('TypeScript', () => {
+export const typescript = () => describe('TypeScript', () => {
 	test('resolves .jsx -> .tsx', async () => {
 		await using fixture = await createFixture({
 			src: {
@@ -20,7 +20,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 		const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -43,7 +42,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 		const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -89,7 +87,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 		const pkgrollProcess = await pkgroll(['--minify'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -135,7 +132,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 		const pkgrollProcess = await pkgroll(['--minify'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -165,7 +161,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -230,7 +225,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -271,7 +265,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 				'--tsconfig=tsconfig.build.json',
 			], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -305,7 +298,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 				'--tsconfig=tsconfig.invalid.json',
 			], {
 				cwd: fixture.path,
-				nodePath,
 			}).catch(error => error as SubprocessError);
 
 			expectError(pkgrollProcess);

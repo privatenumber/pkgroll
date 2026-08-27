@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const packageExports = (nodePath: string) => describe('package exports', () => {
+export const packageExports = () => describe('package exports', () => {
 	test('string', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -14,7 +14,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -34,7 +33,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -56,7 +54,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -81,7 +78,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -117,7 +113,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -144,7 +139,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -175,7 +169,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -214,7 +207,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -242,7 +234,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -267,7 +258,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

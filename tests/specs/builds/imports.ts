@@ -2,10 +2,11 @@ import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import spawn from 'nano-spawn';
 import { outdent } from 'outdent';
-import { node, pkgroll } from '../../utils.ts';
+import { pkgroll } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.ts';
 
-export const imports = (nodePath: string) => describe('imports as build targets', async () => {
+export const imports = () => describe('imports as build targets', async () => {
 	describe('basic imports', () => {
 		test('simple # import', async () => {
 			const packagePath = 'node_modules/test-pkg';
@@ -33,7 +34,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -75,7 +75,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -121,7 +120,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -168,7 +166,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -211,7 +208,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toContain('');
@@ -262,7 +258,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -307,7 +302,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -354,7 +348,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -400,7 +393,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -446,7 +438,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -492,7 +483,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -549,7 +539,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toMatch(/^"hoisted-dep" imported by ".*\/packages\/my-package\/src\/index\.ts" but not declared in package\.json\. Will be bundled to prevent failure at runtime\.$/);
@@ -591,7 +580,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 
 			const result = await pkgroll([], {
 				cwd: fixture.getPath(packagePath),
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');

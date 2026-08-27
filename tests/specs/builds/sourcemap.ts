@@ -5,7 +5,8 @@ import { createFixture } from 'fs-fixture';
 import type { SubprocessError } from 'nano-spawn';
 import outdent from 'outdent';
 import { TraceMap, originalPositionFor, type EncodedSourceMap } from '@jridgewell/trace-mapping';
-import { node, pkgroll } from '../../utils.ts';
+import { pkgroll } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 import {
 	packageFixture, createPackageJson, installTypeScript, createTsconfigJson,
 } from '../../fixtures.ts';
@@ -15,7 +16,7 @@ const readSourceMap = async (filePath: string): Promise<EncodedSourceMap> => {
 	return JSON.parse(content) as EncodedSourceMap;
 };
 
-export const sourcemap = (nodePath: string) => describe('generate sourcemap', () => {
+export const sourcemap = () => describe('generate sourcemap', () => {
 	test('separate files', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -29,7 +30,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -52,7 +52,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap=inline'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -88,7 +87,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -135,7 +133,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -173,7 +170,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -209,7 +205,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -246,7 +241,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -288,7 +282,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -340,7 +333,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			['--sourcemap'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -404,7 +396,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 

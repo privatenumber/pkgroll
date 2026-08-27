@@ -79,7 +79,7 @@ const fixtureDependencyImportsMap: FileTree = {
 	},
 };
 
-export const dependencies = (nodePath: string) => describe('dependencies', () => {
+export const dependencies = () => describe('dependencies', () => {
 	test('externalize dependencies', async () => {
 		await using fixture = await createFixture({
 			'src/dependency-external.js': `
@@ -102,7 +102,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -136,7 +135,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 		expect(pkgrollProcess.stderr).toBe('');
 
@@ -162,7 +160,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 		expect(pkgrollProcess.stderr).toBe('');
 
@@ -196,7 +193,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/react" is bundled \(devDependencies\) but "react" is externalized\. Place "@types\/react" in dependencies\/peerDependencies as well so users don't have missing types\./);
 
@@ -233,7 +229,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -246,7 +241,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -262,7 +256,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -276,7 +269,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -289,7 +281,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 		await using fixture = await createFixture(fixtureDependencyImportsMap);
 		const pkgrollProcess = await pkgroll(['--export-condition=node'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -312,7 +303,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

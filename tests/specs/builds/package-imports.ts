@@ -4,7 +4,7 @@ import outdent from 'outdent';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const packageImports = (nodePath: string) => describe('package imports', () => {
+export const packageImports = () => describe('package imports', () => {
 	test('imports', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -23,7 +23,6 @@ export const packageImports = (nodePath: string) => describe('package imports', 
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

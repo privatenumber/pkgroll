@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
-export const define = (nodePath: string) => describe('define', () => {
+export const define = () => describe('define', () => {
 	test('dead code elimination', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
@@ -22,7 +22,6 @@ export const define = (nodePath: string) => describe('define', () => {
 			'--define.Iterator.from=undefined',
 		], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -49,7 +48,6 @@ export const define = (nodePath: string) => describe('define', () => {
 			'--define.DEBUG=false',
 		], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

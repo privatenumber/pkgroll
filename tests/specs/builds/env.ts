@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const env = (nodePath: string) => describe('env', () => {
+export const env = () => describe('env', () => {
 	test('dead code elimination via env', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -14,7 +14,6 @@ export const env = (nodePath: string) => describe('env', () => {
 
 		const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development', '--env.PROD=false'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -53,7 +52,6 @@ export const env = (nodePath: string) => describe('env', () => {
 
 		const pkgrollProcess = await pkgroll(['--env.NODE_ENV=development', '--env.PROD=false'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
-export const nativeModules = (nodePath: string) => describe('native modules', () => {
+export const nativeModules = () => describe('native modules', () => {
 	test('ESM: copies .node files to natives directory', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
@@ -19,7 +19,6 @@ export const nativeModules = (nodePath: string) => describe('native modules', ()
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -52,7 +51,6 @@ export const nativeModules = (nodePath: string) => describe('native modules', ()
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -99,7 +97,6 @@ export const nativeModules = (nodePath: string) => describe('native modules', ()
 			'src-b:dist-b',
 		], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

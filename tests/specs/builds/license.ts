@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
-export const license = (nodePath: string) => describe('license', () => {
+export const license = () => describe('license', () => {
 	describe('auto-detect LICENSE file', () => {
 		test('creates LICENSE if none exists', async () => {
 			await using fixture = await createFixture({
@@ -31,7 +31,6 @@ export const license = (nodePath: string) => describe('license', () => {
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			// Check LICENSE file was created
@@ -69,7 +68,6 @@ export const license = (nodePath: string) => describe('license', () => {
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			// Check LICENSE.md was appended (original content preserved)
@@ -105,7 +103,6 @@ export const license = (nodePath: string) => describe('license', () => {
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENCE', 'utf8');
@@ -141,7 +138,6 @@ export const license = (nodePath: string) => describe('license', () => {
 
 			await pkgroll(['--license=NOTICES.txt'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			// Check custom file was created
@@ -177,7 +173,6 @@ export const license = (nodePath: string) => describe('license', () => {
 
 			await pkgroll(['--license=legal/notices/LICENSES.txt'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('legal/notices/LICENSES.txt', 'utf8');
@@ -209,12 +204,10 @@ export const license = (nodePath: string) => describe('license', () => {
 
 			await pkgroll(['--license=NOTICES.txt'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			await pkgroll(['--license=NOTICES.txt'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('NOTICES.txt', 'utf8');
@@ -258,7 +251,6 @@ Old bundled content here
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -308,12 +300,10 @@ Old bundled content here
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -354,7 +344,6 @@ Old content
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -390,7 +379,6 @@ Old content
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -424,12 +412,10 @@ Old content
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -451,7 +437,6 @@ Old content
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -469,12 +454,10 @@ Old content
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -519,7 +502,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -558,7 +540,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -596,7 +577,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -647,7 +627,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -721,7 +700,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -754,7 +732,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
@@ -813,7 +790,6 @@ in the Software without restriction.`;
 
 			await pkgroll(['--license'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			const content = await fixture.readFile('LICENSE', 'utf8');

@@ -1,9 +1,10 @@
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import spawn, { type SubprocessError } from 'nano-spawn';
+import type { SubprocessError } from 'nano-spawn';
 import outdent from 'outdent';
 import { pkgroll, pnpm } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 import {
 	packageFixture,
 	installTypeScript,
@@ -11,7 +12,7 @@ import {
 	createTsconfigJson,
 } from '../../fixtures.ts';
 
-export const outputTypes = (nodePath: string) => describe('types', () => {
+export const outputTypes = () => describe('types', () => {
 	test('emits', async () => {
 		await using fixture = await createFixture({
 			...packageFixture({ installTypeScript: true }),
@@ -31,7 +32,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -52,7 +52,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 			const pkgrollProcess = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(pkgrollProcess.stderr).toBe('');
@@ -86,7 +85,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const consumerPath = fixture.getPath('consumer');
 		await pnpm(['install', '--ignore-workspace'], { cwd: consumerPath });
-		const failedBuild = await spawn(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
+		const failedBuild = await node(['node_modules/pkgroll/dist/cli.mjs'], {
 			cwd: consumerPath,
 		}).catch(error => error as SubprocessError) as SubprocessError;
 		expect(failedBuild.exitCode).toBe(1);
@@ -96,7 +95,7 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 		await pnpm(['add', '--save-dev', '--ignore-workspace', `file:${path.resolve('node_modules/@typescript/typescript6')}`], {
 			cwd: consumerPath,
 		});
-		const successfulBuild = await spawn(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
+		const successfulBuild = await node(['node_modules/pkgroll/dist/cli.mjs'], {
 			cwd: consumerPath,
 		});
 		expect(successfulBuild.stderr).toBe('');
@@ -112,7 +111,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -142,7 +140,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -174,7 +171,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -206,7 +202,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -227,7 +222,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -246,7 +240,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -279,7 +272,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -315,7 +307,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -350,7 +341,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -390,7 +380,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -422,7 +411,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -441,7 +429,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -510,7 +497,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollOne = await pkgroll([], {
 			cwd: `${fixture.path}/packages/one`,
-			nodePath,
 		});
 		expect(pkgrollOne.stderr).toBe('');
 
@@ -519,7 +505,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollTwo = await pkgroll([], {
 			cwd: `${fixture.path}/packages/two`,
-			nodePath,
 		});
 		expect(pkgrollTwo.stderr).toBe('');
 
@@ -558,7 +543,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 		expect(pkgrollProcess.stderr).toBe('');
 
@@ -592,7 +576,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -623,7 +606,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 
 		const pkgrollProcess = await pkgroll(['-p', 'tsconfig.custom.json'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

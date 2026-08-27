@@ -4,7 +4,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const minification = (nodePath: string) => describe('minification', () => {
+export const minification = () => describe('minification', () => {
 	test('minification', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -15,7 +15,6 @@ export const minification = (nodePath: string) => describe('minification', () =>
 
 		const pkgrollProcess = await pkgroll(['--minify', '--target', 'esnext'], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

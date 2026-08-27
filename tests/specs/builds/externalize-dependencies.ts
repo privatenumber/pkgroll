@@ -3,13 +3,14 @@ import {
 } from 'manten';
 import { createFixture } from 'fs-fixture';
 import type { SubprocessError } from 'nano-spawn';
-import { node, pkgroll, expectError } from '../../utils.ts';
+import { pkgroll, expectError } from '../../utils.ts';
+import { node } from '../../utils/with-node.ts';
 import {
 	installTypeScript,
 	createPackageJson,
 } from '../../fixtures.ts';
 
-export const externalizeDependencies = (nodePath: string) => describe('externalize-dependencies plugin', () => {
+export const externalizeDependencies = () => describe('externalize-dependencies plugin', () => {
 	test('error if devDependency cannot be resolved', async () => {
 		await using fixture = await createFixture({
 			'src/index.js': 'import foo from "foo"',
@@ -23,7 +24,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		}).catch(error => error as SubprocessError);
 
 		expectError(pkgrollProcess);
@@ -51,7 +51,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toMatch(/^"unlisted-package" imported by ".*\/src\/index\.js" but not declared in package\.json\. Will be bundled to prevent failure at runtime\.$/);
@@ -95,7 +94,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		// Should warn because hoisted-dep is imported from source but not declared
@@ -133,7 +131,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		// Should NOT warn about unlisted-dep because it's imported from node_modules, not source
@@ -175,7 +172,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -203,7 +199,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -241,7 +236,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 	// 	try {
 	// 		await pkgroll([], {
 	// 			cwd: fixture.path,
-	// 			nodePath,
 	// 		});
 	// 	} catch (e) {
 	// 		error = e as Error;
@@ -268,7 +262,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -295,7 +288,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -324,7 +316,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -352,7 +343,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -386,7 +376,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized\. Place "@types\/eslint" in dependencies\/peerDependencies as well so users don't have missing types\./);
@@ -421,7 +410,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -471,7 +459,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -510,7 +497,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -549,7 +535,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -585,7 +570,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -633,7 +617,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -684,7 +667,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.getPath('project'),
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
@@ -742,7 +724,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		// Should only warn about @types/eslint (the only imported package)

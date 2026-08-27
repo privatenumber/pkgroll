@@ -4,7 +4,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const cleanDist = (nodePath: string) => describe('clean dist', () => {
+export const cleanDist = () => describe('clean dist', () => {
 	test('no flag', async () => {
 		await using fixture = await createFixture({
 			...packageFixture({ installTypeScript: true }),
@@ -19,7 +19,6 @@ export const cleanDist = (nodePath: string) => describe('clean dist', () => {
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -36,7 +35,6 @@ export const cleanDist = (nodePath: string) => describe('clean dist', () => {
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -64,7 +62,6 @@ export const cleanDist = (nodePath: string) => describe('clean dist', () => {
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 
@@ -81,7 +78,6 @@ export const cleanDist = (nodePath: string) => describe('clean dist', () => {
 			['--clean-dist'],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 

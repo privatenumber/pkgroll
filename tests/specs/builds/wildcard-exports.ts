@@ -3,7 +3,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { createPackageJson, installTypeScript } from '../../fixtures.ts';
 
-export const wildcardExports = (nodePath: string) => describe('wildcard exports', () => {
+export const wildcardExports = () => describe('wildcard exports', () => {
 	describe('directory wildcards', () => {
 		test('single directory segment', async () => {
 			await using fixture = await createFixture({
@@ -25,7 +25,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -54,7 +53,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -78,7 +76,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -105,7 +102,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -131,7 +127,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -157,7 +152,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -183,7 +177,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -206,7 +199,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -227,7 +219,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -253,7 +244,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -284,7 +274,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -316,7 +305,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -346,7 +334,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll(['--srcdist', 'src-a:dist-a', '--srcdist', 'src-b:dist-b'], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -375,7 +362,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -403,7 +389,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -432,7 +417,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -456,7 +440,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -480,7 +463,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toContain('Warning');
@@ -507,7 +489,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -530,7 +511,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -551,7 +531,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');
@@ -573,7 +552,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toContain('Wildcard pattern must include a file extension');
@@ -601,7 +579,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 
 			const result = await pkgroll([], {
 				cwd: fixture.path,
-				nodePath,
 			});
 
 			expect(result.stderr).toBe('');

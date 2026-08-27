@@ -7,7 +7,7 @@ import {
 	packageFixture, createPackageJson, installTypeScript, createTsconfigJson,
 } from '../fixtures.ts';
 
-export const errorCases = (nodePath: string) => describe('Error handling', () => {
+export const errorCases = () => describe('Error handling', () => {
 	test('no package.json', async () => {
 		await using fixture = await createFixture(packageFixture());
 
@@ -15,7 +15,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -36,7 +35,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -59,7 +57,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -81,7 +78,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -105,7 +101,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 		expectError(pkgrollProcess);
@@ -129,7 +124,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		);
 		expect(pkgrollProcess.stderr).toMatch('Unsupported extension (must be .d.ts|.d.mts|.d.cts|.js|.mjs|.cjs)');
@@ -173,7 +167,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -227,7 +220,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -265,7 +257,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 
@@ -299,7 +290,6 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			[],
 			{
 				cwd: fixture.path,
-				nodePath,
 			},
 		).catch(error => error as SubprocessError);
 

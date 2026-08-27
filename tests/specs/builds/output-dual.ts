@@ -4,7 +4,7 @@ import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
-export const outputDual = (nodePath: string) => describe('output: commonjs & module', () => {
+export const outputDual = () => describe('output: commonjs & module', () => {
 	test('dual', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),
@@ -18,7 +18,6 @@ export const outputDual = (nodePath: string) => describe('output: commonjs & mod
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 		expect(pkgrollProcess.stderr).toBe('');
 
@@ -52,7 +51,6 @@ export const outputDual = (nodePath: string) => describe('output: commonjs & mod
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 		expect(pkgrollProcess.stderr).toBe('');
 
@@ -94,7 +92,6 @@ export const outputDual = (nodePath: string) => describe('output: commonjs & mod
 
 	// 	const pkgrollProcess = await pkgroll([], {
 	// 		cwd: fixture.path,
-	// 		nodePath,
 	// 	});
 	// 	expect(pkgrollProcess.exitCode).toBe(0);
 	// 	expect(pkgrollProcess.stderr).toBe('');

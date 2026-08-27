@@ -7,7 +7,7 @@ import {
 	createPackageJson,
 } from '../../fixtures.ts';
 
-export const realDependencies = (nodePath: string) => describe('bundles real dependencies', () => {
+export const realDependencies = () => describe('bundles real dependencies', () => {
 	test('type-fest types (a lot of d.ts files)', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
@@ -23,7 +23,6 @@ export const realDependencies = (nodePath: string) => describe('bundles real dep
 
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
-			nodePath,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');

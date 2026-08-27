@@ -48,6 +48,7 @@
 		"rollup": "^4.62.5",
 		"rollup-plugin-import-trace": "^1.0.1",
 		"rollup-pluginutils": "^2.8.2",
+		"signal-exit": "4.1.0",
 		"yaml": "^2.9.0"
 	},
 	"peerDependencies": {

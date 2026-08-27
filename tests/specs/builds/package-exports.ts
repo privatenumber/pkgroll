@@ -17,7 +17,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -38,7 +37,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -61,7 +59,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -87,7 +84,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const indexMjs = await fixture.readFile('dist/index.js', 'utf8');
@@ -124,7 +120,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const indexMjs = await fixture.readFile('dist/mts.js', 'utf8');
@@ -152,7 +147,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const indexMjs = await fixture.readFile('dist/index.js', 'utf8');
@@ -184,7 +178,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const mtsTypes = await fixture.readFile('dist/mts.d.mts', 'utf8');
@@ -224,7 +217,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.node.js', 'utf8');
@@ -253,7 +245,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const esmContent = await fixture.readFile('dist/mjs.mjs', 'utf8');
@@ -279,7 +270,6 @@ export const packageExports = (nodePath: string) => describe('package exports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');

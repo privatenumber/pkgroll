@@ -28,7 +28,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/module-a.mjs')).toBe(true);
 			expect(await fixture.exists('dist/module-b.mjs')).toBe(true);
@@ -58,7 +57,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/lib/module.mjs')).toBe(true);
 			expect(await fixture.exists('dist/lib/utils/string/format.mjs')).toBe(true);
@@ -83,7 +81,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/features/auth/handler.mjs')).toBe(true);
 			expect(await fixture.exists('dist/features/billing/nested/handler.mjs')).toBe(true);
@@ -111,7 +108,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/utils/helper-foo.mjs')).toBe(true);
 			expect(await fixture.exists('dist/utils/helper-bar.mjs')).toBe(true);
@@ -138,7 +134,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/libs/foo-lib.mjs')).toBe(true);
 			expect(await fixture.exists('dist/libs/bar-lib.mjs')).toBe(true);
@@ -165,7 +160,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/components/ui.button.component.mjs')).toBe(true);
 			expect(await fixture.exists('dist/components/ui.input.component.mjs')).toBe(true);
@@ -192,7 +186,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/auth/auth.mjs')).toBe(true);
 			expect(await fixture.exists('dist/api/api.mjs')).toBe(true);
@@ -216,7 +209,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/a/_/a/_/a.mjs')).toBe(true);
 			expect(await fixture.exists('dist/b/_/b/_/b.mjs')).toBe(true);
@@ -238,7 +230,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/auth/user/auth/user/index.js')).toBe(true);
 		});
@@ -265,7 +256,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/module-a.mjs')).toBe(true);
 			expect(await fixture.exists('dist/module-b.mjs')).toBe(true);
@@ -297,7 +287,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist-a/module-a.mjs')).toBe(true);
 			expect(await fixture.exists('dist-a/shared/util.mjs')).toBe(true);
@@ -330,7 +319,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist-a/mod.auth.plugin.mjs')).toBe(true);
 			expect(await fixture.exists('dist-a/utils/mod.logger.plugin.mjs')).toBe(true);
@@ -361,7 +349,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist-a/x.foo.y.foo.mjs')).toBe(true);
 			expect(await fixture.exists('dist-a/x.bar.y.bar.mjs')).toBe(true);
@@ -391,7 +378,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/plugins/validator.d.ts')).toBe(true);
 			expect(await fixture.exists('dist/plugins/validator.mjs')).toBe(true);
@@ -420,7 +406,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/types/schema.d.ts')).toBe(true);
 			expect(await fixture.exists('dist/types/schema.d.mts')).toBe(true);
@@ -450,7 +435,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/node/http.mjs')).toBe(true);
 			expect(await fixture.exists('dist/browser/http.mjs')).toBe(true);
@@ -475,7 +459,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/utils/logger.mjs')).toBe(true);
 			expect(await fixture.exists('dist/utils/logger.cjs')).toBe(true);
@@ -500,7 +483,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toContain('Warning');
 			expect(result.stderr).toContain('Ignoring file outside of dist directories');
 			expect(result.stderr).toContain('package.json#exports["./outside"]');
@@ -528,7 +510,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/module-a.mjs')).toBe(true);
 			expect(await fixture.exists('dist/module-b.mjs')).toBe(true);
@@ -552,7 +533,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/optional')).toBe(false);
@@ -574,7 +554,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/lib/.mjs')).toBe(false);
@@ -597,7 +576,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toContain('Wildcard pattern must include a file extension');
 			expect(result.stderr).toContain('package.json#exports["./*"]');
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
@@ -626,7 +604,6 @@ export const wildcardExports = (nodePath: string) => describe('wildcard exports'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 			expect(await fixture.exists('dist/index.mjs')).toBe(true);
 			expect(await fixture.exists('dist/utils/helper.mjs')).toBe(true);

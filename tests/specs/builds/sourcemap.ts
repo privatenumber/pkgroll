@@ -2,10 +2,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execa } from 'execa';
+import type { SubprocessError } from 'nano-spawn';
 import outdent from 'outdent';
 import { TraceMap, originalPositionFor, type EncodedSourceMap } from '@jridgewell/trace-mapping';
-import { pkgroll } from '../../utils.ts';
+import { node, pkgroll } from '../../utils.ts';
 import {
 	packageFixture, createPackageJson, installTypeScript, createTsconfigJson,
 } from '../../fixtures.ts';
@@ -33,7 +33,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.js.map')).toBe(true);
@@ -57,7 +56,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(
@@ -94,14 +92,12 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Run with --enable-source-maps and verify stack trace shows correct line
-		const { stderr } = await execa('node', ['--enable-source-maps', 'dist/index.js'], {
+		const { stderr } = await node(['--enable-source-maps', 'dist/index.js'], {
 			cwd: fixture.path,
-			reject: false,
-		});
+		}).catch(error => error as SubprocessError);
 
 		// Stack trace should reference line 9, not line 1
 		expect(stderr).toMatch(/index\.ts:9/);
@@ -143,7 +139,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Check root level sourcemap
@@ -182,7 +177,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/nested/index.d.ts.map')).toBe(true);
@@ -219,7 +213,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.d.ts.map')).toBe(true);
@@ -257,7 +250,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.d.ts.map')).toBe(true);
@@ -300,7 +292,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.d.ts.map')).toBe(true);
@@ -353,7 +344,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.d.ts.map')).toBe(true);
@@ -418,7 +408,6 @@ export const sourcemap = (nodePath: string) => describe('generate sourcemap', ()
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// .d.ts sourcemap should exist due to declarationMap: true

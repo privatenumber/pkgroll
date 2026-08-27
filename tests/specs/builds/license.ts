@@ -29,12 +29,10 @@ export const license = (nodePath: string) => describe('license', () => {
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			// Check LICENSE file was created
 			expect(await fixture.exists('LICENSE')).toBe(true);
@@ -69,12 +67,10 @@ export const license = (nodePath: string) => describe('license', () => {
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			// Check LICENSE.md was appended (original content preserved)
 			const content = await fixture.readFile('LICENSE.md', 'utf8');
@@ -107,12 +103,10 @@ export const license = (nodePath: string) => describe('license', () => {
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENCE', 'utf8');
 			expect(content).toMatch('Original LICENCE content');
@@ -145,12 +139,10 @@ export const license = (nodePath: string) => describe('license', () => {
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license=NOTICES.txt'], {
+			await pkgroll(['--license=NOTICES.txt'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			// Check custom file was created
 			expect(await fixture.exists('NOTICES.txt')).toBe(true);
@@ -183,12 +175,10 @@ export const license = (nodePath: string) => describe('license', () => {
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license=legal/notices/LICENSES.txt'], {
+			await pkgroll(['--license=legal/notices/LICENSES.txt'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('legal/notices/LICENSES.txt', 'utf8');
 			expect(content).toMatch('test-dep@1.0.0');
@@ -217,19 +207,15 @@ export const license = (nodePath: string) => describe('license', () => {
 				},
 			});
 
-			const firstRun = await pkgroll(['--license=NOTICES.txt'], {
+			await pkgroll(['--license=NOTICES.txt'], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(firstRun.exitCode).toBe(0);
-
-			const secondRun = await pkgroll(['--license=NOTICES.txt'], {
+			await pkgroll(['--license=NOTICES.txt'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(secondRun.exitCode).toBe(0);
 
 			const content = await fixture.readFile('NOTICES.txt', 'utf8');
 			expect(content).toMatch('test-dep@1.0.0');
@@ -270,12 +256,10 @@ Old bundled content here
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 
@@ -322,19 +306,15 @@ Old bundled content here
 				},
 			});
 
-			const firstRun = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(firstRun.exitCode).toBe(0);
-
-			const secondRun = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(secondRun.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('# My Project License');
@@ -372,12 +352,10 @@ Old content
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('MIT License');
@@ -410,12 +388,10 @@ Old content
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('Original LICENSE content');
@@ -446,19 +422,15 @@ Old content
 				},
 			});
 
-			const firstRun = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(firstRun.exitCode).toBe(0);
-
-			const secondRun = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(secondRun.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('Original LICENSE content');
@@ -477,12 +449,10 @@ Old content
 				'src/index.js': 'export default 1;',
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('----------- BUNDLED DEPENDENCIES -----------');
@@ -497,19 +467,15 @@ Old content
 				'src/index.js': 'export default 1;',
 			});
 
-			const firstRun = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(firstRun.exitCode).toBe(0);
-
-			const secondRun = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(secondRun.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('No bundled dependencies');
@@ -551,12 +517,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('test-dep@1.0.0');
@@ -592,12 +556,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('british-dep@1.0.0');
@@ -632,12 +594,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('Main Author');
@@ -685,12 +645,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('bundled-dep@2.0.0');
@@ -761,12 +719,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('shared-lib@2.0.0');
@@ -796,12 +752,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			expect(content).toMatch('No bundled dependencies');
@@ -857,12 +811,10 @@ in the Software without restriction.`;
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--license'], {
+			await pkgroll(['--license'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('LICENSE', 'utf8');
 			const alphaIndex = content.indexOf('alpha-pkg');

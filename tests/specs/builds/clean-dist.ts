@@ -40,7 +40,6 @@ export const cleanDist = (nodePath: string) => describe('clean dist', () => {
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/nested/index.js')).toBe(true);
@@ -86,7 +85,6 @@ export const cleanDist = (nodePath: string) => describe('clean dist', () => {
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/nested/index.js')).toBe(false);

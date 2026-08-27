@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execaNode } from 'execa';
+import spawn, { type SubprocessError } from 'nano-spawn';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 import { waitForOutput } from '../../utils.ts';
 
@@ -17,16 +17,12 @@ export const watch = (nodePath: string) => describe('watch', () => {
 			}),
 		});
 
-		const watchProcess = execaNode(
-			pkgrollBinPath,
-			['--watch'],
-			{
-				cwd: fixture.path,
-				env: { NODE_PATH: '' },
-				reject: false,
-				nodePath,
-			},
-		);
+		const controller = new AbortController();
+		const watchProcess = spawn(nodePath, [pkgrollBinPath, '--watch'], {
+			cwd: fixture.path,
+			env: { NODE_PATH: '' },
+			signal: controller.signal,
+		});
 
 		try {
 			await waitForOutput(watchProcess, 'Built');
@@ -51,8 +47,8 @@ export const watch = (nodePath: string) => describe('watch', () => {
 			const utilsContent = await fixture.readFile('dist/utils.mjs', 'utf8');
 			expect(utilsContent).toMatch('export');
 		} finally {
-			watchProcess.kill();
-			await watchProcess;
+			controller.abort();
+			await watchProcess.catch(error => error as SubprocessError);
 		}
 	});
 });

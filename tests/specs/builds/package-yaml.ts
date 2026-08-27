@@ -18,7 +18,6 @@ export const packageYaml = (nodePath: string) => describe('package.yaml support'
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.js')).toBe(true);

@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execa } from 'execa';
+import spawn, { type SubprocessError } from 'nano-spawn';
 import outdent from 'outdent';
-import { pkgroll } from '../../utils.ts';
+import { pkgroll, pnpm } from '../../utils.ts';
 import {
 	packageFixture,
 	installTypeScript,
@@ -34,7 +34,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
@@ -56,7 +55,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/utils.d.ts', 'utf8');
@@ -87,19 +85,18 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 		]);
 
 		const consumerPath = fixture.getPath('consumer');
-		await execa('pnpm', ['install', '--ignore-workspace'], { cwd: consumerPath });
-		const failedBuild = await execa(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
+		await pnpm(['install', '--ignore-workspace'], { cwd: consumerPath });
+		const failedBuild = await spawn(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
 			cwd: consumerPath,
-			reject: false,
-		});
+		}).catch(error => error as SubprocessError) as SubprocessError;
 		expect(failedBuild.exitCode).toBe(1);
 		expect(failedBuild.stderr).toMatch('does not ship a compiler API');
 		expect(failedBuild.stderr).toMatch('@typescript/typescript6');
 
-		await execa('pnpm', ['add', '--save-dev', '--ignore-workspace', `file:${path.resolve('node_modules/@typescript/typescript6')}`], {
+		await pnpm(['add', '--save-dev', '--ignore-workspace', `file:${path.resolve('node_modules/@typescript/typescript6')}`], {
 			cwd: consumerPath,
 		});
-		const successfulBuild = await execa(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
+		const successfulBuild = await spawn(nodePath, ['node_modules/pkgroll/dist/cli.mjs'], {
 			cwd: consumerPath,
 		});
 		expect(successfulBuild.stderr).toBe('');
@@ -118,7 +115,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/mts.d.ts', 'utf8');
@@ -149,7 +145,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/component.d.ts', 'utf8');
@@ -182,7 +177,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/component.d.mts', 'utf8');
@@ -215,7 +209,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/component.d.cts', 'utf8');
@@ -237,7 +230,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/mts.d.cts', 'utf8');
@@ -257,7 +249,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/mts.d.mts', 'utf8');
@@ -291,7 +282,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
@@ -328,7 +318,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const utilsDts = await fixture.readFile('dist/utils.d.ts', 'utf8');
@@ -364,7 +353,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Requested files exist
@@ -405,7 +393,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const utilsDMts = await fixture.readFile('dist/utils.d.mts', 'utf8');
@@ -438,7 +425,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.d.ts', 'utf8');
@@ -458,7 +444,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dts.d.ts', 'utf8');
@@ -527,7 +512,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			cwd: `${fixture.path}/packages/one`,
 			nodePath,
 		});
-		expect(pkgrollOne.exitCode).toBe(0);
 		expect(pkgrollOne.stderr).toBe('');
 
 		const contentOne = await fixture.readFile('packages/one/dist/index.d.mts', 'utf8');
@@ -537,7 +521,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			cwd: `${fixture.path}/packages/two`,
 			nodePath,
 		});
-		expect(pkgrollTwo.exitCode).toBe(0);
 		expect(pkgrollTwo.stderr).toBe('');
 
 		const contentTwo = await fixture.readFile('packages/two/dist/index.mjs', 'utf8');
@@ -612,7 +595,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.d.ts', 'utf8');
@@ -644,7 +626,6 @@ export const outputTypes = (nodePath: string) => describe('types', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/component.d.ts', 'utf8');

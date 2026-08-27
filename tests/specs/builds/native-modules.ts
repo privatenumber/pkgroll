@@ -22,7 +22,6 @@ export const nativeModules = (nodePath: string) => describe('native modules', ()
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Check that natives directory was created
@@ -56,7 +55,6 @@ export const nativeModules = (nodePath: string) => describe('native modules', ()
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Check that natives directory was created
@@ -104,7 +102,6 @@ export const nativeModules = (nodePath: string) => describe('native modules', ()
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Should create natives in the first dist directory (like shared chunks)

@@ -105,7 +105,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dependency-external.js', 'utf8');
@@ -139,7 +138,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			cwd: fixture.path,
 			nodePath,
 		});
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.d.ts', 'utf8');
@@ -166,7 +164,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			cwd: fixture.path,
 			nodePath,
 		});
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.d.ts', 'utf8');
@@ -201,7 +198,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			cwd: fixture.path,
 			nodePath,
 		});
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/react" is bundled \(devDependencies\) but "react" is externalized\. Place "@types\/react" in dependencies\/peerDependencies as well so users don't have missing types\./);
 
 		const contentJs = await fixture.readFile('dist/index.js', 'utf8');
@@ -240,7 +236,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 	});
 
@@ -254,7 +249,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dependency-exports-require.js', 'utf8');
@@ -271,7 +265,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dependency-exports-import.js', 'utf8');
@@ -286,7 +279,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
@@ -300,7 +292,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dependency-imports-map.js', 'utf8');
@@ -324,7 +315,6 @@ export const dependencies = (nodePath: string) => describe('dependencies', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');

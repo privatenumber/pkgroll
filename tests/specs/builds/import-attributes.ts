@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execa, execaNode } from 'execa';
+import spawn, { type SubprocessError } from 'nano-spawn';
 import { createPackageJson } from '../../fixtures.ts';
 import { pkgroll, waitForOutput } from '../../utils.ts';
 
@@ -28,7 +28,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
@@ -53,7 +52,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
@@ -74,14 +72,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/page.html': '<h1>Dynamic</h1>',
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -103,14 +99,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/page.html': '<h1>Hello World</h1>',
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -139,7 +133,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/index.mjs', 'utf8');
@@ -164,7 +157,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
@@ -186,14 +178,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/data.bin': Buffer.from([0x00, 0x01, 0x02, 0xFF]),
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -217,14 +207,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/data.bin': Buffer.from([0x00, 0x01, 0x02]),
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -249,14 +237,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/empty.txt': '',
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -278,14 +264,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/empty.bin': Buffer.alloc(0),
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -314,7 +298,6 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toMatch(
 				'tried to import "./file.txt" with "type": "bytes" attributes, but it was already imported elsewhere with "type": "text" attributes. Please ensure that import attributes for the same module are always consistent.',
 			);
@@ -333,14 +316,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/my page.html': '<h1>Spaced</h1>',
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
-
-			const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+			const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 				cwd: fixture.path,
 			});
 
@@ -382,14 +363,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 					[`src/${fileName}`]: 'file content',
 				});
 
-				const pkgrollProcess = await pkgroll([], {
+				await pkgroll([], {
 					cwd: fixture.path,
 					nodePath,
 				});
 
-				expect(pkgrollProcess.exitCode).toBe(0);
-
-				const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+				const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 					cwd: fixture.path,
 				});
 
@@ -411,14 +390,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 					[`src/${fileName}`]: Buffer.from([0xCA, 0xFE]),
 				});
 
-				const pkgrollProcess = await pkgroll([], {
+				await pkgroll([], {
 					cwd: fixture.path,
 					nodePath,
 				});
 
-				expect(pkgrollProcess.exitCode).toBe(0);
-
-				const { stdout } = await execa(nodePath, ['dist/index.mjs'], {
+				const { stdout } = await spawn(nodePath, ['dist/index.mjs'], {
 					cwd: fixture.path,
 				});
 
@@ -443,16 +420,12 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				'src/page.html': '<h1>Before</h1>',
 			});
 
-			const watchProcess = execaNode(
-				pkgrollBinPath,
-				['--watch'],
-				{
-					cwd: fixture.path,
-					env: { NODE_PATH: '' },
-					reject: false,
-					nodePath,
-				},
-			);
+			const controller = new AbortController();
+			const watchProcess = spawn(nodePath, [pkgrollBinPath, '--watch'], {
+				cwd: fixture.path,
+				env: { NODE_PATH: '' },
+				signal: controller.signal,
+			});
 
 			try {
 				// Cold startup uses the helper's generous default timeout.
@@ -472,8 +445,8 @@ export const importAttributes = (nodePath: string) => describe('import attribute
 				const updated = await fixture.readFile('dist/index.mjs', 'utf8');
 				expect(updated).toMatch('<h1>After</h1>');
 			} finally {
-				watchProcess.kill();
-				await watchProcess;
+				controller.abort();
+				await watchProcess.catch(error => error as SubprocessError);
 			}
 		}, { retry: 3 });
 	});

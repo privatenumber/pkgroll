@@ -2,8 +2,8 @@ import {
 	describe, test, expect, onTestFail,
 } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execaNode } from 'execa';
-import { pkgroll } from '../../utils.ts';
+import type { SubprocessError } from 'nano-spawn';
+import { node, pkgroll, expectError } from '../../utils.ts';
 import {
 	installTypeScript,
 	createPackageJson,
@@ -24,9 +24,9 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
 			nodePath,
-			reject: false,
-		});
+		}).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 
 		const errorMessage = 'Could not resolve "foo" even though it\'s declared in package.json. Try re-installing node_modules.';
@@ -54,7 +54,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toMatch(/^"unlisted-package" imported by ".*\/src\/index\.js" but not declared in package\.json\. Will be bundled to prevent failure at runtime\.$/);
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -99,7 +98,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		// Should warn because hoisted-dep is imported from source but not declared
 		expect(pkgrollProcess.stderr).toMatch(/^"hoisted-dep" imported by ".*\/src\/index\.js" but not declared in package\.json\. Will be bundled to prevent failure at runtime\.$/);
 
@@ -138,7 +136,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		// Should NOT warn about unlisted-dep because it's imported from node_modules, not source
 		expect(pkgrollProcess.stderr).not.toMatch('unlisted-dep');
 		// Should NOT warn about bundled-pkg either (it's in devDependencies)
@@ -181,7 +178,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -210,7 +206,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -276,7 +271,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -304,7 +298,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -334,7 +327,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -363,7 +355,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -398,7 +389,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized\. Place "@types\/eslint" in dependencies\/peerDependencies as well so users don't have missing types\./);
 
 		const contentTypes = await fixture.readFile('dist/index.d.ts', 'utf8');
@@ -434,7 +424,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -448,14 +437,10 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		expect(content).toMatch('\'external-pkg/file-without-ext.js\'');
 
 		// Verify it actually runs in Node.js
-		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+		const { stderr: runStderr } = await node(['dist/index.js'], {
 			cwd: fixture.path,
-			reject: false,
 		});
-		if (exitCode !== 0) {
-			console.log('Node.js stderr:', runStderr);
-		}
-		expect(exitCode).toBe(0);
+		expect(runStderr).toBe('');
 	});
 
 	test('package with exports (no subpaths) - keep original import', async () => {
@@ -489,7 +474,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -529,7 +513,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -569,7 +552,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -606,7 +588,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -620,14 +601,10 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		expect(content).toMatch('\'external-pkg/lib.min.js\'');
 
 		// Verify it actually runs in Node.js
-		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+		const { stderr: runStderr } = await node(['dist/index.js'], {
 			cwd: fixture.path,
-			reject: false,
 		});
-		if (exitCode !== 0) {
-			console.log('Node.js stderr:', runStderr);
-		}
-		expect(exitCode).toBe(0);
+		expect(runStderr).toBe('');
 	});
 
 	test('directory import resolves to index.js', async () => {
@@ -659,7 +636,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -673,14 +649,10 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		expect(content).toMatch('\'external-pkg/utils/index.js\'');
 
 		// Verify it actually runs in Node.js
-		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+		const { stderr: runStderr } = await node(['dist/index.js'], {
 			cwd: fixture.path,
-			reject: false,
 		});
-		if (exitCode !== 0) {
-			console.log('Node.js stderr:', runStderr);
-		}
-		expect(exitCode).toBe(0);
+		expect(runStderr).toBe('');
 	});
 
 	test('hoisted dependency without exports gets bundled (not externalized)', async () => {
@@ -715,7 +687,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('project/dist/index.js', 'utf8');
@@ -730,14 +701,10 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		expect(content).toMatch('\'hoisted-dep/utils.js\'');
 
 		// Verify it actually runs in Node.js
-		const { exitCode, stderr: runStderr } = await execaNode('dist/index.js', [], {
+		const { stderr: runStderr } = await node(['dist/index.js'], {
 			cwd: fixture.getPath('project'),
-			reject: false,
 		});
-		if (exitCode !== 0) {
-			console.log('Node.js stderr:', runStderr);
-		}
-		expect(exitCode).toBe(0);
+		expect(runStderr).toBe('');
 	});
 
 	test('only warn about @types packages that are actually imported (fixes #49)', async () => {
@@ -777,8 +744,6 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			cwd: fixture.path,
 			nodePath,
 		});
-
-		expect(pkgrollProcess.exitCode).toBe(0);
 
 		// Should only warn about @types/eslint (the only imported package)
 		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized\. Place "@types\/eslint" in dependencies\/peerDependencies as well so users don't have missing types\./);

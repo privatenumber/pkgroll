@@ -23,7 +23,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -43,7 +42,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');
@@ -63,7 +61,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -83,7 +80,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/cjs.mjs', 'utf8');
@@ -111,7 +107,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/component.mjs', 'utf8');
@@ -133,7 +128,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/mts.mjs', 'utf8');
@@ -153,7 +147,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/cts.mjs', 'utf8');
@@ -174,7 +167,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/cts.js', 'utf8');
@@ -195,7 +187,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const js = await fixture.readFile('dist/require.js', 'utf8');
@@ -219,7 +210,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
@@ -239,7 +229,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/conditional-require.mjs', 'utf8');
@@ -262,7 +251,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
@@ -286,7 +274,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/require.mjs', 'utf8');
@@ -308,7 +295,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/require.mjs', 'utf8');
@@ -329,7 +315,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/require.mjs', 'utf8');
@@ -351,7 +336,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dynamic-imports.mjs', 'utf8');
@@ -378,7 +362,6 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toContain('[plugin rollup-plugin-dynamic-import-variables]');
 
 		const content = await fixture.readFile('dist/dynamic-imports.mjs', 'utf8');
@@ -394,11 +377,10 @@ export const outputModule = (nodePath: string) => describe('output: module', () 
 			}),
 		});
 
-		const pkgrollProcess = await pkgroll(['--target=es2017'], {
+		await pkgroll(['--target=es2017'], {
 			cwd: fixture.path,
 			nodePath,
 		});
-		expect(pkgrollProcess.exitCode).toBe(0);
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');
 		expect(content).toMatch('import.meta.url');

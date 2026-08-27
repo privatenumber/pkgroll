@@ -26,7 +26,6 @@ export const packageImports = (nodePath: string) => describe('package imports', 
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/entry.js', 'utf8');

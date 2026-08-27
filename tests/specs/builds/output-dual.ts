@@ -20,7 +20,6 @@ export const outputDual = (nodePath: string) => describe('output: commonjs & mod
 			cwd: fixture.path,
 			nodePath,
 		});
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const files = await fs.readdir(fixture.getPath('dist'));
@@ -55,7 +54,6 @@ export const outputDual = (nodePath: string) => describe('output: commonjs & mod
 			cwd: fixture.path,
 			nodePath,
 		});
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const files = await fs.readdir(fixture.getPath('dist'));

@@ -17,7 +17,6 @@ export const env = (nodePath: string) => describe('env', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/conditional-require.js', 'utf8');
@@ -57,7 +56,6 @@ export const env = (nodePath: string) => describe('env', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');

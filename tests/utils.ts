@@ -1,6 +1,11 @@
 import path from 'node:path';
 import { on } from 'node:events';
-import { execaNode, type Options } from 'execa';
+import spawn, {
+	SubprocessError,
+	type Options,
+	type Result,
+	type Subprocess,
+} from 'nano-spawn';
 import { expect } from 'manten';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
@@ -17,19 +22,29 @@ export const expectMatchesInOrder = (
 	}
 };
 
+export const node = (
+	commandArguments: string[],
+	options?: Options,
+) => spawn(process.execPath, commandArguments, options);
+
+export const pnpm = (commandArguments: string[], options?: Options) => spawn('pnpm', commandArguments, options);
+
+export const expectError: (
+	result: Result | SubprocessError,
+) => asserts result is SubprocessError = (result) => {
+	expect(result).toBeInstanceOf(SubprocessError);
+};
+
 export const pkgroll = async (
 	cliArguments: string[],
-	options: Options,
-) => await execaNode(
-	pkgrollBinPath,
-	cliArguments,
-	{
-		...options,
-		env: {
-			NODE_PATH: '',
-		},
+	{ nodePath, ...options }: Options & { nodePath: string },
+) => await spawn(nodePath, [pkgrollBinPath, ...cliArguments], {
+	...options,
+	env: {
+		...options.env,
+		NODE_PATH: '',
 	},
-);
+});
 
 /**
  * Wait for `pattern` to appear in the subprocess's stdout, or throw.
@@ -49,12 +64,13 @@ export const pkgroll = async (
  *      the caller to fail later on a confusing assertion.
  */
 export const waitForOutput = async (
-	subprocess: ReturnType<typeof execaNode>,
+	subprocess: Subprocess,
 	pattern: string,
 	timeout = 30_000,
 ) => {
+	const childProcess = await subprocess.nodeChildProcess;
 	let output = '';
-	for await (const [data] of on(subprocess.stdout!, 'data', { signal: AbortSignal.timeout(timeout) })) {
+	for await (const [data] of on(childProcess.stdout!, 'data', { signal: AbortSignal.timeout(timeout) })) {
 		output += data.toString();
 		if (output.includes(pattern)) {
 			return;

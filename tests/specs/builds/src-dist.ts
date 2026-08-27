@@ -28,7 +28,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 					nodePath,
 				},
 			);
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.exists('dist/nested/index.js')).toBe(true);
@@ -56,7 +55,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				},
 			);
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.exists('dist/nested/index.js')).toBe(true);
@@ -80,7 +78,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				cwd: fixture.path,
 				nodePath,
 			});
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.exists('nested/index.js')).toBe(true);
@@ -104,7 +101,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				cwd: fixture.path,
 				nodePath,
 			});
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.exists('nested/index.js')).toBe(true);
@@ -129,7 +125,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				cwd: fixture.path,
 				nodePath,
 			});
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.exists('dist-a/nested/index.mjs')).toBe(true);
@@ -158,7 +153,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				cwd: fixture.path,
 				nodePath,
 			});
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const distA = await fs.readdir(fixture.getPath('dist-a'));
@@ -194,7 +188,6 @@ export const srcDist = (nodePath: string) => describe('legacy src & dist', () =>
 				cwd: fixture.path,
 				nodePath,
 			});
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const distA = await fs.readdir(path.join(fixture.path, 'a'));

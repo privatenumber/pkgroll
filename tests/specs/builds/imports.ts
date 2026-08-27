@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execa } from 'execa';
+import spawn from 'nano-spawn';
 import { outdent } from 'outdent';
-import { pkgroll } from '../../utils.ts';
+import { node, pkgroll } from '../../utils.ts';
 import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.ts';
 
 export const imports = (nodePath: string) => describe('imports as build targets', async () => {
@@ -36,13 +36,12 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
 			expect(distContent).toMatch('#utils');
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('util');
 		});
 
@@ -79,13 +78,12 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
 			expect(distContent).toMatch('#env');
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('node');
 		});
 
@@ -126,17 +124,14 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			const dtsContent = await fixture.readFile(`${packagePath}/dist/index.d.ts`, 'utf8');
 			expect(dtsContent).toMatch('#utils');
 
-			const typeCheck = await execa('tsc', ['--noEmit'], {
+			await spawn('tsc', ['--noEmit'], {
 				cwd: fixture.path,
-				reject: false,
 			});
-			expect(typeCheck.exitCode).toBe(0);
 		});
 	});
 
@@ -176,14 +171,13 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
 			expect(distContent).toMatch('#components/button');
 			expect(distContent).toMatch('#components/input');
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('buttoninput');
 		});
 
@@ -220,7 +214,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toContain('');
 
 			expect(await fixture.exists(`${packagePath}/dist/index.js`)).toBe(true);
@@ -231,7 +224,7 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 			expect(indexContent).toMatch('#./dist/helper-a');
 			expect(indexContent).toMatch('#./dist/helper-b');
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('ab');
 		});
 
@@ -272,14 +265,13 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			expect(await fixture.exists(`${packagePath}/dist/lib/module.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/lib/utils/string/format.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/lib/nested/deep/path/index.js`)).toBe(true);
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('valuetestdeep');
 		});
 
@@ -318,13 +310,12 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			expect(await fixture.exists(`${packagePath}/dist/features/auth/handler.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/features/billing/nested/handler.js`)).toBe(true);
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('authbilling');
 		});
 	});
@@ -366,14 +357,13 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			expect(await fixture.exists(`${packagePath}/dist/utils/helper-foo.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/utils/helper-bar.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/utils/ignored.js`)).toBe(false);
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('foobar');
 		});
 
@@ -413,14 +403,13 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			expect(await fixture.exists(`${packagePath}/dist/libs/foo-lib.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/libs/bar-lib.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/libs/ignored.js`)).toBe(false);
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('foobar');
 		});
 
@@ -460,14 +449,13 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			expect(await fixture.exists(`${packagePath}/dist/components/ui.button.component.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/components/ui.input.component.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/components/ignored.js`)).toBe(false);
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('buttoninput');
 		});
 	});
@@ -507,14 +495,13 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			expect(await fixture.exists(`${packagePath}/dist/auth/auth/handler.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/api/api/handler.js`)).toBe(true);
 			expect(await fixture.exists(`${packagePath}/dist/mismatched/other/handler.js`)).toBe(false);
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('authapi');
 		});
 	});
@@ -565,7 +552,6 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toMatch(/^"hoisted-dep" imported by ".*\/packages\/my-package\/src\/index\.ts" but not declared in package\.json\. Will be bundled to prevent failure at runtime\.$/);
 
 			const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
@@ -573,7 +559,7 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 			expect(distContent).not.toMatch('#dep-internal');
 			expect(distContent).not.toMatch('hoisted-dep');
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('internalhoisted');
 		});
 
@@ -608,13 +594,12 @@ export const imports = (nodePath: string) => describe('imports as build targets'
 				nodePath,
 			});
 
-			expect(result.exitCode).toBe(0);
 			expect(result.stderr).toBe('');
 
 			const distContent = await fixture.readFile(`${packagePath}/dist/node_modules_backup/index.js`, 'utf8');
 			expect(distContent).toMatch('#internal');
 
-			const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+			const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 			expect(stdout).toBe('backup');
 		});
 	});

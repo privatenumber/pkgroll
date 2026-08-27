@@ -18,7 +18,6 @@ export const minification = (nodePath: string) => describe('minification', () =>
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/target.js', 'utf8');

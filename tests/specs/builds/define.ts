@@ -25,7 +25,6 @@ export const define = (nodePath: string) => describe('define', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -53,7 +52,6 @@ export const define = (nodePath: string) => describe('define', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');

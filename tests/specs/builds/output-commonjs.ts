@@ -21,7 +21,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -41,7 +40,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/mts.js', 'utf8');
@@ -61,7 +59,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/cts.js', 'utf8');
@@ -81,7 +78,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/cts.cjs', 'utf8');
@@ -102,7 +98,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.cjs', 'utf8');
@@ -122,7 +117,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/mjs.cjs', 'utf8');
@@ -150,7 +144,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/component.cjs', 'utf8');
@@ -172,7 +165,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/nested/index.js', 'utf8');
@@ -192,7 +184,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
@@ -219,7 +210,6 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toContain('[plugin rollup-plugin-dynamic-import-variables]');
 
 		const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
@@ -242,12 +232,10 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 				},
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
 			expect(content).toMatch('0&&(module.exports={foo});');
@@ -267,12 +255,10 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 				},
 			});
 
-			const pkgrollProcess = await pkgroll([], {
+			await pkgroll([], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
 			expect(content).toMatch('0&&(module.exports={bar});');
@@ -292,12 +278,10 @@ export const outputCommonjs = (nodePath: string) => describe('output: commonjs',
 				},
 			});
 
-			const pkgrollProcess = await pkgroll(['--minify'], {
+			await pkgroll(['--minify'], {
 				cwd: fixture.path,
 				nodePath,
 			});
-
-			expect(pkgrollProcess.exitCode).toBe(0);
 
 			const content = await fixture.readFile('dist/index.cjs', 'utf8');
 			expect(content).toMatch('0&&(module.exports={bar});');

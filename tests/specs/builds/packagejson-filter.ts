@@ -27,7 +27,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Only the -i entry should be built, not main
@@ -59,7 +58,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
@@ -91,7 +89,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.mjs')).toBe(true);
@@ -124,7 +121,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.d.ts')).toBe(true);
@@ -161,7 +157,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 			},
 		);
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		// Only utils outputs built
@@ -202,8 +197,6 @@ export const packagejsonFilter = (nodePath: string) => describe('--packagejson f
 				nodePath,
 			},
 		);
-
-		expect(pkgrollProcess.exitCode).toBe(0);
 
 		// The wildcard error warning should be preserved
 		expect(pkgrollProcess.stderr).toMatch('Wildcard pattern must include a file extension');

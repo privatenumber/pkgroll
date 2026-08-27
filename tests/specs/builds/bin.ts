@@ -24,7 +24,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		await test('is executable', async () => {
@@ -57,7 +56,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.mjs')).toBe(true);
@@ -77,7 +75,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/dynamic-require.mjs', 'utf8');
@@ -100,7 +97,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		expect(await fixture.exists('dist/index.mjs')).toBe(true);
@@ -123,7 +119,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cli.mjs', 'utf8');
@@ -148,7 +143,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cli.mjs', 'utf8');
@@ -168,7 +162,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cli.mjs', 'utf8');
@@ -202,7 +195,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const node = await fixture.readFile('dist/node-bin.mjs', 'utf8');
@@ -238,7 +230,6 @@ export const bin = (nodePath: string) => describe('bin', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/cli.mjs', 'utf8');

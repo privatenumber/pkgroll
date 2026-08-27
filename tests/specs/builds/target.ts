@@ -18,7 +18,6 @@ export const target = (nodePath: string) => describe('target', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/target.js', 'utf8');
@@ -49,7 +48,6 @@ export const target = (nodePath: string) => describe('target', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.readFile('dist/utils.js', 'utf8')).not.toMatch('node:');
@@ -83,7 +81,6 @@ export const target = (nodePath: string) => describe('target', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			expect(await fixture.readFile('dist/utils.js', 'utf8')).toMatch('\'node:fs\'');

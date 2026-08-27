@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { pkgroll, expectMatchesInOrder } from '../utils.ts';
+import type { SubprocessError } from 'nano-spawn';
+import { pkgroll, expectMatchesInOrder, expectError } from '../utils.ts';
 import {
 	packageFixture, createPackageJson, installTypeScript, createTsconfigJson,
 } from '../fixtures.ts';
@@ -15,10 +16,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expect(pkgrollProcess.stderr).toMatch('package.json not found');
 	});
@@ -36,10 +37,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expect(pkgrollProcess.stderr).toMatch('No entry points found');
 	});
@@ -59,10 +60,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expect(pkgrollProcess.stderr).toMatch('Error: Conflicting export types "commonjs" & "module" found for ./dist/index.js');
 	});
@@ -81,10 +82,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expect(pkgrollProcess.stderr).toMatch('Ignoring file outside of dist directories');
 		expect(pkgrollProcess.stderr).toMatch('No entry points found');
@@ -105,9 +106,9 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expect(pkgrollProcess.stderr).toMatch('Source file not found: src/missing(.js|.ts|.tsx|.mts|.cts)');
 	});
@@ -129,10 +130,8 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
 		);
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toMatch('Unsupported extension (must be .d.ts|.d.mts|.d.cts|.js|.mjs|.cjs)');
 	});
 
@@ -175,10 +174,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expectMatchesInOrder(pkgrollProcess.stderr as string, [
 			/does-not-exist/,
@@ -229,10 +228,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expectMatchesInOrder(pkgrollProcess.stderr as string, [
 			/missing-file/,
@@ -267,10 +266,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expect(pkgrollProcess.stderr).toMatch(/does-not-exist/);
 		// Entry point errors should NOT show import trace (trace length = 1)
@@ -301,10 +300,10 @@ export const errorCases = (nodePath: string) => describe('Error handling', () =>
 			{
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
 			},
-		);
+		).catch(error => error as SubprocessError);
 
+		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
 		expectMatchesInOrder(pkgrollProcess.stderr as string, [
 			/missing-file/,

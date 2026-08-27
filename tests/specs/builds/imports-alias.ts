@@ -1,8 +1,7 @@
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import { execa } from 'execa';
 import { outdent } from 'outdent';
-import { pkgroll } from '../../utils.ts';
+import { node, pkgroll } from '../../utils.ts';
 import { createPackageJson } from '../../fixtures.ts';
 
 export const importsAlias = (nodePath: string) => describe('imports - non-# import handling', () => {
@@ -36,7 +35,6 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 			nodePath,
 		});
 
-		expect(result.exitCode).toBe(0);
 		expect(result.stderr).toBe('');
 
 		const indexExists = await fixture.exists(`${packagePath}/dist/index.js`);
@@ -45,7 +43,7 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 		const internalExists = await fixture.exists(`${packagePath}/dist/internal.js`);
 		expect(internalExists).toBe(false);
 
-		const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+		const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 		expect(stdout).toBe('456');
 	});
 
@@ -81,7 +79,6 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 			nodePath,
 		});
 
-		expect(result.exitCode).toBe(0);
 		expect(result.stderr).toBe('');
 
 		const validExists = await fixture.exists(`${packagePath}/dist/valid.js`);
@@ -93,7 +90,7 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 		const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
 		expect(distContent).toMatch('#valid');
 
-		const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+		const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 		expect(stdout).toBe('works');
 	});
 
@@ -130,7 +127,6 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 			nodePath,
 		});
 
-		expect(result.exitCode).toBe(0);
 		expect(result.stderr).toBe('');
 
 		const nodeExists = await fixture.exists(`${packagePath}/dist/node.js`);
@@ -142,7 +138,7 @@ export const importsAlias = (nodePath: string) => describe('imports - non-# impo
 		const distContent = await fixture.readFile(`${packagePath}/dist/index.js`, 'utf8');
 		expect(distContent).toMatch('#platform');
 
-		const { stdout } = await execa('node', ['load-pkg.mjs'], { cwd: fixture.path });
+		const { stdout } = await node(['load-pkg.mjs'], { cwd: fixture.path });
 		expect(stdout).toBe('node');
 	});
 });

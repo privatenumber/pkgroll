@@ -1,7 +1,8 @@
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
+import type { SubprocessError } from 'nano-spawn';
 import { outdent } from 'outdent';
-import { pkgroll } from '../../utils.ts';
+import { pkgroll, expectError } from '../../utils.ts';
 import { createPackageJson, createTsconfigJson, installTypeScript } from '../../fixtures.ts';
 
 export const typescript = (nodePath: string) => describe('TypeScript', () => {
@@ -22,7 +23,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -46,7 +46,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -93,7 +92,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');
@@ -140,7 +138,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.mjs', 'utf8');
@@ -171,7 +168,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -237,7 +233,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -279,7 +274,6 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 				nodePath,
 			});
 
-			expect(pkgrollProcess.exitCode).toBe(0);
 			expect(pkgrollProcess.stderr).toBe('');
 
 			const content = await fixture.readFile('dist/index.js', 'utf8');
@@ -312,9 +306,9 @@ export const typescript = (nodePath: string) => describe('TypeScript', () => {
 			], {
 				cwd: fixture.path,
 				nodePath,
-				reject: false,
-			});
+			}).catch(error => error as SubprocessError);
 
+			expectError(pkgrollProcess);
 			expect(pkgrollProcess.exitCode).toBe(1);
 			// expect(pkgrollProcess.stderr).toMatch('Cannot resolve tsconfig at path:');
 		});

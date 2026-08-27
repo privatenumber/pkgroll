@@ -26,7 +26,6 @@ export const realDependencies = (nodePath: string) => describe('bundles real dep
 			nodePath,
 		});
 
-		expect(pkgrollProcess.exitCode).toBe(0);
 		expect(pkgrollProcess.stderr).toBe('');
 
 		const content = await fixture.readFile('dist/index.d.ts', 'utf8');

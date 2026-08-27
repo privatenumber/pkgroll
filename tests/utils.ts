@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { ChildProcess } from 'node:child_process';
 import { on } from 'node:events';
 import spawn, {
 	SubprocessError,
@@ -28,6 +29,14 @@ export const node = (
 ) => spawn(process.execPath, commandArguments, options);
 
 export const pnpm = (commandArguments: string[], options?: Options) => spawn('pnpm', commandArguments, options);
+
+export const waitForChildProcessClose = (
+	childProcess: ChildProcess,
+) => new Promise<void>((resolve) => {
+	childProcess.once('close', () => {
+		resolve();
+	});
+});
 
 export const expectError: (
 	result: Result | SubprocessError,

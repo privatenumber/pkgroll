@@ -44,7 +44,7 @@
 		"@rollup/plugin-node-resolve": "^16.0.3",
 		"cjs-module-lexer": "^2.2.1",
 		"esbuild": "^0.28.2",
-		"magic-string": "^1.2.2",
+		"magic-string": "^1.2.3",
 		"rollup": "^4.62.5",
 		"rollup-plugin-import-trace": "^1.0.1",
 		"rollup-pluginutils": "^2.8.2",
@@ -52,7 +52,7 @@
 		"yaml": "^2.9.0"
 	},
 	"peerDependencies": {
-		"@typescript/typescript6": "^6",
+		"@typescript/typescript6": "^6.0.2",
 		"typescript": "^4.1 || ^5.0 || ^6.0 || ^7.0"
 	},
 	"peerDependenciesMeta": {
@@ -65,10 +65,10 @@
 	},
 	"devDependencies": {
 		"@jridgewell/trace-mapping": "^0.3.31",
-		"@types/node": "^25.9.1",
+		"@types/node": "^25.9.5",
 		"@types/picomatch": "^4.0.3",
 		"@types/react": "^19.2.18",
-		"@typescript/typescript6": "^6",
+		"@typescript/typescript6": "^6.0.2",
 		"clean-pkg-json": "^2.0.0",
 		"cleye": "^2.6.0",
 		"empathic": "^2.0.1",
@@ -81,7 +81,7 @@
 		"manten": "2.0.2",
 		"nano-spawn": "2.1.0",
 		"outdent": "^0.8.0",
-		"picomatch": "^4.0.5",
+		"picomatch": "^4.0.7",
 		"react": "^19.2.8",
 		"rollup-plugin-dts": "github:privatenumber/rollup-plugin-dts#npm/master",
 		"type-fest": "^5.8.0",

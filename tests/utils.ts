@@ -25,15 +25,6 @@ export const expectMatchesInOrder = (
 
 export const pnpm = (commandArguments: string[], options?: Options) => spawn('pnpm', commandArguments, options);
 
-export const killSubprocess = async (subprocess: Subprocess) => {
-	const childProcess = await subprocess.nodeChildProcess;
-	const close = Promise.withResolvers<void>();
-	childProcess.once('close', close.resolve);
-	childProcess.kill();
-	await close.promise;
-	await (process.platform === 'win32' ? subprocess.catch(() => undefined) : subprocess);
-};
-
 export const expectError: (
 	result: Result | SubprocessError,
 ) => asserts result is SubprocessError = (result) => {

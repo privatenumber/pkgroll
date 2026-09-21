@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { createPackageJson } from '../../fixtures.ts';
-import { killSubprocess, pkgroll, waitForOutput } from '../../utils.ts';
+import { pkgroll, waitForOutput } from '../../utils.ts';
 import { node } from '../../utils/with-node.ts';
 
 const pkgrollBinPath = path.resolve('./dist/cli.mjs');
@@ -406,31 +406,27 @@ export const importAttributes = () => describe('import attributes', () => {
 				'src/page.html': '<h1>Before</h1>',
 			});
 
-			const watchProcess = node([pkgrollBinPath, '--watch'], {
+			await using watchProcess = node([pkgrollBinPath, '--watch'], {
 				cwd: fixture.path,
 				env: { NODE_PATH: '' },
 			});
 
-			try {
-				// Cold startup uses the helper's generous default timeout.
-				await waitForOutput(watchProcess, 'Built');
+			// Cold startup uses the helper's generous default timeout.
+			await waitForOutput(watchProcess, 'Built');
 
-				const initial = await fixture.readFile('dist/index.mjs', 'utf8');
-				expect(initial).toMatch('<h1>Before</h1>');
+			const initial = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(initial).toMatch('<h1>Before</h1>');
 
-				await fs.writeFile(
-					path.join(fixture.path, 'src/page.html'),
-					'<h1>After</h1>',
-				);
+			await fs.writeFile(
+				path.join(fixture.path, 'src/page.html'),
+				'<h1>After</h1>',
+			);
 
-				// Warm rebuild — keep the tight timeout to catch real regressions.
-				await waitForOutput(watchProcess, 'Built', 15_000);
+			// Warm rebuild — keep the tight timeout to catch real regressions.
+			await waitForOutput(watchProcess, 'Built', 15_000);
 
-				const updated = await fixture.readFile('dist/index.mjs', 'utf8');
-				expect(updated).toMatch('<h1>After</h1>');
-			} finally {
-				await killSubprocess(watchProcess);
-			}
+			const updated = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(updated).toMatch('<h1>After</h1>');
 		}, { retry: 3 });
 	});
 });

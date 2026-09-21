@@ -21,5 +21,26 @@ export const node = (
 		throw new Error('node() must be called inside withNode()');
 	}
 
-	return spawn(nodePath, commandArguments, options);
+	const subprocess = spawn(nodePath, commandArguments, options);
+
+	/**
+	 * The returned subprocess can be declared with `await using` to kill it on
+	 * scope exit, which is required for processes that keep running (such as
+	 * `pkgroll --watch`) and lets the fixture they build into outlive them.
+	 */
+	return Object.assign(subprocess, {
+		[Symbol.asyncDispose]: async () => {
+			const childProcess = await subprocess.nodeChildProcess;
+
+			if (childProcess.exitCode === null && childProcess.signalCode === null) {
+				const closed = Promise.withResolvers<void>();
+				childProcess.once('close', closed.resolve);
+				childProcess.kill();
+				await closed.promise;
+			}
+
+			// Windows cannot deliver SIGTERM, so a terminated process exits non-zero
+			await (process.platform === 'win32' ? subprocess.catch(() => undefined) : subprocess);
+		},
+	});
 };

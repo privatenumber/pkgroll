@@ -149,6 +149,7 @@ export const getRollupConfigs = async (
 			const outputOptions: OutputWithOptions = {
 				dir: sharedDistDirectory,
 				exports: 'auto',
+				interop: 'auto',
 				format: exportEntry.format,
 				sourcemap: flags.sourcemap,
 				entryFileNames: `[name]${distExtension}`,

@@ -1,10 +1,13 @@
 import fs from 'node:fs/promises';
-import { describe, test, expect } from 'manten';
+import {
+	describe, test, expect, skip,
+} from 'manten';
 import { createFixture } from 'fs-fixture';
 import { pkgroll } from '../../utils.ts';
+import { node, getNodeVersion } from '../../utils/with-node.ts';
 import {
 	packageFixture, createPackageJson, createTsconfigJson, fixtureDynamicImports,
-	fixtureDynamicImportUnresolvable,
+	fixtureDynamicImportUnresolvable, fixtureUnwrapCjsDefault, fixtureUnwrapEsmDefault,
 } from '../../fixtures.ts';
 
 export const outputCommonjs = () => describe('output: commonjs', () => {
@@ -204,6 +207,42 @@ export const outputCommonjs = () => describe('output: commonjs', () => {
 
 		const content = await fixture.readFile('dist/dynamic-imports.cjs', 'utf8');
 		expect(content).toMatch('import(');
+	});
+
+	// https://github.com/privatenumber/pkgroll/issues/101
+	test('unwraps a default export from a transpiled CommonJS dependency', async () => {
+		await using fixture = await createFixture(fixtureUnwrapCjsDefault);
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const { stdout } = await node(['dist/index.cjs'], { cwd: fixture.path });
+		expect(stdout).toBe('hello');
+	});
+
+	test('unwraps a default export from an ES module dependency', async () => {
+		// require(esm) is available by default in Node 20.19+, 22.12+, and 23+
+		const [major, minor] = getNodeVersion().split('.').map(Number);
+		const supportsRequireEsm = major > 22
+			|| (major === 22 && minor >= 12)
+			|| (major === 20 && minor >= 19);
+		if (!supportsRequireEsm) {
+			skip(`Node ${getNodeVersion()} cannot require() ES modules`);
+		}
+
+		await using fixture = await createFixture(fixtureUnwrapEsmDefault);
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const { stdout } = await node(['dist/index.cjs'], { cwd: fixture.path });
+		expect(stdout).toBe('1');
 	});
 
 	describe('preserves cjs-module-lexer compatibility for node', () => {

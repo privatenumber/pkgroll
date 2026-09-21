@@ -217,3 +217,67 @@ export const fixtureDynamicImportUnresolvable: FileTree = {
 		'too-dynamic.js': 'console.log(123)',
 	},
 };
+
+/**
+ * A transpiled ES module dependency: it marks itself with `__esModule` and
+ * exposes its default export on the `default` property, the shape TypeScript
+ * and Babel emit when targeting CommonJS.
+ *
+ * https://github.com/privatenumber/pkgroll/issues/101
+ */
+export const fixtureUnwrapCjsDefault: FileTree = {
+	'package.json': createPackageJson({
+		exports: './dist/index.cjs',
+		dependencies: {
+			'es-interop': '',
+		},
+	}),
+	src: {
+		'index.js': outdent`
+		import hello from 'es-interop';
+		hello();
+		`,
+	},
+	'node_modules/es-interop': {
+		'package.json': createPackageJson({
+			name: 'es-interop',
+		}),
+		'index.js': outdent`
+		Object.defineProperty(exports, '__esModule', { value: true });
+		exports.default = hello;
+		function hello() {
+			console.log('hello');
+		}
+		`,
+	},
+};
+
+/**
+ * An ES module dependency consumed by a CommonJS build. Node's `require(esm)`
+ * returns the module namespace, which also carries `__esModule: true`, so its
+ * default export must be unwrapped just like a transpiled CommonJS dependency.
+ */
+export const fixtureUnwrapEsmDefault: FileTree = {
+	'package.json': createPackageJson({
+		exports: './dist/index.cjs',
+		dependencies: {
+			'esm-dep': '',
+		},
+	}),
+	src: {
+		'index.js': outdent`
+		import plugin from 'esm-dep';
+		console.log(plugin.recommended);
+		`,
+	},
+	'node_modules/esm-dep': {
+		'package.json': createPackageJson({
+			name: 'esm-dep',
+			type: 'module',
+			exports: './index.js',
+		}),
+		'index.js': outdent`
+		export default { recommended: 1 };
+		`,
+	},
+};

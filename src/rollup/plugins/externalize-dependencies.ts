@@ -114,7 +114,7 @@ export const externalizeDependencies = (
 					const typePackageName = getAtTypesPackageName(packageName);
 					if (devDeps.has(typePackageName)) {
 						console.warn(
-							`Recommendation: "${typePackageName}" is bundled (devDependencies) but "${packageName}" is externalized. Place "${typePackageName}" in dependencies/peerDependencies as well so users don't have missing types.`,
+							`Recommendation: "${typePackageName}" is bundled (devDependencies) but "${packageName}" is externalized, so TypeScript users may have missing types. If your package is consumed from TypeScript, place "${typePackageName}" in dependencies/peerDependencies as well (it can be marked optional via peerDependenciesMeta). This is unnecessary if your consumers don't use TypeScript.`,
 						);
 					}
 				}

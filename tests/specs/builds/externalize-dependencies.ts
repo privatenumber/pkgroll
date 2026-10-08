@@ -389,7 +389,7 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 			nodePath,
 		});
 
-		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized\. Place "@types\/eslint" in dependencies\/peerDependencies as well so users don't have missing types\./);
+		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized, so TypeScript users may have missing types\. If your package is consumed from TypeScript, place "@types\/eslint" in dependencies\/peerDependencies as well \(it can be marked optional via peerDependenciesMeta\)\. This is unnecessary if your consumers don't use TypeScript\./);
 
 		const contentTypes = await fixture.readFile('dist/index.d.ts', 'utf8');
 		// eslint types should be externalized (peerDependency)
@@ -746,7 +746,7 @@ export const externalizeDependencies = (nodePath: string) => describe('externali
 		});
 
 		// Should only warn about @types/eslint (the only imported package)
-		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized\. Place "@types\/eslint" in dependencies\/peerDependencies as well so users don't have missing types\./);
+		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/eslint" is bundled \(devDependencies\) but "eslint" is externalized, so TypeScript users may have missing types\. If your package is consumed from TypeScript, place "@types\/eslint" in dependencies\/peerDependencies as well \(it can be marked optional via peerDependenciesMeta\)\. This is unnecessary if your consumers don't use TypeScript\./);
 
 		// Should NOT warn about the other @types packages (not imported)
 		expect(pkgrollProcess.stderr).not.toMatch('@types/eslint__eslintrc');

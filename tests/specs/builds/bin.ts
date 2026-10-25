@@ -39,6 +39,31 @@ export const bin = () => describe('bin', () => {
 		});
 	});
 
+	test('does not add a bin hashbang to other entries', async () => {
+		await using fixture = await createFixture({
+			src: {
+				'cli.ts': 'console.log("Hello from the CLI");',
+				'index.ts': 'export const value = 1;',
+			},
+			'package.json': createPackageJson({
+				bin: './dist/cli.mjs',
+				exports: './dist/index.mjs',
+			}),
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const binContent = await fixture.readFile('dist/cli.mjs', 'utf8');
+		expect(binContent.startsWith('#!/usr/bin/env node\n')).toBe(true);
+
+		const libraryContent = await fixture.readFile('dist/index.mjs', 'utf8');
+		expect(libraryContent).not.toMatch('#!');
+	});
+
 	test('supports object', async () => {
 		await using fixture = await createFixture({
 			...packageFixture(),

@@ -119,7 +119,7 @@ export const getRollupConfigs = async (
 					format: 'esm',
 					// .d.ts sourcemaps enabled via --sourcemap flag or declarationMap in tsconfig
 					sourcemap: flags.sourcemap || tsconfig?.config.compilerOptions?.declarationMap,
-					[entrySymbol]: entry,
+					[entrySymbol]: { inputNames: [inputName] },
 				};
 
 				outputs.push(outputOptions);
@@ -167,7 +167,7 @@ export const getRollupConfigs = async (
 				 * chunks don't and will be placed in the first dist directory.
 				 */
 				chunkFileNames: `${srcdist.distPrefix}[name]-[hash]${distExtension}`,
-				[entrySymbol]: entry,
+				[entrySymbol]: { inputNames: [inputName] },
 			};
 
 			outputs.push(outputOptions);

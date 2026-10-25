@@ -6,9 +6,11 @@ import { normalizePath } from '../utils/normalize-path.ts';
 import { type Options, type OutputWithOptions, entrySymbol } from './types.ts';
 import { getPkgConfig } from './configs/pkg.ts';
 import { getDtsConfig } from './configs/dts.ts';
+import { getJsonConfig } from './configs/json.ts';
 
 type DtsConfig = Awaited<ReturnType<typeof getDtsConfig>>;
 type PkgConfig = ReturnType<typeof getPkgConfig>;
+type JsonConfig = ReturnType<typeof getJsonConfig>;
 
 const getCommonPath = (paths: string[]): string => {
 	if (paths.length === 0) { return ''; }
@@ -76,6 +78,7 @@ export const getRollupConfigs = async (
 	 * renders all inputs before filterUnnecessaryOutputs can remove them.
 	 */
 	const pkgConfigs = new Map<string, PkgConfig>();
+	const jsonEntries: EntryPointValid[] = [];
 
 	for (const entry of entryPoints) {
 		const {
@@ -88,6 +91,11 @@ export const getRollupConfigs = async (
 			srcdist.distPrefix + sourcePath.slice(srcdist.srcResolved.length, -srcExtension.length)
 		);
 		entry.inputNames = [inputName];
+
+		if (exportEntry.format === 'json') {
+			jsonEntries.push(entry);
+			continue;
+		}
 
 		if (exportEntry.format === 'types') {
 			if (!dtsConfig) {
@@ -167,7 +175,10 @@ export const getRollupConfigs = async (
 		}
 	}
 
-	const rollupConfigs: (DtsConfig | PkgConfig)[] = [...pkgConfigs.values()];
+	const rollupConfigs: (DtsConfig | PkgConfig | JsonConfig)[] = [...pkgConfigs.values()];
+	if (jsonEntries.length > 0) {
+		rollupConfigs.push(getJsonConfig(jsonEntries, sharedDistDirectory, flags.minify));
+	}
 	if (dtsConfig) {
 		rollupConfigs.push(dtsConfig);
 	}

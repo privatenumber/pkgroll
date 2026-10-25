@@ -10,7 +10,7 @@ type SourcePackageJson = {
 };
 export type OutputSource = 'cli' | SourcePackageJson;
 
-export type Format = 'module' | 'commonjs' | 'types';
+export type Format = 'module' | 'commonjs' | 'types' | 'json';
 
 type Output<T extends OutputSource> = {
 	source: T;

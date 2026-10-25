@@ -2,7 +2,7 @@ import type { PackageType } from './types.ts';
 
 export const getFileType = (
 	filePath: string,
-): PackageType | 'types' | undefined => {
+): PackageType | 'types' | 'json' | undefined => {
 	if (filePath.endsWith('.mjs')) {
 		return 'module';
 	}
@@ -15,6 +15,9 @@ export const getFileType = (
         || filePath.endsWith('.d.mts')
 	) {
 		return 'types';
+	}
+	if (filePath.endsWith('.json')) {
+		return 'json';
 	}
 };
 

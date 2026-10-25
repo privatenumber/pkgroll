@@ -126,7 +126,100 @@ export const errorCases = () => describe('Error handling', () => {
 				cwd: fixture.path,
 			},
 		);
-		expect(pkgrollProcess.stderr).toMatch('Unsupported extension (must be .d.ts|.d.mts|.d.cts|.js|.mjs|.cjs)');
+		expect(pkgrollProcess.stderr).toMatch('Unsupported extension (must be .d.ts|.d.mts|.d.cts|.js|.mjs|.cjs|.json)');
+	});
+
+	test('json entry requires a json source', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./data': './dist/data.json',
+				},
+			}),
+			src: {
+				'data.ts': 'export default { hello: "world" };',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			[],
+			{
+				cwd: fixture.path,
+			},
+		).catch(error => error as SubprocessError);
+
+		expectError(pkgrollProcess);
+		expect(pkgrollProcess.exitCode).toBe(1);
+		expect(pkgrollProcess.stderr).toMatch('Source file not found: src/data(.json)');
+	});
+
+	test('json reports invalid json', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./data': './dist/data.json',
+				},
+			}),
+			src: {
+				'data.json': '{ invalid }',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			[],
+			{
+				cwd: fixture.path,
+			},
+		).catch(error => error as SubprocessError);
+
+		expectError(pkgrollProcess);
+		expect(pkgrollProcess.exitCode).toBe(1);
+		expect(pkgrollProcess.stderr).toMatch('Failed to parse JSON in');
+		expect(pkgrollProcess.stderr).toMatch(/src[/\\]data\.json/);
+	});
+
+	test('json is not supported for bin entries', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				bin: './dist/cli.json',
+			}),
+			src: {
+				'cli.json': '{}',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			[],
+			{
+				cwd: fixture.path,
+			},
+		).catch(error => error as SubprocessError);
+
+		expectError(pkgrollProcess);
+		expect(pkgrollProcess.exitCode).toBe(1);
+		expect(pkgrollProcess.stderr).toMatch('JSON is not supported for "bin" entry points');
+	});
+
+	test('json is not supported for types entries', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				types: './dist/data.json',
+			}),
+			src: {
+				'data.json': '{}',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(
+			[],
+			{
+				cwd: fixture.path,
+			},
+		).catch(error => error as SubprocessError);
+
+		expectError(pkgrollProcess);
+		expect(pkgrollProcess.exitCode).toBe(1);
+		expect(pkgrollProcess.stderr).toMatch('JSON is not supported for "types" entry points');
 	});
 
 	test('dts error shows import trace (2 levels)', async () => {

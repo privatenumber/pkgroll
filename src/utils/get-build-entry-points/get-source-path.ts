@@ -41,6 +41,7 @@ const extensionMap = {
 	'.js': ['.js', '.ts', '.tsx', '.mts', '.cts'],
 	'.mjs': ['.mjs', '.js', '.cjs', '.mts', '.cts', '.ts', '.tsx'],
 	'.cjs': ['.cjs', '.js', '.mjs', '.mts', '.cts', '.ts', '.tsx'],
+	'.json': ['.json'],
 } as const;
 
 const distExtensions = Object.keys(extensionMap) as (keyof typeof extensionMap)[];
@@ -56,6 +57,21 @@ export const getSourcePath = async (
 			error: `Unsupported extension (must be ${distExtensions.join('|')})`,
 			exportEntry,
 		};
+	}
+
+	if (distExtension === '.json') {
+		if (exportEntry.type === 'binary') {
+			return {
+				error: 'JSON is not supported for "bin" entry points',
+				exportEntry,
+			};
+		}
+		if (exportEntry.format !== 'json') {
+			return {
+				error: `JSON is not supported for "${exportEntry.format}" entry points`,
+				exportEntry,
+			};
+		}
 	}
 
 	const noExtension = outputPath.slice(srcdist.dist.length, -distExtension.length);

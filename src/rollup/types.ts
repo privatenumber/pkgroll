@@ -1,5 +1,4 @@
 import type { OutputOptions } from 'rollup';
-import type { EntryPointValid } from '../utils/get-build-entry-points/types';
 
 export type Options = {
 	minify: boolean;
@@ -20,7 +19,9 @@ export type Options = {
 export const entrySymbol = Symbol('entry');
 
 export type OutputWithOptions = OutputOptions & {
-	[entrySymbol]: EntryPointValid;
+	[entrySymbol]: {
+		inputNames?: string[];
+	};
 };
 
 export type Output = OutputWithOptions[] & Record<string, OutputWithOptions>;

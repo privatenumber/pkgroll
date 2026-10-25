@@ -44,4 +44,33 @@ export const watch = () => describe('watch', () => {
 		const utilsContent = await fixture.readFile('dist/utils.mjs', 'utf8');
 		expect(utilsContent).toMatch('export');
 	});
+
+	test('rebuilds json entries on source change', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./data': './dist/data.json',
+				},
+			}),
+			src: {
+				'data.json': '{"version":1}',
+			},
+		});
+
+		await using watchProcess = node([pkgrollBinPath, '--watch'], {
+			cwd: fixture.path,
+			env: { NODE_PATH: '' },
+		});
+
+		await waitForOutput(watchProcess, 'Built');
+		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe('{"version":1}');
+
+		await fs.writeFile(
+			path.join(fixture.path, 'src/data.json'),
+			'{"version":2}',
+		);
+
+		await waitForOutput(watchProcess, 'Built', 5000);
+		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe('{"version":2}');
+	});
 });

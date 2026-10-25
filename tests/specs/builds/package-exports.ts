@@ -218,6 +218,78 @@ export const packageExports = () => describe('package exports', () => {
 		await fixture.exists('dist/nested/index.node.d.ts');
 	});
 
+	test('json', async () => {
+		const jsonContent = `{
+	"hello": "world"
+}`;
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./data': './dist/data.json',
+				},
+			}),
+			src: {
+				'data.json': jsonContent,
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe(jsonContent);
+	});
+
+	test('json - minify', async () => {
+		const jsonContent = String.raw`{
+	"message": "hello \"world\"",
+	"number": 1.50,
+	"nested": {
+		"value": 1
+	}
+}`;
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./data': './dist/data.json',
+				},
+			}),
+			src: {
+				'data.json': jsonContent,
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(['--minify'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe(
+			String.raw`{"message":"hello \"world\"","number":1.5,"nested":{"value":1}}`,
+		);
+	});
+
+	test('json - minify strips BOM', async () => {
+		await using fixture = await createFixture({
+			'package.json': createPackageJson({
+				exports: {
+					'./data': './dist/data.json',
+				},
+			}),
+			src: {
+				'data.json': '\uFEFF{\n\t"hello": "world"\n}',
+			},
+		});
+
+		const pkgrollProcess = await pkgroll(['--minify'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe('{"hello":"world"}');
+	});
+
 	test('top-level await in ESM does not break separate CJS export', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({

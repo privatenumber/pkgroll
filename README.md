@@ -154,6 +154,9 @@ _Auto-detect_ infers the type by extension or `package.json#type`:
 | `.cjs` | [CommonJS](https://nodejs.org/api/packages.html#:~:text=Files%20ending%20with%20.cjs%20are%20always%20loaded%20as%20CommonJS%20regardless%20of%20the%20nearest%20parent%20package.json) |
 | `.mjs` | [ECMAScript Modules](https://nodejs.org/api/modules.html#the-mjs-extension) |
 | `.js` | Determined by `package.json#type`, defaulting to CommonJS |
+| `.json` | JSON<br>Copied from a `.json` source file. With `--minify`, the file is parsed and re-serialized as single-line JSON. Not supported for `bin`, `module`, or `types` entry-points. |
+
+JSON values are normalized when minified, so `1.50` becomes `1.5`.
 
 
 ### Bin hashbang

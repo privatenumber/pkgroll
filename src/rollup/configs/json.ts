@@ -1,9 +1,9 @@
-import fs from 'node:fs/promises';
 import type { Plugin, RollupOptions } from 'rollup';
 import type { EntryPointValid } from '../../utils/get-build-entry-points/types.ts';
-import { formatPath } from '../../utils/log.ts';
 import { slash } from '../../utils/normalize-path.ts';
 import { type OutputWithOptions, entrySymbol } from '../types.ts';
+
+const name = 'json-assets';
 
 const jsonAssets = (
 	entryPoints: EntryPointValid[],
@@ -12,17 +12,33 @@ const jsonAssets = (
 	const sourcePaths = new Set(entryPoints.map(entry => slash(entry.sourcePath)));
 
 	return {
-		name: 'json-assets',
+		name,
 
-		load(id) {
-			if (sourcePaths.has(slash(id))) {
-				// Rollup requires entries to be JavaScript modules. The dummy
-				// chunk is replaced with the original JSON in generateBundle.
-				return 'export default 0;';
+		transform(code, id) {
+			if (!sourcePaths.has(slash(id))) {
+				return;
 			}
+
+			let parsed: unknown;
+			try {
+				parsed = JSON.parse(code);
+			} catch (error) {
+				this.error(`Failed to parse JSON: ${(error as Error).message}`);
+			}
+
+			// Rollup requires entries to be JavaScript modules. The placeholder
+			// chunk is replaced with the JSON asset in generateBundle.
+			return {
+				code: 'export default 0;',
+				meta: {
+					[name]: {
+						source: minify ? JSON.stringify(parsed) : code,
+					},
+				},
+			};
 		},
 
-		async generateBundle(_options, bundle) {
+		generateBundle(_options, bundle) {
 			for (const [fileName, output] of Object.entries(bundle)) {
 				if (
 					output.type !== 'chunk'
@@ -34,21 +50,11 @@ const jsonAssets = (
 				}
 
 				const sourcePath = output.facadeModuleId;
-				const source = await fs.readFile(sourcePath);
-				const text = source.toString('utf8').replace(/^\uFEFF/, '');
-
-				let parsed: unknown;
-				try {
-					parsed = JSON.parse(text);
-				} catch (error) {
-					this.error(`Failed to parse JSON in "${formatPath(sourcePath)}": ${(error as Error).message}`);
-				}
-
 				delete bundle[fileName];
 				this.emitFile({
 					type: 'asset',
 					fileName,
-					source: minify ? JSON.stringify(parsed) : source,
+					source: this.getModuleInfo(sourcePath)!.meta[name].source,
 					originalFileName: sourcePath,
 				});
 			}

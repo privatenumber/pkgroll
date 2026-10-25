@@ -270,7 +270,7 @@ export const packageExports = () => describe('package exports', () => {
 		);
 	});
 
-	test('json - minify strips BOM', async () => {
+	test('json - strips BOM', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
 				exports: {
@@ -282,12 +282,12 @@ export const packageExports = () => describe('package exports', () => {
 			},
 		});
 
-		const pkgrollProcess = await pkgroll(['--minify'], {
+		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
 		});
 
 		expect(pkgrollProcess.stderr).toBe('');
-		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe('{"hello":"world"}');
+		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe('{\n\t"hello": "world"\n}');
 	});
 
 	test('top-level await in ESM does not break separate CJS export', async () => {

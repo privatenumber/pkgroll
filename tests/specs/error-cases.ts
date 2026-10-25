@@ -174,7 +174,7 @@ export const errorCases = () => describe('Error handling', () => {
 
 		expectError(pkgrollProcess);
 		expect(pkgrollProcess.exitCode).toBe(1);
-		expect(pkgrollProcess.stderr).toMatch('Failed to parse JSON in');
+		expect(pkgrollProcess.stderr).toMatch('Failed to parse JSON');
 		expect(pkgrollProcess.stderr).toMatch(/src[/\\]data\.json/);
 	});
 

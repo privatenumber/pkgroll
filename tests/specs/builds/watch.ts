@@ -45,7 +45,7 @@ export const watch = () => describe('watch', () => {
 		expect(utilsContent).toMatch('export');
 	});
 
-	test('rebuilds json entries on source change', async () => {
+	test('rebuilds json entries after a parse error', async () => {
 		await using fixture = await createFixture({
 			'package.json': createPackageJson({
 				exports: {
@@ -64,6 +64,12 @@ export const watch = () => describe('watch', () => {
 
 		await waitForOutput(watchProcess, 'Built');
 		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe('{"version":1}');
+
+		await fs.writeFile(
+			path.join(fixture.path, 'src/data.json'),
+			'{ invalid',
+		);
+		await waitForOutput(watchProcess, 'Failed to parse JSON', 5000);
 
 		await fs.writeFile(
 			path.join(fixture.path, 'src/data.json'),

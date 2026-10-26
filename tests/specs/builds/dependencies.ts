@@ -194,7 +194,7 @@ export const dependencies = () => describe('dependencies', () => {
 		const pkgrollProcess = await pkgroll([], {
 			cwd: fixture.path,
 		});
-		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/react" is bundled \(devDependencies\) but "react" is externalized\. Place "@types\/react" in dependencies\/peerDependencies as well so users don't have missing types\./);
+		expect(pkgrollProcess.stderr).toMatch(/^Recommendation: "@types\/react" is bundled \(devDependencies\) but "react" is externalized, so TypeScript users may have missing types\. If your package is consumed from TypeScript, place "@types\/react" in dependencies\/peerDependencies as well \(it can be marked optional via peerDependenciesMeta\)\. This is unnecessary if your consumers don't use TypeScript\./);
 
 		const contentJs = await fixture.readFile('dist/index.js', 'utf8');
 		expect(contentJs).toMatch('require(\'react\')');

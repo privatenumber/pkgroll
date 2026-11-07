@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { cli } from 'cleye';
 import { rollup, watch } from 'rollup';
-import { patchErrorWithTrace } from 'rollup-plugin-import-trace';
 import { onExit } from 'signal-exit';
 import ownPackageJson from '../package.json' with { type: 'json' };
 import { readPackage } from './utils/read-package.ts';
@@ -208,7 +207,6 @@ const generateRollupConfigs = async () => {
 };
 
 const exitWithError = (error: unknown) => {
-	patchErrorWithTrace(error);
 	console.error('Error:', error instanceof Error ? error.message : String(error));
 	process.exit(1);
 };

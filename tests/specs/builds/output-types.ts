@@ -75,6 +75,11 @@ export const outputTypes = () => describe('types', () => {
 				src: {
 					'index.ts': 'export type Value = string;',
 				},
+
+				// Makes the consumer its own workspace root, so pnpm ignores any
+				// workspace in a parent temp directory. pnpm 11+ fails installs on
+				// unreviewed build scripts; esbuild's is unnecessary here
+				'pnpm-workspace.yaml': 'allowBuilds:\n  esbuild: false\n',
 			},
 		});
 
@@ -84,7 +89,7 @@ export const outputTypes = () => describe('types', () => {
 		]);
 
 		const consumerPath = fixture.getPath('consumer');
-		await pnpm(['install', '--ignore-workspace'], { cwd: consumerPath });
+		await pnpm(['install'], { cwd: consumerPath });
 		const failedBuild = await node(['node_modules/pkgroll/dist/cli.mjs'], {
 			cwd: consumerPath,
 		}).catch(error => error as SubprocessError) as SubprocessError;
@@ -92,7 +97,7 @@ export const outputTypes = () => describe('types', () => {
 		expect(failedBuild.stderr).toMatch('does not ship a compiler API');
 		expect(failedBuild.stderr).toMatch('@typescript/typescript6');
 
-		await pnpm(['add', '--save-dev', '--ignore-workspace', `file:${path.resolve('node_modules/@typescript/typescript6')}`], {
+		await pnpm(['add', '--save-dev', `file:${path.resolve('node_modules/@typescript/typescript6')}`], {
 			cwd: consumerPath,
 		});
 		const successfulBuild = await node(['node_modules/pkgroll/dist/cli.mjs'], {

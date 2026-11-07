@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { setTimeout } from 'node:timers/promises';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
@@ -70,6 +71,15 @@ export const watch = () => describe('watch', () => {
 			'{ invalid',
 		);
 		await waitForOutput(watchProcess, 'Failed to parse JSON', 5000);
+
+		// Rollup 4 bundles chokidar 3, which drops a second change to the same
+		// file within 50ms of the previous one, with no trailing event:
+		// https://github.com/paulmillr/chokidar/blob/3.6.0/index.js#L615-L618
+		// On Linux, writing right after the error lands inside that window, so
+		// the fix is never rebuilt. Space the edit out, as Rollup's own watch
+		// tests do (300ms). Remove once on Rollup 5 (chokidar 6 replays it):
+		// https://github.com/paulmillr/chokidar/issues/1455
+		await setTimeout(300);
 
 		await fs.writeFile(
 			path.join(fixture.path, 'src/data.json'),

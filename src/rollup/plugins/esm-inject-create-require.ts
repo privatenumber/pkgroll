@@ -4,7 +4,7 @@ import { walk } from 'estree-walker';
 import type { Plugin } from 'rollup';
 
 export const esmInjectCreateRequire = (): Plugin => {
-	const createRequire = 'import{createRequire as _pkgrollCR}from"node:module";const require=_pkgrollCR(import.meta.url);';
+	const baseBinding = '_pkgrollCR';
 
 	return {
 		name: 'esmInjectCreateRequire',
@@ -22,6 +22,15 @@ export const esmInjectCreateRequire = (): Plugin => {
 
 			walk(ast, {
 				enter(node, parent) {
+					if (
+						node.type === 'ImportDeclaration'
+						|| (node.type === 'ExportNamedDeclaration' && node.source)
+						|| node.type === 'ExportAllDeclaration'
+					) {
+						this.skip();
+						return;
+					}
+
 					// Not all nodes have scopes
 					if (node.scope) {
 						currentScope = node.scope as AttachedScope;
@@ -31,17 +40,20 @@ export const esmInjectCreateRequire = (): Plugin => {
 						return;
 					}
 
-					// Ignore Object property
+					if (parent?.type === 'ExportSpecifier' && parent.exported === node) {
+						return;
+					}
+
+					// Ignore non-computed property names.
 					if (
-						parent?.type === 'Property'
+						(parent?.type === 'Property' || parent?.type === 'MethodDefinition' || parent?.type === 'PropertyDefinition')
 						&& parent.key === node
-						&& !parent.compute
+						&& !parent.computed
 					) {
 						return;
 					}
 
-					// Ignore MemberExpression with 'require' as a property
-					if (parent?.type === 'MemberExpression') {
+					if (parent?.type === 'MemberExpression' && parent.property === node && !parent.computed) {
 						return;
 					}
 
@@ -64,8 +76,15 @@ export const esmInjectCreateRequire = (): Plugin => {
 				return null;
 			}
 
+			let binding = baseBinding;
+			let suffix = 0;
+			while (code.includes(binding)) {
+				suffix += 1;
+				binding = `${baseBinding}${suffix}`;
+			}
+
 			const magicString = new MagicString(code);
-			magicString.prepend(createRequire);
+			magicString.prepend(`import{createRequire as ${binding}}from"node:module";const require=${binding}(import.meta.url);`);
 			return {
 				code: magicString.toString(),
 				map: magicString.generateMap({ hires: true }).toString(),

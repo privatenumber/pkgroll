@@ -227,6 +227,37 @@ export const outputModule = () => describe('output: module', () => {
 	});
 
 	describe('injects createRequire', () => {
+		for (const [name, expression] of [
+			['member object', 'require.resolve("node:fs")'],
+			['computed object key', 'Object.values({ [require]: "node:fs" })[0]'],
+			['computed member key', '({})[require] ?? "node:fs"'],
+			['shorthand value', '({ require }).require.resolve("node:fs")'],
+		] as const) {
+			test(`free require as ${name}`, async () => {
+				await using fixture = await createFixture({
+					'src/index.js': `export const result = () => ${expression};`,
+					'package.json': createPackageJson({ exports: './dist/index.mjs' }),
+				});
+
+				await pkgroll([], { cwd: fixture.path });
+				const output = await import(pathToFileURL(fixture.getPath('dist/index.mjs')).toString());
+				expect(output.result()).toBe('node:fs');
+			});
+		}
+
+		test('avoids collisions with existing bindings', async () => {
+			await using fixture = await createFixture({
+				'src/index.js': 'export const _pkgrollCR = 1, _pkgrollCR1 = 2; export const f = x => require(x);',
+				'package.json': createPackageJson({ exports: './dist/index.mjs' }),
+			});
+
+			await pkgroll([], { cwd: fixture.path });
+			const output = await import(pathToFileURL(fixture.getPath('dist/index.mjs')).toString());
+			expect(output._pkgrollCR).toBe(1);
+			expect(output._pkgrollCR1).toBe(2);
+			expect(typeof output.f('node:fs').readFileSync).toBe('function');
+		});
+
 		test('dynamic require should get a createRequire', async () => {
 			await using fixture = await createFixture({
 				'src/dynamic-require.ts': 'require((() => \'fs\')());',
@@ -290,7 +321,7 @@ export const outputModule = () => describe('output: module', () => {
 
 		test('object property should not get a createRequire', async () => {
 			await using fixture = await createFixture({
-				'src/require.ts': 'console.log({ require: 1 });',
+				'src/require.ts': 'console.log({ require: 1 }, class { require = 1; requireMethod() {} });',
 				'package.json': createPackageJson({
 					main: './dist/require.mjs',
 				}),
@@ -305,6 +336,57 @@ export const outputModule = () => describe('output: module', () => {
 			const content = await fixture.readFile('dist/require.mjs', 'utf8');
 			expect(content).not.toMatch('createRequire');
 			expect(content).not.toMatch('(import.meta.url)');
+		});
+
+		test('non-computed member property should not get a createRequire', async () => {
+			await using fixture = await createFixture({
+				'src/index.js': 'export const f = obj => obj.require;',
+				'package.json': createPackageJson({ exports: './dist/index.mjs' }),
+			});
+
+			await pkgroll([], { cwd: fixture.path });
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).not.toMatch('createRequire');
+		});
+
+		for (const source of [
+			'export { require } from "node:module";',
+			'export { require as a } from "node:module";',
+			'const value = 1; export { value as require };',
+		]) {
+			test(`module specifier should not get a createRequire: ${source}`, async () => {
+				await using fixture = await createFixture({
+					'src/index.js': source,
+					'package.json': createPackageJson({ exports: './dist/index.mjs' }),
+				});
+
+				await pkgroll([], { cwd: fixture.path });
+				const content = await fixture.readFile('dist/index.mjs', 'utf8');
+				expect(content).not.toMatch('import.meta.url');
+			});
+		}
+
+		test('imported name should not get a createRequire', async () => {
+			await using fixture = await createFixture({
+				'src/index.js': 'import { require as r } from "dep"; export const f = () => r();',
+				'package.json': createPackageJson({
+					exports: './dist/index.mjs',
+					dependencies: { dep: '1.0.0' },
+				}),
+				'node_modules/dep/package.json': JSON.stringify({
+					name: 'dep',
+					type: 'module',
+					exports: './index.js',
+				}),
+				'node_modules/dep/index.js': 'export const require = () => "ok";',
+			});
+
+			await pkgroll([], { cwd: fixture.path });
+			const content = await fixture.readFile('dist/index.mjs', 'utf8');
+			expect(content).toMatch('import { require as');
+			expect(content).not.toMatch('createRequire');
+			const output = await import(pathToFileURL(fixture.getPath('dist/index.mjs')).toString());
+			expect(output.f()).toBe('ok');
 		});
 	});
 

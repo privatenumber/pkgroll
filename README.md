@@ -464,6 +464,11 @@ Skip all `package.json` entry points (use with `--input`):
 pkgroll --packagejson=false -i dist/index.d.mts
 ```
 
+Build an executable with the source hashbang (or `#!/usr/bin/env node` if absent) and executable mode:
+```sh
+pkgroll --input.bin=./dist/cli.mjs
+```
+
 Filter by glob pattern on output paths:
 ```sh
 # Only build type declarations

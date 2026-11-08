@@ -1,25 +1,17 @@
 import { normalizePath } from '../normalize-path.ts';
 
 export type CliEntry = {
-	type: 'legacy';
+	type: 'legacy' | 'binary';
 	source: 'cli';
 	outputPath: string;
-	isExecutable: boolean;
 };
 
-export const parseCliInputFlag = (distPath: string): CliEntry => {
-	let isExecutable = false;
-
-	if (distPath.includes('=')) {
-		const [type, filePath] = distPath.split('=');
-		distPath = filePath;
-		isExecutable = type === 'bin' || type === 'binary';
-	}
+export const parseCliInputFlag = (input: string): CliEntry => {
+	const [modifier, distPath] = input.includes('=') ? input.split('=') : [undefined, input];
 
 	return {
-		type: 'legacy',
+		type: modifier === 'bin' || modifier === 'binary' ? 'binary' : 'legacy',
 		source: 'cli',
 		outputPath: normalizePath(distPath),
-		isExecutable,
 	};
 };

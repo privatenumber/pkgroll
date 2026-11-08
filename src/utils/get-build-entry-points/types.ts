@@ -18,7 +18,7 @@ type Output<T extends OutputSource> = {
 	format: Format;
 };
 
-export type BinaryOutput = Output<SourcePackageJson> & {
+export type BinaryOutput = Output<OutputSource> & {
 	type: 'binary';
 	// Hashbang line read from the entry source file at discovery time. Used by
 	// patch-binary to prepend the same hashbang on the output. Absent when the
@@ -33,10 +33,8 @@ export type PackageMapOutput = Output<SourcePackageJson> & {
 	conditions: string[];
 };
 
-// Any CLI input would also be considered legacy output
 export type LegacyOutput = Output<OutputSource> & {
 	type: 'legacy';
-	isExecutable?: boolean;
 };
 
 export type BuildOutput = BinaryOutput | PackageMapOutput | LegacyOutput;

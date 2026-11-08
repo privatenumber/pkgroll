@@ -59,6 +59,13 @@ export const getSourcePath = async (
 		};
 	}
 
+	if (exportEntry.type === 'binary' && exportEntry.format === 'types') {
+		return {
+			error: 'Type declarations are not supported for "bin" entry points',
+			exportEntry,
+		};
+	}
+
 	if (distExtension === '.json') {
 		if (exportEntry.type === 'binary') {
 			return {

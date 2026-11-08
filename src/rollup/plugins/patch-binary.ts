@@ -68,9 +68,9 @@ export const patchBinary = (
 			));
 
 			await Promise.all(binaryEntryPoints.map(async ({ exportEntry }) => {
-				const { outputPath } = exportEntry;
-				const isInBundle = outputFiles.has(outputPath);
-				if (isInBundle) {
+				// Use the emitted spelling of the path (e.g. "./dist/./cli.mjs" -> "./dist/cli.mjs")
+				const outputPath = normalizePath(path.normalize(exportEntry.outputPath));
+				if (outputFiles.has(outputPath)) {
 					await fs.promises.chmod(outputPath, 0o755);
 				}
 			}));

@@ -6,6 +6,102 @@ import { pkgroll } from '../../utils.ts';
 import { packageFixture, createPackageJson } from '../../fixtures.ts';
 
 export const bin = () => describe('bin', () => {
+	test('CLI bin input with a redundant path segment is executable', async () => {
+		await using fixture = await createFixture({
+			'src/cli.ts': 'console.log("CLI");',
+			'package.json': createPackageJson({}),
+		});
+
+		const pkgrollProcess = await pkgroll(['--packagejson=false', '--input', 'bin=./dist/./cli.mjs'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		if (process.platform !== 'win32') {
+			const stats = await fs.stat(fixture.getPath('dist/cli.mjs'));
+			expect(stats.mode & 0o777).toBe(0o755); // eslint-disable-line no-bitwise
+		}
+	});
+
+	test('CLI bin input chmods the emitted file when the path has parent segments', async () => {
+		await using fixture = await createFixture({
+			'src/cli.ts': 'console.log("CLI");',
+			'package.json': createPackageJson({}),
+		});
+
+		const pkgrollProcess = await pkgroll(['--packagejson=false', '--input', 'bin=./dist/missing/../cli.mjs'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		if (process.platform !== 'win32') {
+			const stats = await fs.stat(fixture.getPath('dist/cli.mjs'));
+			expect(stats.mode & 0o777).toBe(0o755); // eslint-disable-line no-bitwise
+		}
+	});
+
+	test('CLI bin input rejects declaration outputs', async () => {
+		await using fixture = await createFixture({
+			'src/cli.ts': 'export const a = 1;',
+			'src/index.ts': 'export const b = 1;',
+			'package.json': createPackageJson({}),
+		});
+
+		const pkgrollProcess = await pkgroll(['--packagejson=false', '--input', 'bin=./dist/cli.d.ts', '--input', './dist/index.mjs'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toMatch('Type declarations are not supported for "bin" entry points');
+		expect(await fixture.exists('dist/cli.d.ts')).toBe(false);
+	});
+
+	test('CLI bin input adds a default hashbang and executable mode', async () => {
+		await using fixture = await createFixture({
+			src: {
+				'cli.ts': 'console.log("CLI");',
+				'index.ts': 'export const value = 1;',
+			},
+			'package.json': createPackageJson({}),
+		});
+
+		const pkgrollProcess = await pkgroll(['--packagejson=false', '--input.bin=./dist/cli.mjs', '--input', './dist/index.mjs'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		const content = await fixture.readFile('dist/cli.mjs', 'utf8');
+		expect(content.startsWith('#!/usr/bin/env node\n')).toBe(true);
+		const libraryContent = await fixture.readFile('dist/index.mjs', 'utf8');
+		expect(libraryContent).not.toMatch('#!');
+		if (process.platform !== 'win32') {
+			const stats = await fs.stat(fixture.getPath('dist/cli.mjs'));
+			expect(stats.mode & 0o777).toBe(0o755); // eslint-disable-line no-bitwise
+		}
+	});
+
+	test('CLI binary input preserves the source hashbang', async () => {
+		await using fixture = await createFixture({
+			src: {
+				'cli.ts': '#!/usr/bin/env bun\nconsole.log("CLI");',
+				'index.ts': 'export const value = 1;',
+			},
+			'package.json': createPackageJson({ main: './dist/index.mjs' }),
+		});
+
+		const pkgrollProcess = await pkgroll(['--input', 'binary=./dist/cli.mjs'], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+		const content = await fixture.readFile('dist/cli.mjs', 'utf8');
+		expect(content.startsWith('#!/usr/bin/env bun\n')).toBe(true);
+		expect(content.match(/#!/g)).toHaveLength(1);
+		if (process.platform !== 'win32') {
+			const stats = await fs.stat(fixture.getPath('dist/cli.mjs'));
+			expect(stats.mode & 0o777).toBe(0o755); // eslint-disable-line no-bitwise
+		}
+	});
+
 	test('supports single path', async () => {
 		await using fixture = await createFixture({
 			src: {

@@ -12,7 +12,7 @@ import { getBuildEntryPoints } from './utils/get-build-entry-points/index.ts';
 import { getRollupConfigs } from './rollup/get-rollup-configs.ts';
 import { getTsconfig } from './utils/get-tsconfig.ts';
 import { log, formatPath } from './utils/log.ts';
-import { cleanDist } from './utils/clean-dist.ts';
+import { assertSafeCleanDestinations, cleanDist } from './utils/clean-dist.ts';
 import { prettyPath } from './utils/property-needs-quotes.ts';
 import type { EntryPointValid } from './utils/get-build-entry-points/types.ts';
 import type { SrcDistPairInput } from './types.ts';
@@ -213,6 +213,8 @@ const exitWithError = (error: unknown) => {
 
 (async () => {
 	if (argv.flags.cleanDist) {
+		assertSafeCleanDestinations(srcDistPairs, cwd);
+
 		/**
 		 * Typically, something like this would be implemented as a plugin, so it only
 		 * deletes what it needs to but pkgroll runs multiple builds (e.g. d.ts, mjs, etc)

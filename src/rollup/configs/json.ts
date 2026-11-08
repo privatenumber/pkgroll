@@ -5,6 +5,34 @@ import { type OutputWithOptions, entrySymbol } from '../types.ts';
 
 const name = 'json-assets';
 
+const minifyJson = (code: string) => {
+	const input = Buffer.from(code, 'utf8');
+	const output = Buffer.allocUnsafe(input.length);
+	let length = 0;
+	let inString = false;
+	// UTF-8 continuation bytes cannot match ASCII quotes, escapes, or whitespace.
+	for (let index = 0; index < input.length; index += 1) {
+		const byte = input[index];
+		if (inString && byte === 0x5C) {
+			output[length] = byte;
+			length += 1;
+			index += 1;
+			output[length] = input[index];
+			length += 1;
+			continue;
+		}
+		if (byte === 0x22) {
+			inString = !inString;
+		}
+		if (!inString && (byte === 0x20 || byte === 0x09 || byte === 0x0A || byte === 0x0D)) {
+			continue;
+		}
+		output[length] = byte;
+		length += 1;
+	}
+	return output.toString('utf8', 0, length);
+};
+
 const jsonAssets = (
 	entryPoints: EntryPointValid[],
 	minify: boolean,
@@ -19,9 +47,8 @@ const jsonAssets = (
 				return;
 			}
 
-			let parsed: unknown;
 			try {
-				parsed = JSON.parse(code);
+				JSON.parse(code);
 			} catch (error) {
 				this.error(`Failed to parse JSON: ${(error as Error).message}`);
 			}
@@ -32,7 +59,7 @@ const jsonAssets = (
 				code: 'export default 0;',
 				meta: {
 					[name]: {
-						source: minify ? JSON.stringify(parsed) : code,
+						source: minify ? minifyJson(code) : code,
 					},
 				},
 			};

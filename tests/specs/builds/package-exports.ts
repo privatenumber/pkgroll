@@ -244,7 +244,13 @@ export const packageExports = () => describe('package exports', () => {
 	test('json - minify', async () => {
 		const jsonContent = String.raw`{
 	"message": "hello \"world\"",
+	"escaped": "backslash \\ and unicode \u0020 keep  spaces",
+	"é": "日本 語",
 	"number": 1.50,
+	"big": 9007199254740993,
+	"huge": 1e400,
+	"negativeZero": -0,
+	"decimal": 1.0,
 	"nested": {
 		"value": 1
 	}
@@ -266,7 +272,7 @@ export const packageExports = () => describe('package exports', () => {
 
 		expect(pkgrollProcess.stderr).toBe('');
 		expect(await fixture.readFile('dist/data.json', 'utf8')).toBe(
-			String.raw`{"message":"hello \"world\"","number":1.5,"nested":{"value":1}}`,
+			String.raw`{"message":"hello \"world\"","escaped":"backslash \\ and unicode \u0020 keep  spaces","é":"日本 語","number":1.50,"big":9007199254740993,"huge":1e400,"negativeZero":-0,"decimal":1.0,"nested":{"value":1}}`,
 		);
 	});
 

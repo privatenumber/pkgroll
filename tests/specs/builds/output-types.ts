@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { describe, test, expect } from 'manten';
 import { createFixture } from 'fs-fixture';
-import type { SubprocessError } from 'nano-spawn';
+import spawn, { type SubprocessError } from 'nano-spawn';
 import outdent from 'outdent';
 import { pkgroll, pnpm } from '../../utils.ts';
 import { node } from '../../utils/with-node.ts';
@@ -440,6 +440,54 @@ export const outputTypes = () => describe('types', () => {
 
 		const content = await fixture.readFile('dist/dts.d.ts', 'utf8');
 		expect(content).toMatch('declare const');
+	});
+
+	// https://github.com/Swatinem/rollup-plugin-dts/pull/420
+	test('renaming a bundled value keeps same-named global type references', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript(),
+			'package.json': createPackageJson({
+				types: './dist/index.d.mts',
+				devDependencies: {
+					dep: '1.0.0',
+				},
+			}),
+			'node_modules/dep': {
+				'package.json': createPackageJson({
+					name: 'dep',
+					version: '1.0.0',
+					type: 'module',
+					exports: {
+						'./*': {
+							types: './*.d.ts',
+							default: './*.js',
+						},
+					},
+				}),
+				'schema.d.ts': outdent`
+				export declare const PropertyKey: { readonly key: true };
+				export interface Key { readonly value: PropertyKey }
+				`,
+				'uses-global.d.ts': 'export type GlobalKey = PropertyKey;',
+			},
+			'src/index.ts': outdent`
+			export type { Key } from 'dep/schema';
+			export type { GlobalKey } from 'dep/uses-global';
+			`,
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/index.d.mts', 'utf8');
+		expect(content).toMatch('interface Key { readonly value: globalThis.PropertyKey }');
+
+		await spawn('tsc', ['--ignoreConfig', '--strict', '--noEmit', '--module', 'nodenext', 'dist/index.d.mts'], {
+			cwd: fixture.path,
+		});
 	});
 
 	test('composite monorepos', async () => {

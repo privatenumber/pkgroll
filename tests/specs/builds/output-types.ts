@@ -490,6 +490,57 @@ export const outputTypes = () => describe('types', () => {
 		});
 	});
 
+	// https://github.com/privatenumber/pkgroll/issues/95
+	test('types output named after an ambient .d.ts falls back to the JS entry', async () => {
+		await using fixture = await createFixture({
+			...installTypeScript(),
+			'package.json': createPackageJson({
+				type: 'module',
+				exports: {
+					import: './dist/index.mjs',
+					types: './dist/types.d.mts',
+				},
+				module: './dist/index.mjs',
+				types: './dist/types.d.mts',
+			}),
+			'tsconfig.json': createTsconfigJson({
+				compilerOptions: {
+					allowImportingTsExtensions: true,
+					allowSyntheticDefaultImports: true,
+					esModuleInterop: true,
+					forceConsistentCasingInFileNames: true,
+					isolatedModules: true,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+					noEmit: true,
+					resolveJsonModule: true,
+					skipLibCheck: true,
+					strict: true,
+					target: 'ESNext',
+				},
+				exclude: ['dist'],
+			}),
+			src: {
+				'index.ts': outdent`
+				export const getValue = (value: StringOrNumber) => value;
+				`,
+				'types.d.ts': outdent`
+				type StringOrNumber = string | number;
+				`,
+			},
+		});
+
+		const pkgrollProcess = await pkgroll([], {
+			cwd: fixture.path,
+		});
+
+		expect(pkgrollProcess.stderr).toBe('');
+
+		const content = await fixture.readFile('dist/types.d.mts', 'utf8');
+		expect(content).toMatch('declare const getValue');
+		expect(content).toMatch('export { getValue }');
+	});
+
 	test('composite monorepos', async () => {
 		await using fixture = await createFixture({
 			...installTypeScript(),
